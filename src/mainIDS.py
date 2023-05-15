@@ -18,8 +18,10 @@ def main():
     cap = sensorIDS.idsCamera(0)
     cap2 = sensorIDS.idsCamera(1)
 
-    cap.loadCameraParameters("src/parameters/cam1.cset")
-    cap.loadCameraParameters("src/parameters/cam2.cset")
+    # cap.loadCameraParameters("src/parameters/cam1.cset")
+    # cap2.loadCameraParameters("src/parameters/cam2.cset")
+    cap2.setROI(480, 212, 976, 1094)
+    cap.setROI(520, 212, 976, 1094)
 
     cap.syncAsMaster()
     cap2.syncAsSlave()
