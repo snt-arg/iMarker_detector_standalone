@@ -1,66 +1,64 @@
 import cv2 as cv
 import numpy as np
 import PySimpleGUI as sg
-from csr_sensors.sensors import sensorIDS
-from csr_detector.process import processFrames
-from gui.guiElements import guiElements, addLabel
+from src.gui.addLabel import addLabel
+from src.gui.guiElements import guiElements
+from src.csr_sensors.sensors import sensorIDS
+from src.csr_detector.process import processFrames
+from config import preAligment, homographyMat, windowWidth
 
 
 def main():
-    # Creating log file
-    print('Framework started! [iDS Version]')
+    print('Framework started! [iDS Cameras Setup]')
+
     # Create the window
     windowTitle, tabGroup, imageViewer = guiElements()
     window = sg.Window(
         windowTitle, [tabGroup, imageViewer], location=(800, 400))
 
-    cap = sensorIDS.idsCamera(0)
+    cap1 = sensorIDS.idsCamera(0)
     cap2 = sensorIDS.idsCamera(1)
 
     # cap.loadCameraParameters("src/parameters/cam1.cset")
     # cap2.loadCameraParameters("src/parameters/cam2.cset")
     cap2.setROI(480, 212, 976, 1094)
-    cap.setROI(520, 212, 976, 1094)
+    cap1.setROI(520, 212, 976, 1094)
 
-    cap.syncAsMaster()
+    cap1.syncAsMaster()
     cap2.syncAsSlave()
 
-    cap.startAquisition()
+    cap1.startAquisition()
     cap2.startAquisition()
 
-    cap.setExposureTime(20000)
+    cap1.setExposureTime(20000)
     cap2.setExposureTime(20000)
 
     while True:
         event, values = window.read(timeout=10)
+
         # End program if user closes window
         if event == "Exit" or event == sg.WIN_CLOSED:
             break
 
-        frame = cap.getFrame()
+        frame1 = cap1.getFrame()
         frame2 = cap2.getFrame()
 
-        if (not np.any(frame)):
-            retL = False  # improvised
-        else:
-            retL = True
-        frameL = frame
+        retL = False if (not np.any(frame1)) else True
+        retR = False if (not np.any(frame2)) else True
 
-        if (not np.any(frame2)):
-            retR = False  # improvised
-        else:
-            retR = True  # improvised
-
+        frameL = frame1
         frameR = frame2
 
-        guiValues = {'maxFeatures': values['MaxFeat'], 'goodMatchPercentage': values['MatchRate'],
-                     'circlularMaskCoverage': values['CircMask'], 'threshold': values['Threshold'],
-                     'erosionKernel': values['Erosion'], 'gaussianKernel': values['Gaussian'],
-                     'enableCircularMask': values['CircMaskEnable'], 'allChannels': values['AChannels'],
-                     'rChannel': values['RChannel'], 'gChannel': values['GChannel'], 'bChannel': values['BChannel'],
-                     'threshboth': values['ThreshBoth'], 'threshbin': values['ThreshBin'], 'threshots': values['ThreshOts'],
-                     'isMarkerLeftHanded': values['MarkerLeftHanded'],
-                     }
+        # Get the values from the GUI
+        params = {'maxFeatures': values['MaxFeat'], 'goodMatchPercentage': values['MatchRate'],
+                  'circlularMaskCoverage': values['CircMask'], 'threshold': values['Threshold'],
+                  'erosionKernel': values['Erosion'], 'gaussianKernel': values['Gaussian'],
+                  'enableCircularMask': values['CircMaskEnable'], 'allChannels': values['AChannels'],
+                  'rChannel': values['RChannel'], 'gChannel': values['GChannel'], 'bChannel': values['BChannel'],
+                  'threshboth': values['ThreshBoth'], 'threshbin': values['ThreshBin'], 'threshots': values['ThreshOts'],
+                  'isMarkerLeftHanded': values['MarkerLeftHanded'],
+                  'preAligment': preAligment, 'homographyMat': homographyMat, 'windowWidth': windowWidth
+                  }
 
         frameL = cv.convertScaleAbs(
             frameL, alpha=values['camAlpha'], beta=values['camBeta'])
@@ -70,7 +68,7 @@ def main():
         frameR = cv.flip(frameR, 1)
 
         frame = processFrames(frameL, frameR, retL, retR,
-                              guiValues)
+                              params)
 
         addLabel(frame, 5)
 
@@ -78,9 +76,9 @@ def main():
         window['Frames'].update(data=frame)
 
     window.close()
-    cap.closeLibrary()
+    cap1.closeLibrary()
     cap2.closeLibrary()
-    print('Application has been closed!')
+    print('Framework finished! [iDS Cameras Setup]')
 
 
 # Run the program
