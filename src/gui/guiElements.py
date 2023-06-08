@@ -1,8 +1,8 @@
 import PySimpleGUI as sg
-from gui.config import enableCircularROI, channel, leftHanded
-from gui.config import fpsBoost, brightness, labelSize, sliderSize
-from gui.config import maxFeatures, goodMatchPercentage, circlularMaskCoverage
-from gui.config import threshold, erodeKernelSize, gaussianBlurKernelSize, thresholdMethod
+from config import enableCircularROI, channel, leftHanded
+from config import fpsBoost, brightness, labelSize, sliderSize
+from config import maxFeatures, goodMatchPercentage, circlularMaskCoverage
+from config import threshold, erodeKernelSize, gaussianBlurKernelSize, thresholdMethod
 
 
 def guiElements():

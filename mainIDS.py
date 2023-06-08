@@ -1,10 +1,9 @@
 import cv2 as cv
 import numpy as np
-from csr_detector.vision.processFrames import processFrames
-from csr_detector.vision.addLabel import addLabel
 import PySimpleGUI as sg
-from gui.guiElements import guiElements
 from csr_sensors.sensors import sensorIDS
+from csr_detector.process import processFrames
+from gui.guiElements import guiElements, addLabel
 
 
 def main():

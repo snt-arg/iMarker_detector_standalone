@@ -1,10 +1,9 @@
 import cv2 as cv
 import PySimpleGUI as sg
-from csr_detector.vision.addLabel import addLabel
-from gui.guiElements import guiElements
-from gui.config import ports, fpsBoost, flipImage
-from csr_detector.vision.processFrames import processFrames
 import csr_sensors.sensors.sensorUSB as usb
+from config import ports, fpsBoost, flipImage
+from csr_detector.process import processFrames
+from gui.guiElements import guiElements, addLabel
 
 
 def main():
