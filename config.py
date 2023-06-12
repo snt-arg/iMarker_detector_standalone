@@ -24,7 +24,7 @@ channel = 'g'       # Enabling RGB channels (options: all, r, g, b)
 # Dimensions of ROI for iDS camera setup
 roiDimension = {
     'cap1': {
-        'x': 520,
+        'x': 528,
         'y': 212,
         'width': 976,
         'height': 1094
@@ -42,7 +42,7 @@ maxFeatures = 500               # Maximum number of features for alignment
 goodMatchPercentage = 0.4
 circlularMaskCoverage = 0.8     # Value between 0 and 1
 flipImage = True                # True for BeamSplitter, False for stereo-vision
-enableCircularROI = True        # True for BeamSplitter, False for stereo-vision
+enableCircularROI = False       # True for USB Setup, False for iDS
 # Apply the homography matrix below to do alignment only once
 preAligment = True
 # Homography matrix for iDS cameras
