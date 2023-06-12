@@ -26,3 +26,7 @@ Install the required libraries for running this program using the command below:
 ```
 pip install numpy opencv-python PySimpleGUI
 ```
+
+### III. Installing Submodule Packages
+
+The next step is to intall the cloned submodules and define dependencies and other distribution-related configurations using the provided `setup.py` file in the root directory. Then, run `pip install -e .` in the **root directory** to install the package and its dependencies. You can also run the same command in the submodules directories to install them.

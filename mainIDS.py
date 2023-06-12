@@ -67,11 +67,14 @@ def main():
 
         frameR = cv.flip(frameR, 1)
 
+        # Process frames
         frame = processFrames(frameL, frameR, retL, retR,
                               params)
 
-        addLabel(frame, 5)
+        # Add text to the image
+        # addLabel(frame, 5)
 
+        # Show the frames
         frame = cv.imencode(".png", frame)[1].tobytes()
         window['Frames'].update(data=frame)
 
