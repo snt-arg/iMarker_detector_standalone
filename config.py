@@ -2,7 +2,6 @@ import os
 import numpy as np
 
 # GUI elements
-fpsBoost = True         # Enabling fps boost for USB cameras
 labelSize = (20, 1)     # Setting label size in the GUI
 inputSize = (30, 1)     # Setting input size in the GUI
 sliderSize = (100, 15)  # Setting slider size in the GUI
@@ -20,7 +19,23 @@ brightness = {'alpha': 3.0, 'beta': 0}  # Setting brightness of the cameras
 leftHanded = True   # If True, it is left-handed, otherwise, it is right-handed
 
 # Pre-processing
+fpsBoost = True         # Enabling fps boost for USB cameras
 channel = 'g'       # Enabling RGB channels (options: all, r, g, b)
+# Dimensions of ROI for iDS camera setup
+roiDimension = {
+    'cap1': {
+        'x': 520,
+        'y': 212,
+        'width': 976,
+        'height': 1094
+    },
+    'cap2': {
+        'x': 480,
+        'y': 212,
+        'width': 976,
+        'height': 1094
+    },
+}
 
 # Processing
 maxFeatures = 500               # Maximum number of features for alignment

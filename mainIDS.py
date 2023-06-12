@@ -5,7 +5,8 @@ from src.gui.addLabel import addLabel
 from src.gui.guiElements import guiElements
 from src.csr_sensors.sensors import sensorIDS
 from src.csr_detector.process import processFrames
-from config import preAligment, homographyMat, windowWidth, sensorProjectRoot, exposureTime, windowLocation
+from config import roiDimension, exposureTime, windowLocation
+from config import preAligment, homographyMat, windowWidth, sensorProjectRoot
 
 
 def main():
@@ -22,8 +23,10 @@ def main():
     cap1.getCalibrationConfig(sensorProjectRoot, 'cam1')
     cap2.getCalibrationConfig(sensorProjectRoot, 'cam2')
 
-    cap1.setROI(520, 212, 976, 1094)
-    cap2.setROI(480, 212, 976, 1094)
+    cap1.setROI(roiDimension['cap1']['x'], roiDimension['cap1']
+                ['y'], roiDimension['cap1']['width'], roiDimension['cap1']['height'])
+    cap2.setROI(roiDimension['cap2']['x'], roiDimension['cap2']
+                ['y'], roiDimension['cap2']['width'], roiDimension['cap2']['height'])
 
     cap1.syncAsMaster()
     cap2.syncAsSlave()
@@ -47,9 +50,6 @@ def main():
         retL = False if (not np.any(frame1)) else True
         retR = False if (not np.any(frame2)) else True
 
-        frameL = frame1
-        frameR = frame2
-
         # Get the values from the GUI
         params = {'maxFeatures': values['MaxFeat'], 'goodMatchPercentage': values['MatchRate'],
                   'circlularMaskCoverage': values['CircMask'], 'threshold': values['Threshold'],
@@ -62,9 +62,9 @@ def main():
                   }
 
         frameL = cv.convertScaleAbs(
-            frameL, alpha=values['camAlpha'], beta=values['camBeta'])
+            frame1, alpha=values['camAlpha'], beta=values['camBeta'])
         frameR = cv.convertScaleAbs(
-            frameR, alpha=values['camAlpha'], beta=values['camBeta'])
+            frame2, alpha=values['camAlpha'], beta=values['camBeta'])
 
         frameR = cv.flip(frameR, 1)
 
