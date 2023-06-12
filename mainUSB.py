@@ -4,7 +4,7 @@ from src.gui.addLabel import addLabel
 from src.gui.guiElements import guiElements
 import src.csr_sensors.sensors.sensorUSB as usb
 from src.csr_detector.process import processFrames
-from config import ports, fpsBoost, flipImage, preAligment, homographyMat, windowWidth
+from config import ports, fpsBoost, flipImage, preAligment, homographyMat, windowWidth, windowLocation
 
 
 def main():
@@ -13,7 +13,7 @@ def main():
     # Create the window
     windowTitle, tabGroup, imageViewer = guiElements()
     window = sg.Window(
-        windowTitle, [tabGroup, imageViewer], location=(800, 400))
+        windowTitle, [tabGroup, imageViewer], location=windowLocation)
 
     capL = usb.createCameraObject(ports['lCam'])
     capR = usb.createCameraObject(ports['rCam'])

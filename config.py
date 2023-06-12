@@ -1,3 +1,4 @@
+import os
 import numpy as np
 
 # GUI elements
@@ -6,10 +7,13 @@ labelSize = (20, 1)     # Setting label size in the GUI
 inputSize = (30, 1)     # Setting input size in the GUI
 sliderSize = (100, 15)  # Setting slider size in the GUI
 windowWidth = 1800      # Shown window width
+windowLocation = (800, 400)     # Window location
 
 # Sensors
+exposureTime = 20000
 # Camera ports for USB sensors (0 for internal webcam)
 ports = {'lCam': "/dev/video2", 'rCam': "/dev/video4"}
+sensorProjectRoot = f"{os.getcwd()}/src/csr_sensors/sensors/config"
 brightness = {'alpha': 3.0, 'beta': 0}  # Setting brightness of the cameras
 
 # CSR-based Marker

@@ -5,7 +5,7 @@ from src.gui.addLabel import addLabel
 from src.gui.guiElements import guiElements
 from src.csr_sensors.sensors import sensorIDS
 from src.csr_detector.process import processFrames
-from config import preAligment, homographyMat, windowWidth
+from config import preAligment, homographyMat, windowWidth, sensorProjectRoot, exposureTime, windowLocation
 
 
 def main():
@@ -14,15 +14,16 @@ def main():
     # Create the window
     windowTitle, tabGroup, imageViewer = guiElements()
     window = sg.Window(
-        windowTitle, [tabGroup, imageViewer], location=(800, 400))
+        windowTitle, [tabGroup, imageViewer], location=windowLocation)
 
     cap1 = sensorIDS.idsCamera(0)
     cap2 = sensorIDS.idsCamera(1)
 
-    # cap.loadCameraParameters("src/parameters/cam1.cset")
-    # cap2.loadCameraParameters("src/parameters/cam2.cset")
-    cap2.setROI(480, 212, 976, 1094)
+    cap1.getCalibrationConfig(sensorProjectRoot, 'cam1')
+    cap2.getCalibrationConfig(sensorProjectRoot, 'cam2')
+
     cap1.setROI(520, 212, 976, 1094)
+    cap2.setROI(480, 212, 976, 1094)
 
     cap1.syncAsMaster()
     cap2.syncAsSlave()
@@ -30,8 +31,8 @@ def main():
     cap1.startAquisition()
     cap2.startAquisition()
 
-    cap1.setExposureTime(20000)
-    cap2.setExposureTime(20000)
+    cap1.setExposureTime(exposureTime)
+    cap2.setExposureTime(exposureTime)
 
     while True:
         event, values = window.read(timeout=10)
