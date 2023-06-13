@@ -38,7 +38,7 @@ def guiElements():
                             key='GChannel', default=isGChannel),
                    sg.Radio("Blue Channel", "Channels",
                             key='BChannel', default=isBChannel)],
-                  [sg.Text("Camera brightness/contrast:", size=labelSize), sg.Slider((1.0, 3.0), brightness['alpha'], .1, orientation="h", size=(50, 15), key="camAlpha"),
+                  [sg.Text("Camera brightness/contrast:", size=labelSize), sg.Slider((1.0, 15.0), brightness['alpha'], .1, orientation="h", size=(50, 15), key="camAlpha"),
                    sg.Slider((0, 50), brightness['beta'], 1, orientation="h", size=(50, 15), key="camBeta")]]
     tabAlignment = [
         [sg.Text('Max. features:', size=labelSize), sg.Slider(
