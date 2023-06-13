@@ -14,6 +14,8 @@ exposureTime = 20000
 ports = {'lCam': "/dev/video2", 'rCam': "/dev/video4"}
 sensorProjectRoot = f"{os.getcwd()}/src/csr_sensors/sensors/config"
 brightness = {'alpha': 5.0, 'beta': 0}  # Setting brightness of the cameras
+realSenseFps = 30   # Frame-rate of the sensor, used for configuring RealSense
+realSenseResolution = (640, 480)     # Resolution of the frames in RealSense
 
 # CSR-based Marker
 leftHanded = True   # If True, it is left-handed, otherwise, it is right-handed
