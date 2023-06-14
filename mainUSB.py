@@ -56,7 +56,7 @@ def main():
             frameR = cv.flip(frameR, 1)
 
         # Process frames
-        frame = processFrames(frameL, frameR, retL, retR, params)
+        frame, mask = processFrames(frameL, frameR, retL, retR, params)
 
         # Add text to the image
         # addLabel(frame, 5)
