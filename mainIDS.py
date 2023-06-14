@@ -6,7 +6,6 @@ from src.gui.guiElements import guiElements
 from src.csr_sensors.sensors import sensorIDS
 from src.csr_detector.process import processFrames
 from config import roiDimension, exposureTime, windowLocation
-from src.csr_detector.vision.concatImages import imageConcatHorizontal
 from config import preAligment, homographyMat, windowWidth, sensorProjectRoot
 
 

@@ -5,9 +5,9 @@ from config import maxFeatures, goodMatchPercentage, circlularMaskCoverage
 from config import threshold, erodeKernelSize, gaussianBlurKernelSize, thresholdMethod
 
 
-def guiElements():
+def guiElements(singleCamera: bool = False):
     """
-    Defines GUI elements for controlling the system
+    Defines GUI elements for controlling the system (single and two-camera setups)
 
     Returns
     -------
@@ -27,7 +27,7 @@ def guiElements():
     isThreshBoth = True if (thresholdMethod == 'both') else False
     isThreshBin = True if (thresholdMethod == 'binary') else False
     # Adding GUI elements
-    windowTitle = 'CSR Marker Readout'
+    windowTitle = f"CSR Marker Readout - {'Single' if singleCamera else 'Double'} Camera Setup"
     tabGeneral = [[sg.Text('Frame-rate:', size=labelSize), sg.Text('-' + f' fps {"(boosted)" if fpsBoost else "(normal)"}')],
                   [sg.Text('Marker Properties:', size=labelSize), sg.Checkbox('Left-handed?',
                                                                               default=leftHanded, key="MarkerLeftHanded")],
@@ -59,8 +59,12 @@ def guiElements():
         [sg.Text('Erosion kernel:', size=labelSize), sg.Slider(
             (1, 50), erodeKernelSize, 1, orientation="h", size=sliderSize, key="Erosion")],
         [sg.Text('Gaussian kernel:', size=labelSize), sg.Slider((1, 49), gaussianBlurKernelSize, 2, orientation="h", size=sliderSize, key="Gaussian")]]
-    tabGroup = [[sg.Image(filename="./src/logo.png",  key="LogoHolder"), sg.TabGroup([[sg.Tab('General Settings', tabGeneral), sg.Tab('Alignment Configurations', tabAlignment),
-                                                                                       sg.Tab('Post-Processing', tabPosProcessing)]], tab_location='centertop', expand_x=True,
+
+    # Define tab group values based on camera setup
+    groups = [[sg.Tab('General Settings', tabGeneral)]] if singleCamera else [[sg.Tab('General Settings', tabGeneral), sg.Tab('Alignment Configurations', tabAlignment),
+                                                                               sg.Tab('Post-Processing', tabPosProcessing)]]
+
+    tabGroup = [[sg.Image(filename="./src/logo.png",  key="LogoHolder"), sg.TabGroup(groups, tab_location='centertop', expand_x=True,
                                                                                      title_color='dark slate grey', selected_background_color='dark orange', pad=10)]]
     imageViewer = [sg.Image(filename="", key="Frames")]
     # Return to GUI creator
