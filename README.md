@@ -19,6 +19,8 @@ git clone --recurse-submodules git@github.com:snt-arg/csr_detector_standalone.gi
 
 You can also get the latest changes of each submodule individually using the command `git pull --recurse-submodules`.
 
+[Note] In case you do not have SSH access, you can just download the code of [this library](https://github.com/snt-arg/csr_detector_standalone), [sensors repo](https://github.com/snt-arg/csr_sensors) inside `src/csr_sensors`, and [detector repo](https://github.com/snt-arg/csr_detector) inside `src/csr_detector`.
+
 ### II. Installing Python Libraries
 
 Install the required libraries for running this program using the command below:
@@ -29,9 +31,12 @@ pip install numpy opencv-python PySimpleGUI
 
 ### III. Installing Submodule Packages
 
-The next step is to intall the cloned submodules and define dependencies and other distribution-related configurations using the provided `setup.py` file in the root directory. Then, run `pip install -e .` in the **root directory** to install the package and its dependencies. You can also run the same command in the submodules directories to install them.
+The next step is to intall the cloned submodules and define dependencies and other distribution-related configurations using the provided `setup.py` file in the root directory of each file. Hence, follow the below steps:
+- Go to `src/csr_sensors` and run `pip install -e .`,
+- Go to `src/csr_detector` and run `pip install -e .`,
+- Go to the **root directory** and run `pip install -e .` to install the package and its dependencies.
 
-### 🚀 Running the Code
+## 🚀 Running the Code
 
 For running the code, there are three different modules, each designed based on the demands of a particular sensor.
 
@@ -40,6 +45,10 @@ For running the code, there are three different modules, each designed based on 
 | `mainIDS.py` | Running the GUI-enabled code with iDS camera sensors |
 | `mainUSB.py` | Running the GUI-enabled code with USB camera sensors |
 | `mainRS.py` | Running the GUI-enabled code with RealSense Monocular camera sensor |
+
+You can run the code by `python ./main[IDS/USB/RS].py`.
+
+### Configurations
 
 There are also some configurations in the [config.py](config.py) file, as described below:
 
