@@ -10,7 +10,7 @@ def main():
     print('Framework started! [USB Camera Mono Setup]')
 
     # Create the window
-    windowTitle, tabGroup, imageViewer = guiElements()
+    windowTitle, tabGroup, imageViewer = guiElements(True)
     window = sg.Window(
         windowTitle, [tabGroup, imageViewer], location=windowLocation)
 

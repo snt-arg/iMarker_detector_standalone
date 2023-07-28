@@ -61,8 +61,8 @@ def guiElements(singleCamera: bool = False):
         [sg.Text('Gaussian kernel:', size=labelSize), sg.Slider((1, 49), gaussianBlurKernelSize, 2, orientation="h", size=sliderSize, key="Gaussian")]]
 
     # Define tab group values based on camera setup
-    groups = [[sg.Tab('General Settings', tabGeneral)]] if singleCamera else [[sg.Tab('General Settings', tabGeneral), sg.Tab('Alignment Configurations', tabAlignment),
-                                                                               sg.Tab('Post-Processing', tabPosProcessing)]]
+    groups = [[sg.Tab('General Settings', tabGeneral), sg.Tab('Alignment Configurations', tabAlignment),
+               sg.Tab('Post-Processing', tabPosProcessing)]]
 
     tabGroup = [[sg.Image(filename="./src/logo.png",  key="LogoHolder"), sg.TabGroup(groups, tab_location='centertop', expand_x=True,
                                                                                      title_color='dark slate grey', selected_background_color='dark orange', pad=10)]]
