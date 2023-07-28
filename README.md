@@ -32,6 +32,7 @@ pip install numpy opencv-python PySimpleGUI
 ### III. Installing Submodule Packages
 
 The next step is to intall the cloned submodules and define dependencies and other distribution-related configurations using the provided `setup.py` file in the root directory of each file. Hence, follow the below steps:
+
 - Go to `src/csr_sensors` and run `pip install -e .`,
 - Go to `src/csr_detector` and run `pip install -e .`,
 - Go to the **root directory** and run `pip install -e .` to install the package and its dependencies.
@@ -40,11 +41,12 @@ The next step is to intall the cloned submodules and define dependencies and oth
 
 For running the code, there are three different modules, each designed based on the demands of a particular sensor.
 
-| File | Description  |
-| ------------ | ------------ |
-| `mainIDS.py` | Running the GUI-enabled code with iDS camera sensors |
-| `mainUSB.py` | Running the GUI-enabled code with USB camera sensors |
-| `mainRS.py` | Running the GUI-enabled code with RealSense Monocular camera sensor |
+| File             | Description                                                         |
+| ---------------- | ------------------------------------------------------------------- |
+| `mainIDS.py`     | Running the GUI-enabled code with iDS camera sensors                |
+| `mainUSB.py`     | Running the GUI-enabled code with USB camera sensors                |
+| `mainUsbMono.py` | Running the GUI-enabled code with USB Monocular camera sensor       |
+| `mainRS.py`      | Running the GUI-enabled code with RealSense Monocular camera sensor |
 
 You can run the code by `python ./main[IDS/USB/RS].py`.
 
@@ -52,28 +54,33 @@ You can run the code by `python ./main[IDS/USB/RS].py`.
 
 There are also some configurations in the [config.py](config.py) file, as described below:
 
-*GUI elements*
+_GUI elements_
+
 - `labelSize`: label size in the GUI, like (20, 1)
 - `inputSize`: input size in the GUI, like (30, 1)
 - `sliderSize`: slider size in the GUI, like (100, 15)
 - `windowWidth`: what should be the size of the GUI
 - `windowLocation`: where should the window appear
 
-*Sensors*
+_Sensors_
+
 - `exposureTime`: camera exposure time for iDS cameras, like 20000
 - `ports`: camera ports for USB cameras, including left and right cameras
 - `sensorProjectRoot`: the absolute location of the `Sensors` submodule for accessing its calibration files
 - `brightness`: brightness value of the cameras, including `alpha` and `beta` values
 
-*Markers*
+_Markers_
+
 - `leftHanded`: if the marker is left-handed or right-handed
 
-*Pre-processing*
+_Pre-processing_
+
 - `fpsBoost`: boosting fps of camera, mainly for the USB camera setup
 - `channel`: enabling RGB channels (options: all, r, g, b)
 - `roiDimension`: dimensions of ROI for iDS camera setup
 
-*Processing*
+_Processing_
+
 - `maxFeatures`: maximum number of features for alignment, like 500
 - `goodMatchPercentage`: percentage of a good match of features for alignment, like 0.4
 - `circlularMaskCoverage`: how much the coverage of the circular mask should be (for the old design), like 0.8
@@ -82,7 +89,8 @@ There are also some configurations in the [config.py](config.py) file, as descri
 - `preAligment`: apply the homography matrix below to do alignment only once
 - `homographyMat`: a pre-defined homography matrix for iDS cameras
 
-*Pos-processing*
+_Pos-processing_
+
 - `thresholdMethod`: thresholding method (options: both, binary, otsu)
 - `threshold`: the value of threshold for separating layers (between 0 and 255)
 - `erodeKernelSize`: the size of the kernel for erosion (between 1 and 50)
