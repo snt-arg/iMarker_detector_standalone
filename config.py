@@ -76,6 +76,6 @@ thresholdMethod = 'binary'
 # The value of threshold for separating layers (between 0 and 255)
 threshold = 30
 # The size of the kernel for erosion (between 1 and 50)
-erodeKernelSize = 3
+erodeKernelSize = 1
 # The size of the kernel for gaussian blur (only odd values)
-gaussianBlurKernelSize = 3
+gaussianBlurKernelSize = 1

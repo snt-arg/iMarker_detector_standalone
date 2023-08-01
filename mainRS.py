@@ -3,13 +3,14 @@ import numpy as np
 import PySimpleGUI as sg
 from src.gui.guiElements import guiElements
 from src.csr_sensors.sensors import sensorRealSense
-from src.csr_detector.vision.channelSeparator import channelSeparator
+from src.csr_detector.process import processMonoFrame
 from config import realSenseResolution, realSenseFps, windowWidth, windowLocation
 
 
 def main():
     print('Framework started! [RealSense Mono Setup]')
 
+    # Create an object
     rs = sensorRealSense.rsCamera(realSenseResolution, realSenseFps)
 
     # Create a pipeline
@@ -38,19 +39,23 @@ def main():
             colorFrame = rs.getColorFrame(frames)
 
             # Get the values from the GUI
-            params = {'allChannels': values['AChannels'], 'rChannel': values['RChannel'],
-                      'gChannel': values['GChannel'], 'bChannel': values['BChannel'],
-                      'isMarkerLeftHanded': values['MarkerLeftHanded'], 'windowWidth': windowWidth
+            params = {'circlularMaskCoverage': values['CircMask'], 'threshold': values['Threshold'],
+                      'erosionKernel': values['Erosion'], 'gaussianKernel': values['Gaussian'],
+                      'enableCircularMask': values['CircMaskEnable'], 'allChannels': values['AChannels'],
+                      'rChannel': values['RChannel'], 'gChannel': values['GChannel'], 'bChannel': values['BChannel'],
+                      'threshboth': values['ThreshBoth'], 'threshbin': values['ThreshBin'],
+                      'threshots': values['ThreshOts'], 'isMarkerLeftHanded': values['MarkerLeftHanded'],
+                      'windowWidth': windowWidth
                       }
 
             # Change brightness
             colorFrame = cv.convertScaleAbs(
                 colorFrame, alpha=values['camAlpha'], beta=values['camBeta'])
 
-            procFrame = channelSeparator(colorFrame, params)
+            frame, mask = processMonoFrame(colorFrame, True, params)
 
             # Show the frames
-            frame = cv.imencode(".png", procFrame)[1].tobytes()
+            frame = cv.imencode(".png", frame)[1].tobytes()
             window['Frames'].update(data=frame)
 
     finally:

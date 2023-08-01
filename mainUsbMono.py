@@ -14,6 +14,7 @@ def main():
     window = sg.Window(
         windowTitle, [tabGroup, imageViewer], location=windowLocation)
 
+    # Capture frames
     cap = usb.createCameraObject(ports['rCam'])
 
     if fpsBoost:
