@@ -36,7 +36,7 @@ def main():
             frames = rs.grabFrames()
 
             # Get the color frame
-            colorFrame = rs.getColorFrame(frames)
+            colorFrame, colorCamIntrinsics = rs.getColorFrame(frames)
 
             # Get the values from the GUI
             params = {'circlularMaskCoverage': values['CircMask'], 'threshold': values['Threshold'],
