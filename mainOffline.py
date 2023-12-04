@@ -41,6 +41,10 @@ def main():
             # Retrieve frames
             ret, currFrame = cap.read()
 
+            # Break out of the loop if the video is finished
+            if not ret:
+                break
+
             # Get the values from the GUI
             params = {'threshold': values['Threshold'], 'erosionKernel': values['Erosion'],
                       'gaussianKernel': values['Gaussian'], 'allChannels': values['AChannels'],
