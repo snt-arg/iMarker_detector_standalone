@@ -47,8 +47,9 @@ For running the code, there are three different modules, each designed based on 
 | `mainUSB.py`     | Running the GUI-enabled code with USB camera sensors                |
 | `mainUsbMono.py` | Running the GUI-enabled code with USB Monocular camera sensor       |
 | `mainRS.py`      | Running the GUI-enabled code with RealSense Monocular camera sensor |
+| `mainOffline.py` | Running the GUI-enabled code with offline videos                    |
 
-You can run the code by `python ./main[IDS/USB/RS].py`.
+You can run the code by `python ./main[IDS/USB/RS/etc].py`.
 
 ### Configurations
 
@@ -61,6 +62,10 @@ _GUI elements_
 - `sliderSize`: slider size in the GUI, like (100, 15)
 - `windowWidth`: what should be the size of the GUI
 - `windowLocation`: where should the window appear
+
+_Files_
+
+- `videoPath`: path to the offline video file
 
 _Sensors_
 
