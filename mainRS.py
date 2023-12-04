@@ -3,7 +3,7 @@ import numpy as np
 import PySimpleGUI as sg
 from src.gui.guiElements import guiElements
 from src.csr_sensors.sensors import sensorRealSense
-from src.csr_detector.process import processMonoFrame
+from src.csr_detector.process import processSequentialFrames
 from config import realSenseResolution, realSenseFps, windowWidth, windowLocation
 
 
@@ -23,6 +23,9 @@ def main():
     windowTitle, tabGroup, imageViewer = guiElements(True)
     window = sg.Window(
         windowTitle, [tabGroup, imageViewer], location=windowLocation)
+
+    # Previous frame
+    prevFrame = None
 
     try:
         while True:
@@ -52,11 +55,18 @@ def main():
             colorFrame = cv.convertScaleAbs(
                 colorFrame, alpha=values['camAlpha'], beta=values['camBeta'])
 
-            frame, mask = processMonoFrame(colorFrame, True, params)
+            if prevFrame is None:
+                prevFrame = np.copy(colorFrame)
+
+            frame, mask = processSequentialFrames(
+                prevFrame, colorFrame, True, params)
 
             # Show the frames
             frame = cv.imencode(".png", frame)[1].tobytes()
             window['Frames'].update(data=frame)
+
+            # Save the previous frame
+            prevFrame = np.copy(colorFrame)
 
     finally:
         # Stop the pipeline and close the windows

@@ -4,13 +4,13 @@ import PySimpleGUI as sg
 from src.gui.addLabel import addLabel
 from src.gui.guiElements import guiElements
 from src.csr_sensors.sensors import sensorIDS
-from src.csr_detector.process import processFrames
+from src.csr_detector.process import processSingleFrame
 from config import roiDimension, exposureTime, windowLocation
 from config import preAligment, homographyMat, windowWidth, sensorProjectRoot
 
 
 def main():
-    print('Framework started! [iDS Cameras Setup]')
+    print('Framework started! [Double iDS Camera Setup]')
 
     # Create the window
     windowTitle, tabGroup, imageViewer = guiElements()
@@ -69,8 +69,8 @@ def main():
         frameR = cv.flip(frameR, 1)
 
         # Process frames
-        frame, mask = processFrames(frameL, frameR, retL, retR,
-                                    params)
+        frame, mask = processSingleFrame(frameL, frameR, retL, retR,
+                                         params)
 
         # Add text to the image
         # addLabel(frame, 5)
@@ -82,7 +82,7 @@ def main():
     window.close()
     cap1.closeLibrary()
     cap2.closeLibrary()
-    print('Framework finished! [iDS Cameras Setup]')
+    print('Framework finished! [Double iDS Camera Setup]')
 
 
 # Run the program

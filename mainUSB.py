@@ -3,7 +3,7 @@ import PySimpleGUI as sg
 from src.gui.addLabel import addLabel
 from src.gui.guiElements import guiElements
 import src.csr_sensors.sensors.sensorUSB as usb
-from src.csr_detector.process import processFrames
+from src.csr_detector.process import processStereoFrames
 from config import ports, fpsBoost, flipImage, preAligment, homographyMat, windowWidth, windowLocation
 
 
@@ -56,7 +56,7 @@ def main():
             frameR = cv.flip(frameR, 1)
 
         # Process frames
-        frame, mask = processFrames(frameL, frameR, retL, retR, params)
+        frame, mask = processStereoFrames(frameL, frameR, retL, retR, params)
 
         # Add text to the image
         # addLabel(frame, 5)
