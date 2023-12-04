@@ -31,9 +31,8 @@ def main():
         ret, frame = usb.grabImage(cap)
 
         # Get the values from the GUI
-        params = {'circlularMaskCoverage': values['CircMask'], 'threshold': values['Threshold'],
-                  'erosionKernel': values['Erosion'], 'gaussianKernel': values['Gaussian'],
-                  'enableCircularMask': values['CircMaskEnable'], 'allChannels': values['AChannels'],
+        params = {'threshold': values['Threshold'], 'erosionKernel': values['Erosion'],
+                  'gaussianKernel': values['Gaussian'], 'allChannels': values['AChannels'],
                   'rChannel': values['RChannel'], 'gChannel': values['GChannel'], 'bChannel': values['BChannel'],
                   'threshboth': values['ThreshBoth'], 'threshbin': values['ThreshBin'],
                   'threshots': values['ThreshOts'], 'isMarkerLeftHanded': values['MarkerLeftHanded'],

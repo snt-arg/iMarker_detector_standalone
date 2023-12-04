@@ -8,6 +8,9 @@ sliderSize = (100, 15)  # Setting slider size in the GUI
 windowWidth = 1800      # Shown window width
 windowLocation = (800, 400)     # Window location
 
+# Files
+videoPath = "/home/ali/Videos/vid1.mp4"   # Path to the offline video file
+
 # Sensors
 exposureTime = 20000
 # Camera ports for USB sensors (0 for internal webcam)

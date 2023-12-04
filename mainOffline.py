@@ -1,28 +1,31 @@
+import os
 import cv2 as cv
 import numpy as np
 import PySimpleGUI as sg
 from src.gui.guiElements import guiElements
-from src.csr_sensors.sensors import sensorRealSense
+from config import windowWidth, windowLocation, videoPath
 from src.csr_detector.process import processSequentialFrames
-from config import realSenseResolution, realSenseFps, windowWidth, windowLocation
 
 
 def main():
-    print('Framework started! [RealSense Mono Setup]')
+    print('Framework started! [Offline Video Seq. Setup]')
 
-    # Create an object
-    rs = sensorRealSense.rsCamera(realSenseResolution, realSenseFps)
-
-    # Create a pipeline
-    rs.createPipeline()
-
-    # Start the pipeline
-    rs.startPipeline()
+    # Check if the video file exists
+    if not os.path.exists(videoPath):
+        print("Video file does not exist!")
+        return
 
     # Create the window
     windowTitle, tabGroup, imageViewer = guiElements(True)
     window = sg.Window(
         windowTitle, [tabGroup, imageViewer], location=windowLocation)
+
+    # Open the video file
+    cap = cv.VideoCapture(videoPath)
+
+    if not cap.isOpened():
+        print("Error: Could not open video file.")
+        exit()
 
     # Previous frame
     prevFrame = None
@@ -35,11 +38,8 @@ def main():
             if event == "Exit" or event == sg.WIN_CLOSED:
                 break
 
-            # Wait for the next frames from the camera
-            frames = rs.grabFrames()
-
-            # Get the color frame
-            colorFrame, colorCamIntrinsics = rs.getColorFrame(frames)
+            # Retrieve frames
+            ret, currFrame = cap.read()
 
             # Get the values from the GUI
             params = {'threshold': values['Threshold'], 'erosionKernel': values['Erosion'],
@@ -51,27 +51,26 @@ def main():
                       }
 
             # Change brightness
-            colorFrame = cv.convertScaleAbs(
-                colorFrame, alpha=values['camAlpha'], beta=values['camBeta'])
+            currFrame = cv.convertScaleAbs(
+                currFrame, alpha=values['camAlpha'], beta=values['camBeta'])
 
             if prevFrame is None:
-                prevFrame = np.copy(colorFrame)
+                prevFrame = np.copy(currFrame)
 
             frame, mask = processSequentialFrames(
-                prevFrame, colorFrame, True, params)
+                prevFrame, currFrame, True, params)
 
             # Show the frames
             frame = cv.imencode(".png", frame)[1].tobytes()
             window['Frames'].update(data=frame)
 
             # Save the previous frame
-            prevFrame = np.copy(colorFrame)
+            prevFrame = np.copy(currFrame)
 
     finally:
         # Stop the pipeline and close the windows
-        rs.stopPipeline()
         cv.destroyAllWindows()
-        print('Framework stopped! [RealSense Mono Setup]')
+        print('Framework stopped! [Offline Video Seq. Setup]')
 
 
 # Run the program
