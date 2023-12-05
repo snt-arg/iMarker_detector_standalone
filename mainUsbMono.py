@@ -1,8 +1,9 @@
 import cv2 as cv
+import numpy as np
 import PySimpleGUI as sg
 from src.gui.guiElements import guiElements
 import src.csr_sensors.sensors.sensorUSB as usb
-from src.csr_detector.process import processMonoFrame
+from src.csr_detector.process import processSequentialFrames
 from config import ports, fpsBoost, windowWidth, windowLocation
 
 
@@ -15,7 +16,10 @@ def main():
         windowTitle, [tabGroup, imageViewer], location=windowLocation)
 
     # Capture frames
-    cap = usb.createCameraObject(ports['rCam'])
+    cap = usb.createCameraObject(ports['lCam'])
+
+    # Previous frame
+    prevFrame = None
 
     if fpsBoost:
         cap.set(cv.CAP_PROP_FPS, 30.0)
@@ -48,12 +52,18 @@ def main():
         frame = cv.convertScaleAbs(
             frame, alpha=values['camAlpha'], beta=values['camBeta'])
 
+        if prevFrame is None:
+            prevFrame = frame
+
         # Process frames
-        frame, mask = processMonoFrame(frame, ret, params)
+        frame, mask = processSequentialFrames(prevFrame, frame, ret, params)
 
         # Show the frames
         frame = cv.imencode(".png", frame)[1].tobytes()
         window['Frames'].update(data=frame)
+
+        # Save the previous frame
+        prevFrame = np.copy(frame)
 
     cap.release()
     window.close()

@@ -9,7 +9,10 @@ windowWidth = 1800      # Shown window width
 windowLocation = (800, 400)     # Window location
 
 # Files
-videoPath = "/home/ali/Videos/vid1.mp4"   # Path to the offline video file
+videoPath = "/home/ali/Videos/vid2.MOV"   # Path to the offline video file
+imagesPath = "/home/ali/Pictures/img/"   # Path to the offline image file
+imagesNames = ['Halide_RH_1m.jpg',
+               'Halide_LH_1m.jpg']   # Names of the images
 
 # Sensors
 exposureTime = 20000

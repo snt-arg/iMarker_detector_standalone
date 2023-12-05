@@ -4,7 +4,7 @@ import PySimpleGUI as sg
 from src.gui.addLabel import addLabel
 from src.gui.guiElements import guiElements
 from src.csr_sensors.sensors import sensorIDS
-from src.csr_detector.process import processSingleFrame
+from src.csr_detector.process import processStereoFrames
 from config import roiDimension, exposureTime, windowLocation
 from config import preAligment, homographyMat, windowWidth, sensorProjectRoot
 
@@ -69,8 +69,8 @@ def main():
         frameR = cv.flip(frameR, 1)
 
         # Process frames
-        frame, mask = processSingleFrame(frameL, frameR, retL, retR,
-                                         params)
+        frame, mask = processStereoFrames(frameL, frameR, retL, retR,
+                                          params)
 
         # Add text to the image
         # addLabel(frame, 5)

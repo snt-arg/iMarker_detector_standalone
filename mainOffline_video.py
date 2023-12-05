@@ -58,11 +58,19 @@ def main():
             currFrame = cv.convertScaleAbs(
                 currFrame, alpha=values['camAlpha'], beta=values['camBeta'])
 
+            # Rotate the frame 180 degrees [TODO: add to config.py]
+            # currFrame = cv.rotate(currFrame, cv.ROTATE_180)
+
             if prevFrame is None:
                 prevFrame = np.copy(currFrame)
 
             frame, mask = processSequentialFrames(
                 prevFrame, currFrame, True, params)
+
+            # Resize the frame while keeping the aspect ratio to fit the height of the window
+            # ratio = windowWidth / frame.shape[1] / 2
+            # dim = (windowWidth, int(frame.shape[0] * ratio))
+            # frame = cv.resize(frame, dim, interpolation=cv.INTER_AREA)
 
             # Show the frames
             frame = cv.imencode(".png", frame)[1].tobytes()
