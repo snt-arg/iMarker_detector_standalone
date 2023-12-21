@@ -5,14 +5,14 @@ import numpy as np
 labelSize = (20, 1)     # Setting label size in the GUI
 inputSize = (30, 1)     # Setting input size in the GUI
 sliderSize = (100, 15)  # Setting slider size in the GUI
-windowWidth = 1800      # Shown window width
-windowLocation = (800, 400)     # Window location
+windowWidth = 2500      # Max. shown window width
+windowLocation = (0, 0)  # Window location
 
 # Files
 videoPath = "/home/ali/Videos/vid2.MOV"   # Path to the offline video file
 imagesPath = "/home/ali/Pictures/img/"   # Path to the offline image file
-imagesNames = ['Halide_RH_1m.jpg',
-               'Halide_LH_1m.jpg']   # Names of the images
+imagesNames = ['Halide_RH_5m.jpg',
+               'Halide_LH_5m.jpg']   # Names of the images
 
 # Sensors
 exposureTime = 20000

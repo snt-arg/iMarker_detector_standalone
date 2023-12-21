@@ -13,7 +13,7 @@ def main():
     # Create the window
     windowTitle, tabGroup, imageViewer = guiElements()
     window = sg.Window(
-        windowTitle, [tabGroup, imageViewer], location=windowLocation)
+        windowTitle, [tabGroup, imageViewer], location=windowLocation, resizable=True)
 
     capL = usb.createCameraObject(ports['lCam'])
     capR = usb.createCameraObject(ports['rCam'])

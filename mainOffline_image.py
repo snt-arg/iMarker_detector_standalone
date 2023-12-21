@@ -1,6 +1,5 @@
 import os
 import cv2 as cv
-import numpy as np
 import PySimpleGUI as sg
 from src.gui.guiElements import guiElements
 from src.csr_detector.process import processSequentialFrames
@@ -18,9 +17,10 @@ def main():
         return
 
     # Create the window
+    # screenResolution = sg.Window.get_screen_size()
     windowTitle, tabGroup, imageViewer = guiElements(True)
     window = sg.Window(
-        windowTitle, [tabGroup, imageViewer], location=windowLocation)
+        windowTitle, [tabGroup, imageViewer], location=windowLocation, resizable=True)
 
     # Open the video file
     frame1 = cv.imread(image1Path)

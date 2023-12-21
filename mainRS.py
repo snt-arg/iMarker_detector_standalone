@@ -22,7 +22,7 @@ def main():
     # Create the window
     windowTitle, tabGroup, imageViewer = guiElements(True)
     window = sg.Window(
-        windowTitle, [tabGroup, imageViewer], location=windowLocation)
+        windowTitle, [tabGroup, imageViewer], location=windowLocation, resizable=True)
 
     # Previous frame
     prevFrame = None
