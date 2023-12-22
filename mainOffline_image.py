@@ -1,7 +1,6 @@
 import os
 import cv2 as cv
-import PySimpleGUI as sg
-from src.gui.guiElements import guiElements
+from src.gui.guiElements import checkTerminateGUI, getGUI
 from src.csr_detector.process import processSequentialFrames
 from config import windowWidth, windowLocation, imagesPath, imagesNames
 
@@ -17,10 +16,7 @@ def main():
         return
 
     # Create the window
-    # screenResolution = sg.Window.get_screen_size()
-    windowTitle, tabGroup, imageViewer = guiElements(True)
-    window = sg.Window(
-        windowTitle, [tabGroup, imageViewer], location=windowLocation, resizable=True)
+    window = getGUI(windowLocation[0], windowLocation[1], True)
 
     # Open the video file
     frame1 = cv.imread(image1Path)
@@ -31,7 +27,7 @@ def main():
             event, values = window.read(timeout=10)
 
             # End program if user closes window
-            if event == "Exit" or event == sg.WIN_CLOSED:
+            if checkTerminateGUI(event):
                 break
 
             # Get the values from the GUI

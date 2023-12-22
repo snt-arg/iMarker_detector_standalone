@@ -1,9 +1,7 @@
 import cv2 as cv
-import PySimpleGUI as sg
-from src.gui.addLabel import addLabel
-from src.gui.guiElements import guiElements
 import src.csr_sensors.sensors.sensorUSB as usb
 from src.csr_detector.process import processStereoFrames
+from src.gui.guiElements import getGUI, checkTerminateGUI
 from config import ports, fpsBoost, flipImage, preAligment, homographyMat, windowWidth, windowLocation
 
 
@@ -11,9 +9,7 @@ def main():
     print('Framework started! [USB Cameras Setup]')
 
     # Create the window
-    windowTitle, tabGroup, imageViewer = guiElements()
-    window = sg.Window(
-        windowTitle, [tabGroup, imageViewer], location=windowLocation, resizable=True)
+    window = getGUI(windowLocation[0], windowLocation[1])
 
     capL = usb.createCameraObject(ports['lCam'])
     capR = usb.createCameraObject(ports['rCam'])
@@ -26,7 +22,7 @@ def main():
         event, values = window.read(timeout=10)
 
         # End program if user closes window
-        if event == "Exit" or event == sg.WIN_CLOSED:
+        if checkTerminateGUI(event):
             break
 
         # Retrieve frames

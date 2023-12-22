@@ -1,7 +1,6 @@
 import cv2 as cv
 import numpy as np
-import PySimpleGUI as sg
-from src.gui.guiElements import guiElements
+from src.gui.guiElements import getGUI, checkTerminateGUI
 from src.csr_sensors.sensors import sensorRealSense
 from src.csr_detector.process import processSequentialFrames
 from config import realSenseResolution, realSenseFps, windowWidth, windowLocation
@@ -20,9 +19,7 @@ def main():
     rs.startPipeline()
 
     # Create the window
-    windowTitle, tabGroup, imageViewer = guiElements(True)
-    window = sg.Window(
-        windowTitle, [tabGroup, imageViewer], location=windowLocation, resizable=True)
+    window = getGUI(windowLocation[0], windowLocation[1], True)
 
     # Previous frame
     prevFrame = None
@@ -32,7 +29,7 @@ def main():
             event, values = window.read(timeout=10)
 
             # End program if user closes window
-            if event == "Exit" or event == sg.WIN_CLOSED:
+            if checkTerminateGUI(event):
                 break
 
             # Wait for the next frames from the camera

@@ -1,10 +1,8 @@
 import cv2 as cv
 import numpy as np
-import PySimpleGUI as sg
-from src.gui.addLabel import addLabel
-from src.gui.guiElements import guiElements
 from src.csr_sensors.sensors import sensorIDS
 from src.csr_detector.process import processStereoFrames
+from src.gui.guiElements import getGUI, checkTerminateGUI
 from config import roiDimension, exposureTime, windowLocation
 from config import preAligment, homographyMat, windowWidth, sensorProjectRoot
 
@@ -13,9 +11,7 @@ def main():
     print('Framework started! [Double iDS Camera Setup]')
 
     # Create the window
-    windowTitle, tabGroup, imageViewer = guiElements()
-    window = sg.Window(
-        windowTitle, [tabGroup, imageViewer], location=windowLocation)
+    window = getGUI(windowLocation[0], windowLocation[1])
 
     cap1 = sensorIDS.idsCamera(0)
     cap2 = sensorIDS.idsCamera(1)
@@ -41,7 +37,7 @@ def main():
         event, values = window.read(timeout=10)
 
         # End program if user closes window
-        if event == "Exit" or event == sg.WIN_CLOSED:
+        if checkTerminateGUI(event):
             break
 
         frame1 = cap1.getFrame()

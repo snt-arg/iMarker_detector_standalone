@@ -72,7 +72,7 @@ def guiElements(singleCamera: bool = False):
     return windowTitle, tabGroup, imageViewer
 
 
-def getGUI(xLoc: int = 800, yLoc: int = 400):
+def getGUI(xLoc: int = 800, yLoc: int = 400, singleCamera: bool = False):
     """
     Creates a set of GUI elements and send it back
 
@@ -88,13 +88,13 @@ def getGUI(xLoc: int = 800, yLoc: int = 400):
     window: Window
         The window containing all the GUI
     """
-    windowTitle, tabGroup, imageViewer = guiElements()
+    windowTitle, tabGroup, imageViewer = guiElements(singleCamera)
     window = sg.Window(
-        windowTitle, [tabGroup, imageViewer], location=(xLoc, yLoc))
+        windowTitle, [tabGroup, imageViewer], location=(xLoc, yLoc), resizable=True)
     return window
 
 
-def checkTerminateGUI(window):
+def checkTerminateGUI(event):
     """
     Creates a set of GUI elements and send it back
 
@@ -109,7 +109,6 @@ def checkTerminateGUI(window):
         The bool to set the command of stop/continue GUI
     """
     stopGUI = False
-    event, values = window.read(timeout=10)
     # End program if user closes window
     if event == "Exit" or event == sg.WIN_CLOSED:
         stopGUI = True

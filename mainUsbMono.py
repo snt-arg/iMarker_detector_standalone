@@ -1,8 +1,7 @@
 import cv2 as cv
 import numpy as np
-import PySimpleGUI as sg
-from src.gui.guiElements import guiElements
 import src.csr_sensors.sensors.sensorUSB as usb
+from src.gui.guiElements import getGUI, checkTerminateGUI
 from src.csr_detector.process import processSequentialFrames
 from config import ports, fpsBoost, windowWidth, windowLocation
 
@@ -11,9 +10,7 @@ def main():
     print('Framework started! [USB Camera Mono Setup]')
 
     # Create the window
-    windowTitle, tabGroup, imageViewer = guiElements(True)
-    window = sg.Window(
-        windowTitle, [tabGroup, imageViewer], location=windowLocation, resizable=True)
+    window = getGUI(windowLocation[0], windowLocation[1], True)
 
     # Capture frames
     cap = usb.createCameraObject(ports['lCam'])
@@ -28,7 +25,7 @@ def main():
         event, values = window.read(timeout=10)
 
         # End program if user closes window
-        if event == "Exit" or event == sg.WIN_CLOSED:
+        if checkTerminateGUI(event):
             break
 
         # Retrieve frames
