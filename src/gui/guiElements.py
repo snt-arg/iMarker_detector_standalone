@@ -68,6 +68,9 @@ def guiElements(singleCamera: bool = False):
                  sg.TabGroup(groups, tab_location='centertop', expand_x=True,
                              title_color='dark slate grey', selected_background_color='dark orange', pad=10)]]
     imageViewer = [sg.Image(filename="", key="Frames")]
+    # column = [[sg.Image(filename="", key="Frames")]]
+    # imageViewer = [sg.Column(column, size=(
+    #     500, 200), scrollable=True, key='Column')]
     # Return to GUI creator
     return windowTitle, tabGroup, imageViewer
 
