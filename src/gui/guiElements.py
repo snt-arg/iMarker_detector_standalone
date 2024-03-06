@@ -2,12 +2,17 @@ import PySimpleGUI as sg
 from config import enableCircularROI, channel, leftHanded
 from config import fpsBoost, brightness, labelSize, sliderSize
 from config import maxFeatures, goodMatchPercentage, circlularMaskCoverage
-from config import threshold, erodeKernelSize, gaussianBlurKernelSize, thresholdMethod
+from config import threshold, erodeKernelSize, gaussianBlurKernelSize, thresholdMethod, isSequentialSubtraction
 
 
 def guiElements(singleCamera: bool = False):
     """
     Defines GUI elements for controlling the system (single and two-camera setups)
+
+    Parameters
+    -------
+    singleCamera: bool
+        The bool to set the command of single/double camera setup
 
     Returns
     -------
@@ -67,12 +72,37 @@ def guiElements(singleCamera: bool = False):
     tabGroup = [[sg.Image(filename="./src/logo.png",  key="LogoHolder"),
                  sg.TabGroup(groups, tab_location='centertop', expand_x=True,
                              title_color='dark slate grey', selected_background_color='dark orange', pad=10)]]
-    imageViewer = [sg.Image(filename="", key="Frames")]
-    # column = [[sg.Image(filename="", key="Frames")]]
-    # imageViewer = [sg.Column(column, size=(
-    #     500, 200), scrollable=True, key='Column')]
+    # Define image viewer values based on camera setup
+    imageViewerMain = [[sg.Image(filename="", key="FramesMain")]]
+    imageViewerLeft = [[sg.Image(filename="", key="FramesLeft")]]
+    imageViewerRight = [[sg.Image(filename="", key="FramesRight")]]
+    imageViewerMask = [[sg.Image(filename="", key="FramesMask")]]
+    imageViewerMarker = [[sg.Image(filename="", key="FramesMarker")]]
+    if singleCamera:
+        if isSequentialSubtraction:
+            tabImages = [
+                [sg.Tab('Previous Frame', imageViewerLeft),
+                 sg.Tab('Current Frame', imageViewerRight),
+                 sg.Tab('Mask Frame', imageViewerMask),
+                 sg.Tab('Detected Markers', imageViewerMarker)]
+            ]
+        else:
+            tabImages = [
+                        [sg.Tab('Main Frame', imageViewerMain),
+                         sg.Tab('Mask Frame', imageViewerMask),
+                         sg.Tab('Detected Markers', imageViewerMarker)]
+            ]
+    else:
+        tabImages = [
+            [sg.Tab('Main Frame Left', imageViewerLeft)],
+            [sg.Tab('Main Frame Right', imageViewerRight)],
+            [sg.Tab('Mask Frame', imageViewerMask)],
+            [sg.Tab('Detected Markers', imageViewerMarker)]
+        ]
+    tabImageGroup = [[sg.TabGroup(tabImages, tab_location='centertop', expand_x=True,
+                                  title_color='dark slate grey', selected_background_color='dark orange', pad=10)]]
     # Return to GUI creator
-    return windowTitle, tabGroup, imageViewer
+    return windowTitle, tabGroup, tabImageGroup
 
 
 def getGUI(xLoc: int = 800, yLoc: int = 400, singleCamera: bool = False):
@@ -91,9 +121,9 @@ def getGUI(xLoc: int = 800, yLoc: int = 400, singleCamera: bool = False):
     window: Window
         The window containing all the GUI
     """
-    windowTitle, tabGroup, imageViewer = guiElements(singleCamera)
+    windowTitle, tabGroup, tabImages = guiElements(singleCamera)
     window = sg.Window(
-        windowTitle, [tabGroup, imageViewer], location=(xLoc, yLoc), resizable=True)
+        windowTitle, [tabGroup, tabImages], location=(xLoc, yLoc), resizable=True)
     return window
 
 

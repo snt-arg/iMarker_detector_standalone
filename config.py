@@ -5,7 +5,7 @@ import numpy as np
 labelSize = (20, 1)     # Setting label size in the GUI
 inputSize = (30, 1)     # Setting input size in the GUI
 sliderSize = (100, 15)  # Setting slider size in the GUI
-windowWidth = 2500      # Max. shown window width
+windowWidth = 1800      # Max. shown window width
 windowLocation = (0, 0)  # Window location
 
 # Files

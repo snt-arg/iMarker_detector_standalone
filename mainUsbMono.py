@@ -53,11 +53,16 @@ def main():
             prevFrame = frame
 
         # Process frames
-        frame, mask = processSequentialFrames(prevFrame, frame, ret, params)
+        prevFrame, currFrame, mask = processSequentialFrames(
+            prevFrame, frame, ret, params)
 
         # Show the frames
-        frame = cv.imencode(".png", frame)[1].tobytes()
-        window['Frames'].update(data=frame)
+        prevFrame = cv.imencode(".png", prevFrame)[1].tobytes()
+        currFrame = cv.imencode(".png", currFrame)[1].tobytes()
+        mask = cv.imencode(".png", mask)[1].tobytes()
+        window['FramesLeft'].update(data=prevFrame)
+        window['FramesRight'].update(data=currFrame)
+        window['FramesMask'].update(data=mask)
 
         # Save the previous frame
         prevFrame = np.copy(frame)

@@ -39,7 +39,7 @@ def main():
                       'windowWidth': windowWidth
                       }
 
-            frame, mask = processSequentialFrames(
+            prevFrame, currFrame, mask = processSequentialFrames(
                 frame1, frame2, True, params)
 
             # Resize the frame while keeping the aspect ratio to fit the height of the window
@@ -48,8 +48,12 @@ def main():
             frame = cv.resize(frame, dim, interpolation=cv.INTER_AREA)
 
             # Show the frames
-            frame = cv.imencode(".png", frame)[1].tobytes()
-            window['Frames'].update(data=frame)
+            prevFrame = cv.imencode(".png", prevFrame)[1].tobytes()
+            currFrame = cv.imencode(".png", currFrame)[1].tobytes()
+            mask = cv.imencode(".png", mask)[1].tobytes()
+            window['FramesLeft'].update(data=prevFrame)
+            window['FramesRight'].update(data=currFrame)
+            window['FramesMask'].update(data=mask)
 
     finally:
         # Stop the pipeline and close the windows

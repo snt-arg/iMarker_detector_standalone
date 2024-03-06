@@ -56,14 +56,22 @@ def main():
                 prevFrame = np.copy(colorFrame)
 
             if (isSequentialSubtraction):
-                frame, mask = processSequentialFrames(
+                pFrame, cFrame, mask = processSequentialFrames(
                     prevFrame, colorFrame, True, params)
             else:
                 frame, mask = processSingleFrame(colorFrame, True, params)
 
             # Show the frames
-            frame = cv.imencode(".png", frame)[1].tobytes()
-            window['Frames'].update(data=frame)
+            if (isSequentialSubtraction):
+                pFrame = cv.imencode(".png", pFrame)[1].tobytes()
+                cFrame = cv.imencode(".png", cFrame)[1].tobytes()
+                window['FramesLeft'].update(data=pFrame)
+                window['FramesRight'].update(data=cFrame)
+            else:
+                frame = cv.imencode(".png", frame)[1].tobytes()
+                window['FramesMain'].update(data=frame)
+            mask = cv.imencode(".png", mask)[1].tobytes()
+            window['FramesMask'].update(data=mask)
 
             # Save the previous frame
             prevFrame = np.copy(colorFrame)

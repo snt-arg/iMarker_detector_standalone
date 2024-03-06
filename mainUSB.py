@@ -52,14 +52,19 @@ def main():
             frameR = cv.flip(frameR, 1)
 
         # Process frames
-        frame, mask = processStereoFrames(frameL, frameR, retL, retR, params)
+        frameL, frameR, mask = processStereoFrames(
+            frameL, frameR, retL, retR, params)
 
         # Add text to the image
         # addLabel(frame, 5)
 
         # Show the frames
-        frame = cv.imencode(".png", frame)[1].tobytes()
-        window['Frames'].update(data=frame)
+        frameL = cv.imencode(".png", frameL)[1].tobytes()
+        frameR = cv.imencode(".png", frameR)[1].tobytes()
+        mask = cv.imencode(".png", mask)[1].tobytes()
+        window['FramesLeft'].update(data=frameL)
+        window['FramesRight'].update(data=frameR)
+        window['FramesMask'].update(data=mask)
 
     capL.release()
     capR.release()
