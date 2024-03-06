@@ -66,13 +66,17 @@ _GUI elements_
 _Files_
 
 - `videoPath`: path to the offline video file
+- `imagesPath`: path to the offline image file
+- `imagesNames`: names of the images to be subtracted
 
 _Sensors_
 
 - `exposureTime`: camera exposure time for iDS cameras, like 20000
-- `ports`: camera ports for USB cameras, including left and right cameras
+- `ports`: camera ports for USB cameras, including left and right cameras (0 for internal webcam)
 - `sensorProjectRoot`: the absolute location of the `Sensors` submodule for accessing its calibration files
 - `brightness`: brightness value of the cameras, including `alpha` and `beta` values
+- `realSenseFps`: frame-rate of the sensor, used for configuring RealSense (e.g., 30)
+- `realSenseResolution`: resolution of the frames in RealSense (e.g., (640, 480))
 
 _Markers_
 
@@ -92,7 +96,8 @@ _Processing_
 - `flipImage`: should the images be flipped
 - `enableCircularROI`: disable or enable the circular mask for USB cameras
 - `preAligment`: apply the homography matrix below to do alignment only once
-- `homographyMat`: a pre-defined homography matrix for iDS cameras
+- `isSequentialSubtraction`: in the mono-camera setup, whether to use sequential subtraction or just thresholding
+- `homographyMat`: a pre-defined homography matrix for iDS cameras (from homographyMatList)
 
 _Pos-processing_
 

@@ -1,13 +1,14 @@
 import cv2 as cv
 import numpy as np
-from src.gui.guiElements import getGUI, checkTerminateGUI
 from src.csr_sensors.sensors import sensorRealSense
-from src.csr_detector.process import processSequentialFrames
-from config import realSenseResolution, realSenseFps, windowWidth, windowLocation
+from src.gui.guiElements import getGUI, checkTerminateGUI
+from src.csr_detector.process import processSequentialFrames, processSingleFrame
+from config import realSenseResolution, realSenseFps, windowWidth, windowLocation, isSequentialSubtraction
 
 
 def main():
-    print('Framework started! [RealSense Mono Setup]')
+    monoSetupVariant = "Sequential Subtraction" if isSequentialSubtraction else "Thresholding"
+    print(f'Framework started! [RealSense Mono Setup - {monoSetupVariant}]')
 
     # Create an object
     rs = sensorRealSense.rsCamera(realSenseResolution, realSenseFps)
@@ -54,8 +55,11 @@ def main():
             if prevFrame is None:
                 prevFrame = np.copy(colorFrame)
 
-            frame, mask = processSequentialFrames(
-                prevFrame, colorFrame, True, params)
+            if (isSequentialSubtraction):
+                frame, mask = processSequentialFrames(
+                    prevFrame, colorFrame, True, params)
+            else:
+                frame, mask = processSingleFrame(colorFrame, True, params)
 
             # Show the frames
             frame = cv.imencode(".png", frame)[1].tobytes()
@@ -68,7 +72,8 @@ def main():
         # Stop the pipeline and close the windows
         rs.stopPipeline()
         cv.destroyAllWindows()
-        print('Framework stopped! [RealSense Mono Setup]')
+        print(
+            f'Framework started! [RealSense Mono Setup - {monoSetupVariant}]')
 
 
 # Run the program
