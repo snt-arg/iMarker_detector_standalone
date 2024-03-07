@@ -1,4 +1,5 @@
 import os
+import cv2 as cv
 import numpy as np
 
 # GUI elements
@@ -50,6 +51,8 @@ maxFeatures = 500               # Maximum number of features for alignment
 goodMatchPercentage = 0.4
 circlularMaskCoverage = 0.8     # Value between 0 and 1
 flipImage = True                # True for BeamSplitter, False for stereo-vision
+# True for inverting the black and white colors in the image
+invertBinaryImage = True
 enableCircularROI = False       # True for USB Setup, False for iDS
 # Apply the homography matrix below to do alignment only once
 preAligment = True
@@ -87,3 +90,11 @@ threshold = 30
 erodeKernelSize = 1
 # The size of the kernel for gaussian blur (only odd values)
 gaussianBlurKernelSize = 1
+
+# Aruco Marker Detection
+# Aruco dictionary to use for marker detection
+arucoDict = cv.aruco.getPredefinedDictionary(cv.aruco.DICT_ARUCO_ORIGINAL)
+# Aruco parameters to use for marker detection
+arucoParams = cv.aruco.DetectorParameters()
+# Aruco marker size in meters
+arucoSize = 0.1

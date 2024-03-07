@@ -53,7 +53,7 @@ def main():
                   'enableCircularMask': values['CircMaskEnable'], 'allChannels': values['AChannels'],
                   'rChannel': values['RChannel'], 'gChannel': values['GChannel'], 'bChannel': values['BChannel'],
                   'threshboth': values['ThreshBoth'], 'threshbin': values['ThreshBin'], 'threshots': values['ThreshOts'],
-                  'isMarkerLeftHanded': values['MarkerLeftHanded'],
+                  'isMarkerLeftHanded': values['MarkerLeftHanded'], 'invertBinaryImage': values['invertBinaryImage'],
                   'preAligment': preAligment, 'homographyMat': homographyMat, 'windowWidth': windowWidth
                   }
 

@@ -37,7 +37,7 @@ def main():
                   'rChannel': values['RChannel'], 'gChannel': values['GChannel'], 'bChannel': values['BChannel'],
                   'threshboth': values['ThreshBoth'], 'threshbin': values['ThreshBin'],
                   'threshots': values['ThreshOts'], 'isMarkerLeftHanded': values['MarkerLeftHanded'],
-                  'windowWidth': windowWidth
+                  'windowWidth': windowWidth, 'invertBinaryImage': values['invertBinaryImage'],
                   }
 
         # Check if the frame is successfully read

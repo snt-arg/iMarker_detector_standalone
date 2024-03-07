@@ -38,7 +38,8 @@ def main():
                   'rChannel': values['RChannel'], 'gChannel': values['GChannel'], 'bChannel': values['BChannel'],
                   'threshboth': values['ThreshBoth'], 'threshbin': values['ThreshBin'],
                   'threshots': values['ThreshOts'], 'isMarkerLeftHanded': values['MarkerLeftHanded'],
-                  'preAligment': preAligment, 'homographyMat': homographyMat, 'windowWidth': windowWidth
+                  'preAligment': preAligment, 'homographyMat': homographyMat, 'windowWidth': windowWidth,
+                  'invertBinaryImage': values['invertBinaryImage']
                   }
 
         # Change brightness

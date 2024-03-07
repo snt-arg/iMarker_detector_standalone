@@ -2,8 +2,10 @@ import cv2 as cv
 import numpy as np
 from src.csr_sensors.sensors import sensorRealSense
 from src.gui.guiElements import getGUI, checkTerminateGUI
+from config import arucoDict, arucoParams, isSequentialSubtraction
+from src.marker_detector.arucoMarkerDetector import arucoMarkerDetector
 from src.csr_detector.process import processSequentialFrames, processSingleFrame
-from config import realSenseResolution, realSenseFps, windowWidth, windowLocation, isSequentialSubtraction
+from config import realSenseResolution, realSenseFps, windowWidth, windowLocation
 
 
 def main():
@@ -45,7 +47,7 @@ def main():
                       'rChannel': values['RChannel'], 'gChannel': values['GChannel'], 'bChannel': values['BChannel'],
                       'threshboth': values['ThreshBoth'], 'threshbin': values['ThreshBin'],
                       'threshots': values['ThreshOts'], 'isMarkerLeftHanded': values['MarkerLeftHanded'],
-                      'windowWidth': windowWidth
+                      'windowWidth': windowWidth, 'invertBinaryImage': values['invertBinaryImage'],
                       }
 
             # Change brightness
@@ -70,8 +72,14 @@ def main():
             else:
                 frame = cv.imencode(".png", frame)[1].tobytes()
                 window['FramesMain'].update(data=frame)
-            mask = cv.imencode(".png", mask)[1].tobytes()
-            window['FramesMask'].update(data=mask)
+            newMask = cv.imencode(".png", mask)[1].tobytes()
+            window['FramesMask'].update(data=newMask)
+
+            # ArUco marker detection
+            detectedMarkers = arucoMarkerDetector(
+                mask, arucoDict, arucoParams)
+            detectedMarkers = cv.imencode(".png", detectedMarkers)[1].tobytes()
+            window['FramesMarker'].update(data=detectedMarkers)
 
             # Save the previous frame
             prevFrame = np.copy(colorFrame)

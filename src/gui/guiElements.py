@@ -1,7 +1,7 @@
 import PySimpleGUI as sg
 from config import enableCircularROI, channel, leftHanded
 from config import fpsBoost, brightness, labelSize, sliderSize
-from config import maxFeatures, goodMatchPercentage, circlularMaskCoverage
+from config import maxFeatures, goodMatchPercentage, circlularMaskCoverage, invertBinaryImage
 from config import threshold, erodeKernelSize, gaussianBlurKernelSize, thresholdMethod, isSequentialSubtraction
 
 
@@ -61,6 +61,8 @@ def guiElements(singleCamera: bool = False):
          sg.Radio("Binary+Otsu", "ThreshMeth", key='ThreshBoth', default=isThreshBoth)],
         [sg.Text('Threshold:', size=labelSize), sg.Slider(
             (1, 255), threshold, 1, orientation="h", size=sliderSize, key="Threshold")],
+        [sg.Text('Invert the Binary Image?', size=labelSize), sg.Checkbox('(Check for Yes)',
+                                                                          default=invertBinaryImage, key="invertBinaryImage")],
         [sg.Text('Erosion kernel:', size=labelSize), sg.Slider(
             (1, 50), erodeKernelSize, 1, orientation="h", size=sliderSize, key="Erosion")],
         [sg.Text('Gaussian kernel:', size=labelSize), sg.Slider((1, 49), gaussianBlurKernelSize, 2, orientation="h", size=sliderSize, key="Gaussian")]]
