@@ -1,8 +1,10 @@
 import os
 import cv2 as cv
+from src.gui.utils import resizeFrame
 from src.gui.guiElements import checkTerminateGUI, getGUI
 from src.csr_detector.process import processSequentialFrames
-from config import windowWidth, windowLocation, imagesPath, imagesNames
+from src.marker_detector.arucoMarkerDetector import arucoMarkerDetector
+from config import windowWidth, windowLocation, imagesPath, imagesNames, arucoDict, arucoParams
 
 
 def main():
@@ -21,6 +23,10 @@ def main():
     # Open the video file
     frame1 = cv.imread(image1Path)
     frame2 = cv.imread(image2Path)
+
+    # Resize frames if necessary
+    frame1 = resizeFrame(frame1)
+    frame2 = resizeFrame(frame2)
 
     try:
         while True:
@@ -42,18 +48,19 @@ def main():
             prevFrame, currFrame, mask = processSequentialFrames(
                 frame1, frame2, True, params)
 
-            # Resize the frame while keeping the aspect ratio to fit the height of the window
-            ratio = windowWidth / frame.shape[1]
-            dim = (windowWidth, int(frame.shape[0] * ratio))
-            frame = cv.resize(frame, dim, interpolation=cv.INTER_AREA)
-
             # Show the frames
             prevFrame = cv.imencode(".png", prevFrame)[1].tobytes()
             currFrame = cv.imencode(".png", currFrame)[1].tobytes()
-            mask = cv.imencode(".png", mask)[1].tobytes()
+            newMask = cv.imencode(".png", mask)[1].tobytes()
             window['FramesLeft'].update(data=prevFrame)
             window['FramesRight'].update(data=currFrame)
-            window['FramesMask'].update(data=mask)
+            window['FramesMask'].update(data=newMask)
+
+            # ArUco marker detection
+            detectedMarkers = arucoMarkerDetector(
+                mask, arucoDict, arucoParams)
+            detectedMarkers = cv.imencode(".png", detectedMarkers)[1].tobytes()
+            window['FramesMarker'].update(data=detectedMarkers)
 
     finally:
         # Stop the pipeline and close the windows
