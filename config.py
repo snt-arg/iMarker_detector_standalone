@@ -57,7 +57,7 @@ enableCircularROI = False       # True for USB Setup, False for iDS
 # Apply the homography matrix below to do alignment only once
 preAligment = True
 # In the single camera setup, whether to use sequential subtraction or just thresholding
-isSequentialSubtraction = True
+isSequentialSubtraction = False
 # Homography matrix for iDS cameras
 # Structure: [[scaling x-axis, skewing x-axis, shift x-axis]
 #             [skewing y-axis, scaling y-axis, shift y-axis]

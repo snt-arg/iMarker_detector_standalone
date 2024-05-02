@@ -36,12 +36,12 @@ def guiElements(singleCamera: bool = False):
     tabGeneral = [[sg.Text('Frame-rate:', size=labelSize), sg.Text('-' + f' fps {"(boosted)" if fpsBoost else "(normal)"}')],
                   [sg.Text('Marker Properties:', size=labelSize), sg.Checkbox('Left-handed?',
                                                                               default=leftHanded, key="MarkerLeftHanded")],
-                  [sg.Text('Processing Channels:', size=labelSize), sg.Radio("All Channels", "Channels", key='AChannels', default=isAllChannels),
-                   sg.Radio("Red Channel", "Channels",
+                  [sg.Text('Color-range Filter:', size=labelSize), sg.Radio("All Channels", "Channels", key='AChannels', default=isAllChannels),
+                   sg.Radio("Red", "Channels",
                             key='RChannel', default=isRChannel),
-                   sg.Radio("Green Channel", "Channels",
+                   sg.Radio("Green", "Channels",
                             key='GChannel', default=isGChannel),
-                   sg.Radio("Blue Channel", "Channels",
+                   sg.Radio("Blue", "Channels",
                             key='BChannel', default=isBChannel)],
                   [sg.Text("Camera brightness/contrast:", size=labelSize), sg.Slider((1.0, 15.0), brightness['alpha'], .1, orientation="h", size=(50, 15), key="camAlpha"),
                    sg.Slider((0, 50), brightness['beta'], 1, orientation="h", size=(50, 15), key="camBeta")]]
@@ -80,25 +80,29 @@ def guiElements(singleCamera: bool = False):
     imageViewerRight = [[sg.Image(filename="", key="FramesRight")]]
     imageViewerMask = [[sg.Image(filename="", key="FramesMask")]]
     imageViewerMarker = [[sg.Image(filename="", key="FramesMarker")]]
+    imageViewerMaskApplied = [[sg.Image(filename="", key="FramesMaskApplied")]]
     if singleCamera:
         if isSequentialSubtraction:
             tabImages = [
                 [sg.Tab('Previous Frame', imageViewerLeft),
                  sg.Tab('Current Frame', imageViewerRight),
                  sg.Tab('Mask Frame', imageViewerMask),
+                 sg.Tab('Mask Applied Frame', imageViewerMaskApplied),
                  sg.Tab('Detected Markers', imageViewerMarker)]
             ]
         else:
             tabImages = [
-                        [sg.Tab('Main Frame', imageViewerMain),
+                        [sg.Tab('Raw Frame', imageViewerMain),
                          sg.Tab('Mask Frame', imageViewerMask),
+                         sg.Tab('Mask Applied Frame', imageViewerMaskApplied),
                          sg.Tab('Detected Markers', imageViewerMarker)]
             ]
     else:
         tabImages = [
-            [sg.Tab('Main Frame Left', imageViewerLeft)],
-            [sg.Tab('Main Frame Right', imageViewerRight)],
+            [sg.Tab('Raw Frame Left', imageViewerLeft)],
+            [sg.Tab('Raw Frame Right', imageViewerRight)],
             [sg.Tab('Mask Frame', imageViewerMask)],
+            sg.Tab('Mask Applied Frame', imageViewerMaskApplied),
             [sg.Tab('Detected Markers', imageViewerMarker)]
         ]
     tabImageGroup = [[sg.TabGroup(tabImages, tab_location='centertop', expand_x=True,

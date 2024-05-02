@@ -39,7 +39,7 @@ def main():
             frames = rs.grabFrames()
 
             # Get the color frame
-            colorFrame, colorCamIntrinsics = rs.getColorFrame(frames)
+            colorFrameRaw, colorCamIntrinsics = rs.getColorFrame(frames)
 
             # Get the values from the GUI
             params = {'threshold': values['Threshold'], 'erosionKernel': values['Erosion'],
@@ -51,8 +51,11 @@ def main():
                       }
 
             # Change brightness
-            colorFrame = cv.convertScaleAbs(
-                colorFrame, alpha=values['camAlpha'], beta=values['camBeta'])
+            colorFrameRaw = cv.convertScaleAbs(
+                colorFrameRaw, alpha=values['camAlpha'], beta=values['camBeta'])
+
+            # Convert to HSV
+            colorFrame = cv.cvtColor(colorFrameRaw, cv.COLOR_BGR2HSV)
 
             if prevFrame is None:
                 prevFrame = np.copy(colorFrame)
@@ -63,6 +66,9 @@ def main():
             else:
                 frame, mask = processSingleFrame(colorFrame, True, params)
 
+            # Apply the mask
+            frameMasked = cv.bitwise_and(frame, frame, mask=mask)
+
             # Show the frames
             if (isSequentialSubtraction):
                 pFrame = cv.imencode(".png", pFrame)[1].tobytes()
@@ -70,10 +76,12 @@ def main():
                 window['FramesLeft'].update(data=pFrame)
                 window['FramesRight'].update(data=cFrame)
             else:
-                frame = cv.imencode(".png", frame)[1].tobytes()
+                frame = cv.imencode(".png", colorFrameRaw)[1].tobytes()
                 window['FramesMain'].update(data=frame)
             newMask = cv.imencode(".png", mask)[1].tobytes()
             window['FramesMask'].update(data=newMask)
+            newFrameMasked = cv.imencode(".png", frameMasked)[1].tobytes()
+            window['FramesMaskApplied'].update(data=newFrameMasked)
 
             # ArUco marker detection
             detectedMarkers = arucoMarkerDetector(
