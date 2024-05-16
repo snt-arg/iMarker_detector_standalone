@@ -9,7 +9,7 @@ from config import realSenseResolution, realSenseFps, windowWidth, windowLocatio
 
 
 def main():
-    monoSetupVariant = "Sequential Subtraction" if isSequentialSubtraction else "Thresholding"
+    monoSetupVariant = "Sequential Subtraction" if isSequentialSubtraction else "Masking"
     print(f'Framework started! [RealSense Mono Setup - {monoSetupVariant}]')
 
     # Create an object
@@ -63,11 +63,12 @@ def main():
             if (isSequentialSubtraction):
                 pFrame, cFrame, mask = processSequentialFrames(
                     prevFrame, colorFrame, True, params)
+                # Apply the mask
+                frameMasked = cv.bitwise_and(pFrame, pFrame, mask=mask)
             else:
                 frame, mask = processSingleFrame(colorFrame, True, params)
-
-            # Apply the mask
-            frameMasked = cv.bitwise_and(frame, frame, mask=mask)
+                # Apply the mask
+                frameMasked = cv.bitwise_and(frame, frame, mask=mask)
 
             # Show the frames
             if (isSequentialSubtraction):
@@ -97,7 +98,7 @@ def main():
         rs.stopPipeline()
         cv.destroyAllWindows()
         print(
-            f'Framework started! [RealSense Mono Setup - {monoSetupVariant}]')
+            f'Framework stopped! [RealSense Mono Setup - {monoSetupVariant}]')
 
 
 # Run the program
