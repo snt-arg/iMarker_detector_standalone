@@ -55,7 +55,10 @@ def main():
                 colorFrameRaw, alpha=values['camAlpha'], beta=values['camBeta'])
 
             # Convert to HSV
-            colorFrame = cv.cvtColor(colorFrameRaw, cv.COLOR_BGR2HSV)
+            if (isSequentialSubtraction):
+                colorFrame = np.copy(colorFrameRaw)
+            else:
+                colorFrame = cv.cvtColor(colorFrameRaw, cv.COLOR_BGR2HSV)
 
             if prevFrame is None:
                 prevFrame = np.copy(colorFrame)
