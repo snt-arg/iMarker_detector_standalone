@@ -1,0 +1,67 @@
+configs:
+  mode:
+    runner: "offimg" # ["offimg", "offvid", "usb", "ids", "rs"]
+    sequentialSubtraction: false
+  gui:
+    windowWidth: 1800
+    labelSize: [20, 1]
+    inputSize: [30, 1]
+    sliderSize: [100, 15]
+    windowLocation: [0, 0]
+  sensor:
+    general:
+      fpsBoost: true
+      exposureTime: 20000
+      brightness:
+        alpha: 1.0
+        beta: 0.0
+    offline:
+      image:
+        folder: "/home/ali/Pictures/img/"
+        names: ["Halide_RH_5m.jpg", "Halide_LH_5m.jpg"]
+      video:
+        path: "/home/ali/Videos/vid2.MOV"
+    usbCam:
+      maskSize: 0.8
+      enableMask: false
+      ports:
+        lCam: "/dev/video2"
+        rCam: "/dev/video4"
+    ids:
+      roi:
+        cap1:
+          x: 520
+          y: 300
+          width: 976
+          height: 900
+        cap2:
+          x: 480
+          y: 284
+          width: 976
+          height: 900
+    realSense:
+      fps: 30
+      resolution:
+        width: 640
+        height: 480
+  algorithm:
+    process:
+      alignment:
+        matchRate: 0.4
+        usePreset: true
+        maxFeatures: 500
+      flipImage: true
+      channel: "g" # ["b", "g", "r", "all"]
+    postprocess:
+      threshold:
+        size: 50
+        method: "binary" # ["binary", "otsu", "both"]
+      invertBinary: true
+      erosionKernelSize: 1
+      gaussianKernelSize: 1
+  marker:
+    structure:
+      size: 0.1
+      leftHanded: true
+    detection:
+      dictionary: "DICT_ARUCO_ORIGINAL"

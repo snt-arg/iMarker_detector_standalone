@@ -1,26 +1,32 @@
 import os
 import cv2 as cv
 import numpy as np
-from src.gui.utils import resizeFrame
-from src.gui.guiElements import checkTerminateGUI, getGUI
-from src.marker_detector.arucoMarkerDetector import arucoMarkerDetector
-from src.csr_detector.process import processSequentialFrames, processSingleFrame
-from config import windowWidth, windowLocation, imagesPath, imagesNames, arucoDict, arucoParams, isSequentialSubtraction
+from .gui.utils import resizeFrame
+from .gui.guiElements import checkTerminateGUI, getGUI
+from .marker_detector.arucoMarkerDetector import arucoMarkerDetector
+from .csr_detector.process import processSequentialFrames, processSingleFrame
 
 
-def main():
-    setupVariant = "Sequential Subtraction" if isSequentialSubtraction else "Masking"
+def mainOfflineImage(config):
+    # Get the config values
+    cfgMode = config['mode']
+    cfgMarker = config['marker']
+    cfgOffline = config['sensor']['offline']
+
+    setupVariant = "Sequential Subtraction" if cfgMode['sequentialSubtraction'] else "Masking"
     print(f'Framework started! [Offline Image Setup - {setupVariant}]')
 
     # Check if the images files exist
-    image1Path = os.path.join(imagesPath, imagesNames[0])
-    image2Path = os.path.join(imagesPath, imagesNames[1])
+    image1Path = os.path.join(
+        cfgOffline['image']['folder'], cfgOffline['image']['names'][0])
+    image2Path = os.path.join(
+        cfgOffline['image']['folder'], cfgOffline['image']['names'][1])
     if not os.path.exists(image1Path) or not os.path.exists(image2Path):
         print("At leaset one image does not exist!")
         return
 
     # Create the window
-    window = getGUI(windowLocation[0], windowLocation[1], True)
+    window = getGUI(config, True)
 
     # Open the video file
     frame1Raw = cv.imread(image1Path)
@@ -38,15 +44,6 @@ def main():
             if checkTerminateGUI(event):
                 break
 
-            # Get the values from the GUI
-            params = {'threshold': values['Threshold'], 'erosionKernel': values['Erosion'],
-                      'gaussianKernel': values['Gaussian'], 'allChannels': values['AChannels'],
-                      'rChannel': values['RChannel'], 'gChannel': values['GChannel'], 'bChannel': values['BChannel'],
-                      'threshboth': values['ThreshBoth'], 'threshbin': values['ThreshBin'],
-                      'threshots': values['ThreshOts'], 'isMarkerLeftHanded': values['MarkerLeftHanded'],
-                      'windowWidth': windowWidth, 'invertBinaryImage': values['invertBinaryImage'],
-                      }
-
             # Change brightness
             frame1Raw = cv.convertScaleAbs(
                 frame1Raw, alpha=values['camAlpha'], beta=values['camBeta'])
@@ -57,18 +54,18 @@ def main():
             colorFrame1 = cv.cvtColor(frame1Raw, cv.COLOR_BGR2HSV)
             colorFrame2 = cv.cvtColor(frame2Raw, cv.COLOR_BGR2HSV)
 
-            if (isSequentialSubtraction):
+            if (cfgMode['sequentialSubtraction']):
                 pFrame, cFrame, mask = processSequentialFrames(
-                    colorFrame1, colorFrame2, True, params)
+                    colorFrame1, colorFrame2, True, config)
                 # Apply the mask
                 frameMasked = cv.bitwise_and(pFrame, pFrame, mask=mask)
             else:
-                frame, mask = processSingleFrame(colorFrame1, True, params)
+                frame, mask = processSingleFrame(colorFrame1, True, config)
                 # Apply the mask
                 frameMasked = cv.bitwise_and(frame, frame, mask=mask)
 
             # Show the frames
-            if (isSequentialSubtraction):
+            if (cfgMode['sequentialSubtraction']):
                 pFrame = cv.imencode(".png", pFrame)[1].tobytes()
                 cFrame = cv.imencode(".png", cFrame)[1].tobytes()
                 window['FramesLeft'].update(data=pFrame)
@@ -83,7 +80,7 @@ def main():
 
             # ArUco marker detection
             detectedMarkers = arucoMarkerDetector(
-                mask, arucoDict, arucoParams)
+                mask, cfgMarker['detection']['dictionary'])
             detectedMarkers = cv.imencode(".png", detectedMarkers)[1].tobytes()
             window['FramesMarker'].update(data=detectedMarkers)
 
@@ -92,7 +89,3 @@ def main():
         cv.destroyAllWindows()
         print(
             f'Framework stopped! [Offline Image Setup - {setupVariant}]')
-
-
-# Run the program
-main()
