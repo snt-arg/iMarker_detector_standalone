@@ -1,86 +1,108 @@
-# import os
-# import cv2 as cv
-# import numpy as np
-# from src.gui.guiElements_old import getGUI, checkTerminateGUI
-# from config import windowWidth, windowLocation, videoPath
-# from src.csr_detector.process import processSequentialFrames
+import os
+import cv2 as cv
+import numpy as np
+from .gui.guiElements import checkTerminateGUI, getGUI
+from .marker_detector.arucoMarkerDetector import arucoMarkerDetector
+from .csr_detector.process import processSequentialFrames, processSingleFrame
 
 
 def mainOfflineVideo(config):
-    print('Framework started! [Offline Video Seq. Setup]')
+    # Get the config values
+    cfgGui = config['gui']
+    cfgMode = config['mode']
+    cfgMarker = config['marker']
+    cfgOffline = config['sensor']['offline']
 
-#     # Check if the video file exists
-#     if not os.path.exists(videoPath):
-#         print("Video file does not exist!")
-#         return
+    setupVariant = "Sequential Subtraction" if cfgMode['sequentialSubtraction'] else "Masking"
+    print(f'Framework started! [Offline Video Setup - {setupVariant}]')
 
-#     # Create the window
-#     window = getGUI(windowLocation[0], windowLocation[1], True)
+    # Check if the video file exists
+    if not os.path.exists(cfgOffline['video']['path']):
+        print("Video file does not exist!")
+        return
 
-#     # Open the video file
-#     cap = cv.VideoCapture(videoPath)
+    # Create the window
+    window = getGUI(config, True)
 
-#     if not cap.isOpened():
-#         print("Error: Could not open video file.")
-#         exit()
+    # Open the video file
+    cap = cv.VideoCapture(cfgOffline['video']['path'])
 
-#     # Previous frame
-#     prevFrame = None
+    if not cap.isOpened():
+        print("Error: Could not open video file.")
+        exit()
 
-#     try:
-#         while True:
-#             event, values = window.read(timeout=10)
+    # Previous frame
+    prevFrame = None
 
-#             # End program if user closes window
-#             if checkTerminateGUI(event):
-#                 break
+    try:
+        while True:
+            event, values = window.read(timeout=10)
 
-#             # Retrieve frames
-#             ret, currFrame = cap.read()
+            # End program if user closes window
+            if checkTerminateGUI(event):
+                break
 
-#             # Break out of the loop if the video is finished
-#             if not ret:
-#                 break
+            # Retrieve frames
+            ret, currFrame = cap.read()
 
-#             # Get the values from the GUI
-#             params = {'threshold': values['Threshold'], 'erosionKernel': values['Erosion'],
-#                       'gaussianKernel': values['Gaussian'], 'allChannels': values['AChannels'],
-#                       'rChannel': values['RChannel'], 'gChannel': values['GChannel'], 'bChannel': values['BChannel'],
-#                       'threshboth': values['ThreshBoth'], 'threshbin': values['ThreshBin'],
-#                       'threshots': values['ThreshOts'], 'isMarkerLeftHanded': values['MarkerLeftHanded'],
-#                       'windowWidth': windowWidth, 'invertBinaryImage': values['invertBinaryImage'],
-#                       }
+            # Break out of the loop if the video is finished
+            if not ret:
+                break
 
-#             # Change brightness
-#             currFrame = cv.convertScaleAbs(
-#                 currFrame, alpha=values['camAlpha'], beta=values['camBeta'])
+            # Change brightness
+            currFrame = cv.convertScaleAbs(
+                currFrame, alpha=values['camAlpha'], beta=values['camBeta'])
 
-#             # Rotate the frame 180 degrees [TODO: add to config.py]
-#             # currFrame = cv.rotate(currFrame, cv.ROTATE_180)
+            # Rotate the frame 180 degrees (if necessary)
+            if cfgOffline['video']['rotate']:
+                currFrame = cv.rotate(currFrame, cv.ROTATE_180)
 
-#             if prevFrame is None:
-#                 prevFrame = np.copy(currFrame)
+            if prevFrame is None:
+                prevFrame = np.copy(currFrame)
 
-#             prevFrame, currFrame, mask = processSequentialFrames(
-#                 prevFrame, currFrame, True, params)
+            # Convert to HSV
+            prevFrameHSV = cv.cvtColor(prevFrame, cv.COLOR_BGR2HSV)
+            currFrameHSV = cv.cvtColor(currFrame, cv.COLOR_BGR2HSV)
 
-#             # Resize the frame while keeping the aspect ratio to fit the height of the window
-#             # ratio = windowWidth / frame.shape[1] / 2
-#             # dim = (windowWidth, int(frame.shape[0] * ratio))
-#             # frame = cv.resize(frame, dim, interpolation=cv.INTER_AREA)
+            if (cfgMode['sequentialSubtraction']):
+                pFrame, cFrame, mask = processSequentialFrames(
+                    prevFrame, currFrame, True, config)
+                # Apply the mask
+                frameMasked = cv.bitwise_and(pFrame, pFrame, mask=mask)
+            else:
+                frame, mask = processSingleFrame(currFrameHSV, True, config)
+                # Apply the mask
+                frameMasked = cv.bitwise_and(frame, frame, mask=mask)
 
-#             # Show the frames
-#             prevFrame = cv.imencode(".png", prevFrame)[1].tobytes()
-#             currFrame = cv.imencode(".png", currFrame)[1].tobytes()
-#             mask = cv.imencode(".png", mask)[1].tobytes()
-#             window['FramesLeft'].update(data=prevFrame)
-#             window['FramesRight'].update(data=currFrame)
-#             window['FramesMask'].update(data=mask)
+            # Resize the frame while keeping the aspect ratio to fit the height of the window
+            ratio = cfgGui['windowWidth'] / frame.shape[1] / 2
+            dim = (cfgGui['windowWidth'], int(frame.shape[0] * ratio))
+            frame = cv.resize(frame, dim, interpolation=cv.INTER_AREA)
 
-#             # Save the previous frame
-#             prevFrame = np.copy(currFrame)
+            # Show the frames
+            if (cfgMode['sequentialSubtraction']):
+                pFrame = cv.imencode(".png", pFrame)[1].tobytes()
+                cFrame = cv.imencode(".png", cFrame)[1].tobytes()
+                window['FramesLeft'].update(data=pFrame)
+                window['FramesRight'].update(data=cFrame)
+            else:
+                frame = cv.imencode(".png", currFrame)[1].tobytes()
+                window['FramesMain'].update(data=frame)
+            newMask = cv.imencode(".png", mask)[1].tobytes()
+            window['FramesMask'].update(data=newMask)
+            newFrameMasked = cv.imencode(".png", frameMasked)[1].tobytes()
+            window['FramesMaskApplied'].update(data=newFrameMasked)
 
-#     finally:
-#         # Stop the pipeline and close the windows
-#         cv.destroyAllWindows()
-#         print('Framework stopped! [Offline Video Seq. Setup]')
+            # ArUco marker detection
+            detectedMarkers = arucoMarkerDetector(
+                mask, cfgMarker['detection']['dictionary'])
+            detectedMarkers = cv.imencode(".png", detectedMarkers)[1].tobytes()
+            window['FramesMarker'].update(data=detectedMarkers)
+
+            # Save the previous frame
+            prevFrame = np.copy(currFrame)
+
+    finally:
+        # Stop the pipeline and close the windows
+        cv.destroyAllWindows()
+        print('Framework stopped! [Offline Video Seq. Setup]')

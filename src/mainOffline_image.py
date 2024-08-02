@@ -28,7 +28,7 @@ def mainOfflineImage(config):
     # Create the window
     window = getGUI(config, True)
 
-    # Open the video file
+    # Open the image files
     frame1Raw = cv.imread(image1Path)
     frame2Raw = cv.imread(image2Path)
 

@@ -1,6 +1,6 @@
 configs:
   mode:
-    runner: "offimg" # ["offimg", "offvid", "usb", "ids", "rs"]
+    runner: "offvid" # ["offimg", "offvid", "usb", "ids", "rs"]
     sequentialSubtraction: false
   gui:
     windowWidth: 1800
@@ -20,6 +20,7 @@ configs:
         folder: "/home/ali/Pictures/img/"
         names: ["Halide_RH_5m.jpg", "Halide_LH_5m.jpg"]
       video:
+        rotate: true
         path: "/home/ali/Videos/vid2.MOV"
     usbCam:
       maskSize: 0.8
