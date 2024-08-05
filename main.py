@@ -1,9 +1,9 @@
 import yaml
-from src.mainIDS import mainIDS
-from src.mainUSB import mainUSB
-from src.mainRS import mainRealSense
-from src.mainOffline_video import mainOfflineVideo
-from src.mainOffline_image import mainOfflineImage
+from src.runner_ids import runner_ids
+from src.runner_usb import runner_usb
+from src.runner_rs import runner_rs
+from src.runner_offVid import runner_offVid
+from src.runner_offImg import runner_offImg
 
 
 def readConfig(config):
@@ -21,15 +21,15 @@ def main():
     # Mode selection
     mode = config['configs']['mode']['runner']
     if mode == 'rs':
-        mainRealSense(config['configs'])
+        runner_rs(config['configs'])
     elif mode == 'ids':
-        mainIDS(config['configs'])
+        runner_ids(config['configs'])
     elif mode == 'usb':
-        mainUSB(config['configs'])
+        runner_usb(config['configs'])
     elif mode == 'offvid':
-        mainOfflineVideo(config['configs'])
+        runner_offVid(config['configs'])
     else:
-        mainOfflineImage(config['configs'])
+        runner_offImg(config['configs'])
 
 
 # Run the main function

@@ -1,6 +1,6 @@
 configs:
   mode:
-    runner: "offvid" # ["offimg", "offvid", "usb", "ids", "rs"]
+    runner: "offimg" # ["offimg", "offvid", "usb", "ids", "rs"]
     sequentialSubtraction: false
   gui:
     windowWidth: 1800

@@ -7,7 +7,7 @@ from .marker_detector.arucoMarkerDetector import arucoMarkerDetector
 from .csr_detector.process import processSequentialFrames, processSingleFrame
 
 
-def mainOfflineImage(config):
+def runner_offImg(config):
     # Get the config values
     cfgMode = config['mode']
     cfgMarker = config['marker']

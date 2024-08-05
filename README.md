@@ -43,9 +43,8 @@ For running the code, there are three different modules, each designed based on 
 
 | File             | Description                                                         |
 | ---------------- | ------------------------------------------------------------------- |
-| `mainIDS.py`     | Running the GUI-enabled code with iDS camera sensors                |
-| `mainUSB.py`     | Running the GUI-enabled code with USB camera sensors                |
-| `mainUsbMono.py` | Running the GUI-enabled code with USB Monocular camera sensor       |
+| `runner_ids.py`  | Running the GUI-enabled code with iDS camera sensors                |
+| `runner_usb.py`  | Running the GUI-enabled code with USB camera sensors                |
 | `mainRS.py`      | Running the GUI-enabled code with RealSense Monocular camera sensor |
 | `mainOffline.py` | Running the GUI-enabled code with offline videos                    |
 

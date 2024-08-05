@@ -7,7 +7,7 @@
 # from config import preAligment, homographyMat, windowWidth, sensorProjectRoot
 
 
-def mainIDS(config):
+def runner_ids(config):
     print('Framework started! [Double iDS Camera Setup]')
 
 #     # Create the window

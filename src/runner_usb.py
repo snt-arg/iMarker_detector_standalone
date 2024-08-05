@@ -5,7 +5,7 @@
 # from config import ports, fpsBoost, flipImage, preAligment, homographyMat, windowWidth, windowLocation
 
 
-def mainUSB(config):
+def runner_usb(config):
     print('Framework started! [USB Cameras Setup]')
 
 #     # Create the window

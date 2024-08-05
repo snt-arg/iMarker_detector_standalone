@@ -8,7 +8,7 @@
 # # from config import realSenseResolution, realSenseFps, windowWidth, windowLocation
 
 
-def mainRealSense(config):
+def runner_rs(config):
     print('Framework started! [RealSense Setup]')
     # monoSetupVariant = "Sequential Subtraction" if [
     #     isSequentialSubtraction] else "Masking"
