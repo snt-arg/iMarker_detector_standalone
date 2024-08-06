@@ -82,13 +82,14 @@ def runner_offImg(config):
             # ArUco marker detection
             detectedMarkers = arucoMarkerDetector(
                 mask, cfgMarker['detection']['dictionary'])
-            detectedMarkers = cv.imencode(".png", detectedMarkers)[1].tobytes()
-            window['FramesMarker'].update(data=detectedMarkers)
+            newDetectedMarkers = cv.imencode(
+                ".png", detectedMarkers)[1].tobytes()
+            window['FramesMarker'].update(data=newDetectedMarkers)
 
             # Record the frame(s)
             if event == 'Record':
                 concatedImage = imageConcatHorizontal(
-                    [frame1Raw, frame2Raw, frameMasked], 800)
+                    [frame1Raw, frame2Raw, frameMasked], 1200)
                 frameSave(concatedImage, cfgMode['runner'])
 
     finally:
