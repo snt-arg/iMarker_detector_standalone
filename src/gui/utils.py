@@ -1,4 +1,5 @@
 import cv2 as cv
+from datetime import datetime
 
 
 def resizeFrame(frame, widthThreshold=1000):
@@ -32,3 +33,44 @@ def resizeFrame(frame, widthThreshold=1000):
         return resizedFrame
     else:
         return frame
+
+
+def fileNameGenerator(prefix: str, extension: str = 'png'):
+    """
+    Generate a unique file name with the given prefix and extension.
+
+    Parameters
+    ----------
+    prefix : str
+        Prefix for the file name.
+    extension : str
+        Extension for the file name.
+
+    Returns
+    -------
+    fileName: str
+        Unique file name.
+    """
+    fileName = datetime.now().strftime("%Y%m%d_%H%M%S")
+    return f"{fileName}_{prefix}.{extension}"
+
+
+def frameSave(frame, prefix: str, extension: str = 'png'):
+    """
+    Save the frame with a unique file name.
+
+    Parameters
+    ----------
+    frame : numpy.ndarray
+        Frame to save.
+    prefix : str
+        Prefix for the file name.
+    extension : str
+        Extension for the file name.
+    """
+    # Prepare a unique file name and path
+    fileName = fileNameGenerator(prefix, extension)
+    filePath = 'outputs/' + fileName
+    # Save the frame
+    cv.imwrite(filePath, frame)
+    print(f"- The current frame saved as {fileName}")

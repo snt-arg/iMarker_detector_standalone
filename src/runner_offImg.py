@@ -1,8 +1,9 @@
 import os
 import cv2 as cv
 import numpy as np
-from .gui.utils import resizeFrame
+from .gui.utils import resizeFrame, frameSave
 from .gui.guiElements import checkTerminateGUI, getGUI
+from .csr_detector.vision.concatImages import imageConcatHorizontal
 from .marker_detector.arucoMarkerDetector import arucoMarkerDetector
 from .csr_detector.process import processSequentialFrames, processSingleFrame
 
@@ -83,6 +84,12 @@ def runner_offImg(config):
                 mask, cfgMarker['detection']['dictionary'])
             detectedMarkers = cv.imencode(".png", detectedMarkers)[1].tobytes()
             window['FramesMarker'].update(data=detectedMarkers)
+
+            # Record the frame(s)
+            if event == 'Record':
+                concatedImage = imageConcatHorizontal(
+                    [frame1Raw, frame2Raw, frameMasked], 800)
+                frameSave(concatedImage, cfgMode['runner'])
 
     finally:
         # Stop the pipeline and close the windows

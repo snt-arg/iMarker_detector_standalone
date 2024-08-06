@@ -6,6 +6,7 @@ configs:
     windowWidth: 1800
     labelSize: [20, 1]
     inputSize: [30, 1]
+    buttonSize: [20, 1]
     sliderSize: [100, 15]
     windowLocation: [0, 0]
   sensor:

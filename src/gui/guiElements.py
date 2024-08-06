@@ -45,9 +45,13 @@ def guiElements(cfg: dict, singleCamera: bool = False):
     # Adding GUI elements
     windowTitle = f"iMarker Readout - {'Single' if singleCamera else 'Double'} Vision Setup"
     tabGeneral = [[sg.Text('Frame-rate:', size=cfgGui['labelSize']),
-                   sg.Text('-' + f' fps {"(boosted)" if cfgSensor["fpsBoost"] else "(normal)"}')],
+                   sg.Text(
+                       '-' + f' fps {"(boosted)" if cfgSensor["fpsBoost"] else "(normal)"}')],
                   [sg.Text('Marker Properties:', size=cfgGui['labelSize']),
-                   sg.Checkbox('Left-handed?', default=cfgMarker['leftHanded'], key="MarkerLeftHanded")],
+                   sg.Checkbox(
+                       'Left-handed?', default=cfgMarker['leftHanded'], key="MarkerLeftHanded"),
+                   sg.Push(),  # Pushing the following element to the rightmost
+                   sg.Button('Save Current Frame', key="Record", size=cfgGui['buttonSize'], button_color=('white', 'red'))],
                   [sg.Text('Color-range Filter:', size=cfgGui['labelSize']),
                    sg.Radio("All Channels", "Channels",
                             key='AChannels', default=isAllChannels),
