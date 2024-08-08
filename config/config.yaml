@@ -1,6 +1,6 @@
 configs:
   mode:
-    runner: "offimg" # ["offimg", "offvid", "usb", "ids", "rs"]
+    runner: "usb" # ["offimg", "offvid", "usb", "ids", "rs"]
     sequentialSubtraction: true
   gui:
     windowWidth: 1800
@@ -25,10 +25,11 @@ configs:
         path: "/home/ali/Videos/vid2.MOV"
     usbCam:
       maskSize: 0.8
+      flipImage: true
       enableMask: false
       ports:
         lCam: "/dev/video2"
-        rCam: "/dev/video4"
+        rCam: "/dev/video5"
     ids:
       roi:
         cap1:
@@ -52,7 +53,6 @@ configs:
         matchRate: 0.4
         usePreset: true
         maxFeatures: 500
-      flipImage: true
       channel: "g" # ["b", "g", "r", "all"]
     postprocess:
       threshold:

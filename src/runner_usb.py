@@ -1,73 +1,105 @@
-# import cv2 as cv
-# import src.csr_sensors.sensors.sensorUSB as usb
-# from src.csr_detector.process import processStereoFrames
-# from src.gui.guiElements_old import getGUI, checkTerminateGUI
-# from config import ports, fpsBoost, flipImage, preAligment, homographyMat, windowWidth, windowLocation
+import cv2 as cv
+from .gui.utils import frameSave
+from .csr_sensors.sensors import sensorUSB as usb
+from .csr_detector.process import processStereoFrames
+from .gui.guiElements import checkTerminateGUI, getGUI
+from .csr_detector.vision.concatImages import imageConcatHorizontal
+from .marker_detector.arucoMarkerDetector import arucoMarkerDetector
 
 
 def runner_usb(config):
-    print('Framework started! [USB Cameras Setup]')
+    # Get the config values
+    cfgMode = config['mode']
+    cfgMarker = config['marker']
+    cfgUsbCam = config['sensor']['usbCam']
+    cfgGeneral = config['sensor']['general']
 
-#     # Create the window
-#     window = getGUI(windowLocation[0], windowLocation[1])
+    print(f'Framework started! [Double Vision USB Cameras Setup]')
 
-#     capL = usb.createCameraObject(ports['lCam'])
-#     capR = usb.createCameraObject(ports['rCam'])
+    # Create the window
+    window = getGUI(config, False)
 
-#     if fpsBoost:
-#         capL.set(cv.CAP_PROP_FPS, 30.0)
-#         capR.set(cv.CAP_PROP_FPS, 30.0)
+    # Fetch the cameras
+    capL = usb.createCameraObject(cfgUsbCam['ports']['lCam'])
+    capR = usb.createCameraObject(cfgUsbCam['ports']['rCam'])
 
-#     while True:
-#         event, values = window.read(timeout=10)
+    if cfgGeneral['fpsBoost']:
+        capL.set(cv.CAP_PROP_FPS, 30.0)
+        capR.set(cv.CAP_PROP_FPS, 30.0)
 
-#         # End program if user closes window
-#         if checkTerminateGUI(event):
-#             break
+    try:
+        while True:
+            event, values = window.read(timeout=10)
 
-#         # Retrieve frames
-#         # Note: if each of the cameras not working, retX will be False
-#         retL, frameL = usb.grabImage(capL)
-#         retR, frameR = usb.grabImage(capR)
+            # End program if user closes window
+            if checkTerminateGUI(event):
+                break
 
-#         # Get the values from the GUI
-#         params = {'maxFeatures': values['MaxFeat'], 'goodMatchPercentage': values['MatchRate'],
-#                   'circlularMaskCoverage': values['CircMask'], 'threshold': values['Threshold'],
-#                   'erosionKernel': values['Erosion'], 'gaussianKernel': values['Gaussian'],
-#                   'enableCircularMask': values['CircMaskEnable'], 'allChannels': values['AChannels'],
-#                   'rChannel': values['RChannel'], 'gChannel': values['GChannel'], 'bChannel': values['BChannel'],
-#                   'threshboth': values['ThreshBoth'], 'threshbin': values['ThreshBin'],
-#                   'threshots': values['ThreshOts'], 'isMarkerLeftHanded': values['MarkerLeftHanded'],
-#                   'preAligment': preAligment, 'homographyMat': homographyMat, 'windowWidth': windowWidth,
-#                   'invertBinaryImage': values['invertBinaryImage']
-#                   }
+            # Retrieve frames
+            # Note: if each of the cameras not working, retX will be False
+            retL, frameLRaw = usb.grabImage(capL)
+            retR, frameRRaw = usb.grabImage(capR)
 
-#         # Change brightness
-#         frameL = cv.convertScaleAbs(
-#             frameL, alpha=values['camAlpha'], beta=values['camBeta'])
-#         frameR = cv.convertScaleAbs(
-#             frameR, alpha=values['camAlpha'], beta=values['camBeta'])
+            # Flip the right frame
+            if (cfgUsbCam['flipImage']):
+                frameRRaw = cv.flip(frameRRaw, 1)
 
-#         # Flip the right frame
-#         if (flipImage):
-#             frameR = cv.flip(frameR, 1)
+            # Change brightness
+            frameLRaw = cv.convertScaleAbs(
+                frameLRaw, alpha=values['camAlpha'], beta=values['camBeta'])
+            frameRRaw = cv.convertScaleAbs(
+                frameRRaw, alpha=values['camAlpha'], beta=values['camBeta'])
 
-#         # Process frames
-#         frameL, frameR, mask = processStereoFrames(
-#             frameL, frameR, retL, retR, params)
+            # Check variable changes from the GUI
+            config['sensor']['usbCam']['maskSize'] = values['CircMask']
+            config['sensor']['usbCam']['enableMask'] = values['CircMaskEnable']
+            config['marker']['structure']['leftHanded'] = values['MarkerLeftHanded']
+            config['algorithm']['postprocess']['erosionKernelSize'] = values['Erosion']
+            config['algorithm']['postprocess']['gaussianKernelSize'] = values['Gaussian']
+            config['algorithm']['postprocess']['threshold']['size'] = values['Threshold']
+            config['algorithm']['process']['alignment']['matchRate'] = values['MatchRate']
+            config['algorithm']['process']['alignment']['maxFeatures'] = values['MaxFeat']
+            config['algorithm']['postprocess']['invertBinary'] = values['invertBinaryImage']
+            # Thresholding value
+            thresholdMethod = 'otsu' if values['ThreshOts'] else 'both' if values['ThreshBoth'] else 'binary'
+            config['algorithm']['postprocess']['threshold']['method'] = thresholdMethod
+            # Channel selection
+            channel = 'r' if values['RChannel'] else 'g' if values['GChannel'] else 'b' if values['BChannel'] else 'all'
+            config['algorithm']['process']['channel'] = channel
 
-#         # Add text to the image
-#         # addLabel(frame, 5)
+            # Process frames
+            frameL, frameR, frameMask = processStereoFrames(
+                frameLRaw, frameRRaw, retL, retR, config, True)
 
-#         # Show the frames
-#         frameL = cv.imencode(".png", frameL)[1].tobytes()
-#         frameR = cv.imencode(".png", frameR)[1].tobytes()
-#         mask = cv.imencode(".png", mask)[1].tobytes()
-#         window['FramesLeft'].update(data=frameL)
-#         window['FramesRight'].update(data=frameR)
-#         window['FramesMask'].update(data=mask)
+            # Show the frames
+            frameLRaw = frameLRaw if retL else frameL
+            frameRRaw = frameRRaw if retR else frameR
+            frameMask = frameMask if (
+                retR and retL) else frameR if retL else frameL
+            maskVis = cv.imencode(".png", frameMask)[1].tobytes()
+            frameLRawVis = cv.imencode(".png", frameLRaw)[1].tobytes()
+            frameRRawVis = cv.imencode(".png", frameRRaw)[1].tobytes()
+            window['FramesMask'].update(data=maskVis)
+            window['FramesLeft'].update(data=frameLRawVis)
+            window['FramesRight'].update(data=frameRRawVis)
 
-#     capL.release()
-#     capR.release()
-#     window.close()
-#     print('Framework finished! [USB Cameras Setup]')
+            # ArUco marker detection
+            frameMarkers = arucoMarkerDetector(
+                frameMask, cfgMarker['detection']['dictionary'])
+            frameMarkersVis = cv.imencode(
+                ".png", frameMarkers)[1].tobytes()
+            window['FramesMarker'].update(data=frameMarkersVis)
+
+            # Record the frame(s)
+            if event == 'Record':
+                frameMarkers = cv.cvtColor(frameMarkers, cv.COLOR_GRAY2BGR)
+                imageList = [frameLRaw, frameRRaw, frameMarkers]
+                concatedImage = imageConcatHorizontal(imageList, 1800)
+                frameSave(concatedImage, cfgMode['runner'])
+
+    finally:
+        # Stop the pipeline and close the windows
+        capL.release()
+        capR.release()
+        cv.destroyAllWindows()
+        print(f'Framework finished! [Double Vision USB Cameras Setup]')

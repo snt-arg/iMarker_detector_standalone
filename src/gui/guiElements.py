@@ -120,11 +120,10 @@ def guiElements(cfg: dict, singleCamera: bool = False):
             ]
     else:
         tabImages = [
-            [sg.Tab('Raw Frame Left', imageViewerL)],
-            [sg.Tab('Raw Frame Right', imageViewerR)],
-            [sg.Tab('Mask Frame', imageViewerMask)],
-            sg.Tab('Mask Applied Frame', imageViewerMaskApplied),
-            [sg.Tab('Detected Markers', imageViewerMarker)]
+            [sg.Tab('Raw Frame Left', imageViewerL),
+             sg.Tab('Raw Frame Right', imageViewerR),
+             sg.Tab('Mask Frame', imageViewerMask),
+             sg.Tab('Detected Markers', imageViewerMarker)]
         ]
     tabImageGroup = [[sg.TabGroup(tabImages, tab_location='centertop', expand_x=True,
                                   title_color='dark slate grey', selected_background_color='dark orange', pad=10)]]

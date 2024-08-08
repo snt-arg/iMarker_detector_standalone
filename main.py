@@ -1,7 +1,7 @@
 import yaml
+from src.runner_rs import runner_rs
 from src.runner_ids import runner_ids
 from src.runner_usb import runner_usb
-from src.runner_rs import runner_rs
 from src.runner_offVid import runner_offVid
 from src.runner_offImg import runner_offImg
 

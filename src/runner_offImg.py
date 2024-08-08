@@ -1,6 +1,5 @@
 import os
 import cv2 as cv
-import numpy as np
 from .gui.utils import resizeFrame, frameSave
 from .gui.guiElements import checkTerminateGUI, getGUI
 from .csr_detector.vision.concatImages import imageConcatHorizontal
