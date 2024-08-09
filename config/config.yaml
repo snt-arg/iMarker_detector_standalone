@@ -1,7 +1,7 @@
 configs:
   mode:
-    runner: "usb" # ["offimg", "offvid", "usb", "ids", "rs"]
-    sequentialSubtraction: true
+    runner: "offimg" # ["offimg", "offvid", "usb", "ids", "rs"]
+    sequentialSubtraction: true # Only for single vision sensor ("rs", "offimg", "offvid")
   gui:
     windowWidth: 1800
     labelSize: [20, 1]

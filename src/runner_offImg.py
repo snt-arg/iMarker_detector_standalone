@@ -34,12 +34,12 @@ def runner_offImg(config):
     window = getGUI(config, True)
 
     # Open the image files
-    frame1Raw = cv.imread(image1Path)
-    frame2Raw = cv.imread(image2Path)
+    frame1RawFetched = cv.imread(image1Path)
+    frame2RawFetched = cv.imread(image2Path)
 
     # Resize frames if necessary
-    frame1Raw = resizeFrame(frame1Raw)
-    frame2Raw = resizeFrame(frame2Raw)
+    frame1RawFetched = resizeFrame(frame1RawFetched)
+    frame2RawFetched = resizeFrame(frame2RawFetched)
 
     try:
         while True:
@@ -49,11 +49,27 @@ def runner_offImg(config):
             if checkTerminateGUI(event):
                 break
 
+            frame1Raw = frame1RawFetched.copy()
+            frame2Raw = frame2RawFetched.copy()
+
             # Change brightness
             frame1Raw = cv.convertScaleAbs(
                 frame1Raw, alpha=values['camAlpha'], beta=values['camBeta'])
             frame2Raw = cv.convertScaleAbs(
                 frame2Raw, alpha=values['camAlpha'], beta=values['camBeta'])
+
+            # Check variable changes from the GUI
+            config['marker']['structure']['leftHanded'] = values['MarkerLeftHanded']
+            config['algorithm']['postprocess']['erosionKernelSize'] = values['Erosion']
+            config['algorithm']['postprocess']['gaussianKernelSize'] = values['Gaussian']
+            config['algorithm']['postprocess']['threshold']['size'] = values['Threshold']
+            config['algorithm']['postprocess']['invertBinary'] = values['invertBinaryImage']
+            # Thresholding value
+            thresholdMethod = 'otsu' if values['ThreshOts'] else 'both' if values['ThreshBoth'] else 'binary'
+            config['algorithm']['postprocess']['threshold']['method'] = thresholdMethod
+            # Channel selection
+            channel = 'r' if values['RChannel'] else 'g' if values['GChannel'] else 'b' if values['BChannel'] else 'all'
+            config['algorithm']['process']['channel'] = channel
 
             if (cfgMode['sequentialSubtraction']):
                 # Process the frames
