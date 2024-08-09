@@ -9,6 +9,7 @@ from .csr_detector.process import processSequentialFrames, processSingleFrame
 
 def runner_offImg(config):
     # Get the config values
+    cfgGui = config['gui']
     cfgMode = config['mode']
     cfgMarker = config['marker']
     cfgOffline = config['sensor']['offline']
@@ -38,8 +39,10 @@ def runner_offImg(config):
     frame2RawFetched = cv.imread(image2Path)
 
     # Resize frames if necessary
-    frame1RawFetched = resizeFrame(frame1RawFetched)
-    frame2RawFetched = resizeFrame(frame2RawFetched)
+    frame1RawFetched = resizeFrame(
+        frame1RawFetched, cfgGui['maxImageHolderSize'])
+    frame2RawFetched = resizeFrame(
+        frame2RawFetched, cfgGui['maxImageHolderSize'])
 
     try:
         while True:
