@@ -150,7 +150,7 @@ def getGUI(config: dict, singleCamera: bool = False):
     # Create the window
     windowTitle, tabGroup, tabImages = guiElements(config, singleCamera)
     window = sg.Window(
-        windowTitle, [tabGroup, tabImages], location=(xLoc, yLoc), resizable=True)
+        windowTitle, [tabGroup, tabImages], location=(xLoc, yLoc), resizable=False)
     # Return to the called function
     return window
 

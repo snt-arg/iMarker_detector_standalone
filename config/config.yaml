@@ -1,6 +1,6 @@
 configs:
   mode:
-    runner: "offimg" # ["offimg", "offvid", "usb", "ids", "rs"]
+    runner: "offvid" # ["offimg", "offvid", "usb", "ids", "rs"]
     sequentialSubtraction: true # Only for single vision sensor ("rs", "offimg", "offvid")
   gui:
     windowWidth: 1800
@@ -9,6 +9,7 @@ configs:
     buttonSize: [20, 1]
     sliderSize: [100, 15]
     windowLocation: [0, 0]
+    maxImageHolderSize: 400
   sensor:
     general:
       fpsBoost: true
