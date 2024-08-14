@@ -1,85 +1,132 @@
-# import cv2 as cv
-# import numpy as np
-# from src.csr_sensors.sensors import sensorIDS
-# from src.csr_detector.process import processStereoFrames
-# from src.gui.guiElements_old import getGUI, checkTerminateGUI
-# from config import roiDimension, exposureTime, windowLocation
-# from config import preAligment, homographyMat, windowWidth, sensorProjectRoot
+import os
+import cv2 as cv
+import numpy as np
+from .gui.utils import frameSave
+from .csr_sensors.sensors import sensorIDS
+from .csr_detector.process import processStereoFrames
+from .gui.guiElements import checkTerminateGUI, getGUI
+from .csr_sensors.sensors.config.idsPresets import homographyMat
+from .csr_detector.vision.concatImages import imageConcatHorizontal
+from .marker_detector.arucoMarkerDetector import arucoMarkerDetector
 
 
 def runner_ids(config):
-    print('Framework started! [Double iDS Camera Setup]')
+    # Get the config values
+    cfgMode = config['mode']
+    cfgMarker = config['marker']
+    cfgIDSCam = config['sensor']['ids']
+    cfgGeneral = config['sensor']['general']
 
-#     # Create the window
-#     window = getGUI(windowLocation[0], windowLocation[1])
+    print(f'Framework started! [Double Vision iDS Cameras Setup]')
 
-#     cap1 = sensorIDS.idsCamera(0)
-#     cap2 = sensorIDS.idsCamera(1)
+    # Create the window
+    window = getGUI(config, False)
 
-#     cap1.getCalibrationConfig(sensorProjectRoot, 'cam1')
-#     cap2.getCalibrationConfig(sensorProjectRoot, 'cam2')
+    # Fetch the cameras
+    cap1 = sensorIDS.idsCamera(0)
+    cap2 = sensorIDS.idsCamera(1)
 
-#     cap1.setROI(roiDimension['cap1']['x'], roiDimension['cap1']
-#                 ['y'], roiDimension['cap1']['width'], roiDimension['cap1']['height'])
-#     cap2.setROI(roiDimension['cap2']['x'], roiDimension['cap2']
-#                 ['y'], roiDimension['cap2']['width'], roiDimension['cap2']['height'])
+    # Get the calibration configuration
+    root = f"{os.getcwd()}/src/csr_sensors/sensors/config"
+    cap1.getCalibrationConfig(root, 'cam1')
+    cap2.getCalibrationConfig(root, 'cam2')
 
-#     cap1.syncAsMaster()
-#     cap2.syncAsSlave()
+    # Set the ROI
+    cap1.setROI(cfgIDSCam['roi']['cap1']['x'], cfgIDSCam['roi']['cap1']
+                ['y'], cfgIDSCam['roi']['cap1']['width'], cfgIDSCam['roi']['cap1']['height'])
+    cap2.setROI(cfgIDSCam['roi']['cap2']['x'], cfgIDSCam['roi']['cap2']
+                ['y'], cfgIDSCam['roi']['cap2']['width'], cfgIDSCam['roi']['cap2']['height'])
 
-#     cap1.startAquisition()
-#     cap2.startAquisition()
+    # Synchronize the cameras
+    cap1.syncAsMaster()
+    cap2.syncAsSlave()
 
-#     cap1.setExposureTime(exposureTime)
-#     cap2.setExposureTime(exposureTime)
+    # Capture the frames
+    cap1.startAquisition()
+    cap2.startAquisition()
 
-#     while True:
-#         event, values = window.read(timeout=10)
+    # Set the exposure time
+    cap1.setExposureTime(cfgIDSCam['exposureTime'])
+    cap2.setExposureTime(cfgIDSCam['exposureTime'])
 
-#         # End program if user closes window
-#         if checkTerminateGUI(event):
-#             break
+    try:
+        while True:
+            event, values = window.read(timeout=10)
 
-#         frame1 = cap1.getFrame()
-#         frame2 = cap2.getFrame()
+            # End program if user closes window
+            if checkTerminateGUI(event):
+                break
 
-#         retL = False if (not np.any(frame1)) else True
-#         retR = False if (not np.any(frame2)) else True
+            # Fetch the frames
+            frame1Raw = cap1.getFrame()
+            frame2Raw = cap2.getFrame()
 
-#         # Get the values from the GUI
-#         params = {'maxFeatures': values['MaxFeat'], 'goodMatchPercentage': values['MatchRate'],
-#                   'circlularMaskCoverage': values['CircMask'], 'threshold': values['Threshold'],
-#                   'erosionKernel': values['Erosion'], 'gaussianKernel': values['Gaussian'],
-#                   'enableCircularMask': values['CircMaskEnable'], 'allChannels': values['AChannels'],
-#                   'rChannel': values['RChannel'], 'gChannel': values['GChannel'], 'bChannel': values['BChannel'],
-#                   'threshboth': values['ThreshBoth'], 'threshbin': values['ThreshBin'], 'threshots': values['ThreshOts'],
-#                   'isMarkerLeftHanded': values['MarkerLeftHanded'], 'invertBinaryImage': values['invertBinaryImage'],
-#                   'preAligment': preAligment, 'homographyMat': homographyMat, 'windowWidth': windowWidth
-#                   }
+            retL = False if (not np.any(frame1Raw)) else True
+            retR = False if (not np.any(frame2Raw)) else True
 
-#         frameL = cv.convertScaleAbs(
-#             frame1, alpha=values['camAlpha'], beta=values['camBeta'])
-#         frameR = cv.convertScaleAbs(
-#             frame2, alpha=values['camAlpha'], beta=values['camBeta'])
+            # Change brightness
+            frame1Raw = cv.convertScaleAbs(
+                frame1Raw, alpha=values['camAlpha'], beta=values['camBeta'])
+            frame2Raw = cv.convertScaleAbs(
+                frame2Raw, alpha=values['camAlpha'], beta=values['camBeta'])
 
-#         frameR = cv.flip(frameR, 1)
+            # Flip the right frame
+            frame2Raw = cv.flip(frame2Raw, 1)
 
-#         # Process frames
-#         frameL, frameR, mask = processStereoFrames(frameL, frameR, retL, retR,
-#                                                    params)
+            # Check variable changes from the GUI
+            config['sensor']['usbCam']['maskSize'] = values['CircMask']
+            config['sensor']['usbCam']['enableMask'] = values['CircMaskEnable']
+            config['marker']['structure']['leftHanded'] = values['MarkerLeftHanded']
+            config['algorithm']['postprocess']['erosionKernelSize'] = values['Erosion']
+            config['algorithm']['postprocess']['gaussianKernelSize'] = values['Gaussian']
+            config['algorithm']['postprocess']['threshold']['size'] = values['Threshold']
+            config['algorithm']['process']['alignment']['matchRate'] = values['MatchRate']
+            config['algorithm']['process']['alignment']['maxFeatures'] = values['MaxFeat']
+            config['algorithm']['postprocess']['invertBinary'] = values['invertBinaryImage']
+            # Thresholding value
+            thresholdMethod = 'otsu' if values['ThreshOts'] else 'both' if values['ThreshBoth'] else 'binary'
+            config['algorithm']['postprocess']['threshold']['method'] = thresholdMethod
+            # Channel selection
+            channel = 'r' if values['RChannel'] else 'g' if values['GChannel'] else 'b' if values['BChannel'] else 'all'
+            config['algorithm']['process']['channel'] = channel
 
-#         # Add text to the image
-#         # addLabel(frame, 5)
+            # Add the homography matrix to the config
+            config['presetMat'] = homographyMat
 
-#         # Show the frames
-#         frameL = cv.imencode(".png", frameL)[1].tobytes()
-#         frameR = cv.imencode(".png", frameR)[1].tobytes()
-#         mask = cv.imencode(".png", mask)[1].tobytes()
-#         window['FramesLeft'].update(data=frameL)
-#         window['FramesRight'].update(data=frameR)
-#         window['FramesMask'].update(data=mask)
+            # Process frames
+            frame1, frame2, frameMask = processStereoFrames(
+                frame1Raw, frame2Raw, retL, retR, config, False)
 
-#     window.close()
-#     cap1.closeLibrary()
-#     cap2.closeLibrary()
-#     print('Framework finished! [Double iDS Camera Setup]')
+            # Show the frames
+            frame1Raw = frame1Raw if retL else frame1
+            frame2Raw = frame2Raw if retR else frame2
+            frameMask = frameMask if (
+                retR and retL) else frame2 if retL else frame1
+            maskVis = cv.imencode(".png", frameMask)[1].tobytes()
+            frame1RawVis = cv.imencode(".png", frame1Raw)[1].tobytes()
+            frame2RawVis = cv.imencode(".png", frame2Raw)[1].tobytes()
+            window['FramesMask'].update(data=maskVis)
+            window['FramesLeft'].update(data=frame1RawVis)
+            window['FramesRight'].update(data=frame2RawVis)
+
+            # ArUco marker detection
+            frameMarkers = arucoMarkerDetector(
+                frameMask, cfgMarker['detection']['dictionary'])
+            frameMarkersVis = cv.imencode(
+                ".png", frameMarkers)[1].tobytes()
+            window['FramesMarker'].update(data=frameMarkersVis)
+
+            # Record the frame(s)
+            if event == 'Record':
+                frameMarkers = cv.cvtColor(frameMarkers, cv.COLOR_GRAY2BGR)
+                imageList = [frame1Raw, frame2Raw, frameMarkers]
+                concatedImage = imageConcatHorizontal(imageList, 1800)
+                frameSave(concatedImage, cfgMode['runner'])
+
+    finally:
+        # Stop the pipeline and close the windows
+        window.close()
+        cap1.closeLibrary()
+        cap2.closeLibrary()
+        cv.destroyAllWindows()
+        print(f'Framework finished! [Double Vision iDS Cameras Setup]')

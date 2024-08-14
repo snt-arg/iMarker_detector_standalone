@@ -1,6 +1,6 @@
 configs:
   mode:
-    runner: "offvid" # ["offimg", "offvid", "usb", "ids", "rs"]
+    runner: "ids" # ["offimg", "offvid", "usb", "ids", "rs"]
     sequentialSubtraction: true # Only for single vision sensor ("rs", "offimg", "offvid")
   gui:
     windowWidth: 1800
@@ -13,7 +13,6 @@ configs:
   sensor:
     general:
       fpsBoost: true
-      exposureTime: 20000
       brightness:
         alpha: 1.0
         beta: 0.0
@@ -32,6 +31,7 @@ configs:
         lCam: "/dev/video2"
         rCam: "/dev/video5"
     ids:
+      exposureTime: 20000
       roi:
         cap1:
           x: 520
