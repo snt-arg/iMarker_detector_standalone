@@ -1,5 +1,6 @@
 import os
 import cv2 as cv
+import numpy as np
 from .gui.utils import resizeFrame, frameSave
 from .gui.guiElements import checkTerminateGUI, getGUI
 from .csr_detector.vision.concatImages import imageConcatHorizontal
@@ -87,17 +88,15 @@ def runner_offImg(config):
                 window['FramesLeft'].update(data=pFrameVis)
                 window['FramesRight'].update(data=cFrameVis)
             else:
-                # Convert the frame to HSV
-                frame2RawHSV = cv.cvtColor(frame2Raw, cv.COLOR_BGR2HSV)
+                # Keep the original frame
+                cFrameRGB = np.copy(frame2Raw)
                 # Process the frames
                 cFrame, frameMask = processSingleFrame(
-                    frame2RawHSV, True, config)
-                # Apply the mask
-                cFrameRGB = cv.cvtColor(cFrame, cv.COLOR_HSV2BGR)
+                    frame2Raw, True, config)
                 frameMaskApplied = cv.bitwise_and(
-                    cFrameRGB, cFrameRGB, mask=frameMask)
+                    cFrame, cFrame, mask=frameMask)
                 # Show the setup-specific frames
-                cFrameVis = cv.imencode(".png", frame2Raw)[1].tobytes()
+                cFrameVis = cv.imencode(".png", cFrameRGB)[1].tobytes()
                 window['FramesMain'].update(data=cFrameVis)
 
             # Show the common frames

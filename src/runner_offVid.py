@@ -96,17 +96,15 @@ def runner_offVid(config):
                 window['FramesLeft'].update(data=pFrameVis)
                 window['FramesRight'].update(data=cFrameVis)
             else:
-                # Convert the frame to HSV
-                currFrameHSV = cv.cvtColor(currFrame, cv.COLOR_BGR2HSV)
+                # Keep the original frame
+                cFrameRGB = np.copy(currFrame)
                 # Process the frames
                 cFrame, frameMask = processSingleFrame(
-                    currFrameHSV, True, config)
-                # Apply the mask
-                cFrameRGB = cv.cvtColor(cFrame, cv.COLOR_HSV2BGR)
+                    currFrame, True, config)
                 frameMaskApplied = cv.bitwise_and(
-                    cFrameRGB, cFrameRGB, mask=frameMask)
+                    cFrame, cFrame, mask=frameMask)
                 # Show the setup-specific frames
-                cFrameVis = cv.imencode(".png", currFrame)[1].tobytes()
+                cFrameVis = cv.imencode(".png", cFrameRGB)[1].tobytes()
                 window['FramesMain'].update(data=cFrameVis)
 
             # Show the common frames
