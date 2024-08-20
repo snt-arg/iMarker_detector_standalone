@@ -1,7 +1,7 @@
 configs:
   mode:
-    runner: "rs" # ["offimg", "offvid", "usb", "ids", "rs"]
-    sequentialSubtraction: false # Only for single vision sensor ("rs", "offimg", "offvid")
+    runner: "usb" # ["offimg", "offvid", "usb", "ids", "rs"]
+    sequentialSubtraction: true # Only for single vision sensor ("rs", "offimg", "offvid")
   gui:
     windowWidth: 1800
     labelSize: [20, 1]
@@ -28,8 +28,8 @@ configs:
       flipImage: true
       enableMask: false
       ports:
-        lCam: "/dev/video2"
-        rCam: "/dev/video5"
+        lCam: "/dev/video4"
+        rCam: "/dev/video6"
     ids:
       exposureTime: 20000
       roi:
