@@ -63,7 +63,7 @@ def runner_offImg(config):
                 frame2Raw, alpha=values['camAlpha'], beta=values['camBeta'])
 
             # Check variable changes from the GUI
-            config['marker']['structure']['leftHanded'] = values['MarkerLeftHanded']
+            config['algorithm']['process']['subtractRL'] = values['SubtractionOrder']
             config['algorithm']['postprocess']['erosionKernelSize'] = values['Erosion']
             config['algorithm']['postprocess']['gaussianKernelSize'] = values['Gaussian']
             config['algorithm']['postprocess']['threshold']['size'] = values['Threshold']

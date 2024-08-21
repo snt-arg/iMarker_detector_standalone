@@ -53,7 +53,7 @@ def runner_usb(config):
             # Check variable changes from the GUI
             config['sensor']['usbCam']['maskSize'] = values['CircMask']
             config['sensor']['usbCam']['enableMask'] = values['CircMaskEnable']
-            config['marker']['structure']['leftHanded'] = values['MarkerLeftHanded']
+            config['algorithm']['process']['subtractRL'] = values['SubtractionOrder']
             config['algorithm']['postprocess']['erosionKernelSize'] = values['Erosion']
             config['algorithm']['postprocess']['gaussianKernelSize'] = values['Gaussian']
             config['algorithm']['postprocess']['threshold']['size'] = values['Threshold']

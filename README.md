@@ -79,7 +79,7 @@ _Sensors_
 
 _Markers_
 
-- `leftHanded`: if the marker is left-handed or right-handed
+- `subtractRL`: if the marker is left-handed or right-handed
 
 _Pre-processing_
 
