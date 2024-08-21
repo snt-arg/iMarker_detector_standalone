@@ -150,7 +150,7 @@ def guiElements(cfg: dict, singleCamera: bool = False):
     tabImageGroup = [[sg.TabGroup(tabImages, tab_location='centertop', expand_x=True,
                                   title_color='dark slate grey', selected_background_color='dark orange', pad=10)]]
 
-    tabFooter = [[sg.Text('© 2022-2024 - TRANSCEND Project - University of Luxembourg', size=cfgGui['labelSize']),
+    tabFooter = [[sg.Text('© 2022-2024 - TRANSCEND Project - University of Luxembourg', size=[130, 1]),
                   sg.Push(),  # Pushing the following element to the rightmost
                   sg.Button('Save the Current Frame', key="Record",
                             size=cfgGui['buttonSize'], button_color=('white', 'green'))]]

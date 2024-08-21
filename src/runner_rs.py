@@ -31,7 +31,7 @@ def runner_rs(config):
     rs.createPipeline()
 
     # Start the pipeline
-    rs.startPipeline()
+    isPipelineStarted = rs.startPipeline()
 
     # Create the window
     window = getGUI(config, True)
@@ -44,8 +44,16 @@ def runner_rs(config):
             if checkTerminateGUI(event):
                 break
 
+            # Check if the frames are valid
+            if not isPipelineStarted:
+                break
+
             # End program if user closes window
             frames = rs.grabFrames()
+
+            # Check if the frames are valid
+            if frames is None:
+                break
 
             # Get the color frame
             currFrame, camParams = rs.getColorFrame(frames)
@@ -122,7 +130,8 @@ def runner_rs(config):
 
     finally:
         # Stop the pipeline and close the windows
-        rs.stopPipeline()
+        if isPipelineStarted:
+            rs.stopPipeline()
         cv.destroyAllWindows()
         print(
             f'Framework stopped! [RealSense Single Vision Setup - {setupVariant}]')
