@@ -15,7 +15,6 @@ def runner_ids(config):
     cfgMode = config['mode']
     cfgMarker = config['marker']
     cfgIDSCam = config['sensor']['ids']
-    cfgGeneral = config['sensor']['general']
 
     print(f'Framework started! [Double Vision iDS Cameras Setup]')
 
