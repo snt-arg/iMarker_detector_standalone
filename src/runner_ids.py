@@ -73,8 +73,6 @@ def runner_ids(config):
             frame2Raw = cv.flip(frame2Raw, 1)
 
             # Check variable changes from the GUI
-            config['sensor']['usbCam']['maskSize'] = values['CircMask']
-            config['sensor']['usbCam']['enableMask'] = values['CircMaskEnable']
             config['algorithm']['process']['subtractRL'] = values['SubtractionOrder']
             config['algorithm']['postprocess']['erosionKernelSize'] = values['Erosion']
             config['algorithm']['postprocess']['gaussianKernelSize'] = values['Gaussian']
