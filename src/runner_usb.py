@@ -35,15 +35,15 @@ def runner_usb(config):
             if checkTerminateGUI(event):
                 break
 
-            # Check if the cameras are opened
-            if not capL.isOpened() or not capR.isOpened():
-                print('- [Error] one or both cameras are not connected! Exiting...')
-                break
-
             # Retrieve frames
             # Note: if each of the cameras not working, retX will be False
             retL, frameLRaw = usb.grabImage(capL)
             retR, frameRRaw = usb.grabImage(capR)
+
+            # Check if both cameras are connected
+            if not retL and not retR:
+                print('- [Error] no camera is connected! Exiting...')
+                break
 
             # Flip the right frame
             if (cfgUsbCam['flipImage']):
