@@ -58,6 +58,10 @@ def guiElements(cfg: dict, singleCamera: bool = False):
     windowTitle += f" [{setupVariant}]" if isOffImg or isOffVid or isRealSense else ""
 
     # Preparing sensor-related GUI elements
+    enableMask = [sg.Text('Enable circular mask:', size=cfgGui['labelSize']),
+                  sg.Checkbox('(check to enable)', default=cfgUsbCam['enableMask'], key="CircMaskEnable")] if isUsbCam else []
+    circularMaskValue = [sg.Text('Circular mask radius size:', size=cfgGui['labelSize']), sg.Slider(
+        (0, 1), cfgUsbCam['maskSize'], .01, orientation="h", size=cfgGui['sliderSize'], key="CircMask")] if isUsbCam else []
     boostFrameRate = [sg.Text('Boosting frame-rate?', size=cfgGui['labelSize']),
                       sg.Text(
         f'{"Enabled" if cfgSensor["fpsBoost"] else "Disabled"}')] if isUsbCam else []
@@ -70,27 +74,27 @@ def guiElements(cfg: dict, singleCamera: bool = False):
                   [sg.Text('Invert binary image:', size=cfgGui['labelSize']),
                    sg.Checkbox('(check to invert)', default=cfgPostproc['invertBinary'], key="invertBinaryImage")],
                   [sg.Text('Color-range filter:', size=cfgGui['labelSize']),
-                   sg.Radio("All", "Channels",
-                            key='AChannels', default=isAllChannels),
                    sg.Radio("Red", "Channels", key='RChannel',
                             default=isRChannel),
                    sg.Radio("Green", "Channels",
                             key='GChannel', default=isGChannel),
                    sg.Radio("Blue", "Channels",
-                            key='BChannel', default=isBChannel)],
+                            key='BChannel', default=isBChannel),
+                   sg.Radio("All", "Channels",
+                            key='AChannels', default=isAllChannels)],
                   [sg.Text("Brightness & contrast:", size=cfgGui['labelSize']),
                    sg.Slider((1.0, 15.0), cfgSensor['brightness']['alpha'], .1, orientation="h", size=(
                        50, 15), key="camAlpha"),
                    sg.Slider((0, 50), cfgSensor['brightness']['beta'], 1, orientation="h", size=(50, 15), key="camBeta")]]
 
     tabAlignment = [
+        enableMask,
+        circularMaskValue,
         [sg.Text('Max. features:', size=cfgGui['labelSize']),
          sg.Slider((10, 1000), cfgAlignment['maxFeatures'], 10, orientation="h", size=cfgGui['sliderSize'], key="MaxFeat")],
         [sg.Text('Matching rate:', size=cfgGui['labelSize']),
          sg.Slider(
-            (0, 1), cfgAlignment['matchRate'], .1, orientation="h", size=cfgGui['sliderSize'], key="MatchRate")],
-        [sg.Text('Circular mask:', size=cfgGui['labelSize']), sg.Slider((0, 1), cfgUsbCam['maskSize'], .01, orientation="h", size=cfgGui['sliderSize'], key="CircMask"),
-         sg.Checkbox('Enable Circular Mask', default=cfgUsbCam['enableMask'], key="CircMaskEnable")]]
+            (0, 1), cfgAlignment['matchRate'], .1, orientation="h", size=cfgGui['sliderSize'], key="MatchRate")]]
 
     tabPosProcessing = [
         [sg.Text('Thresholding method:', size=cfgGui['labelSize']),
