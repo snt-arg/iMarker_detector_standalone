@@ -1,6 +1,4 @@
 click==8.1.7
-ids-peak @ file:///home/ali/Codes/csr_detector_standalone/.venv/share/python-wheels/ids_peak-1.4.3.0-cp38-cp38-linux_x86_64.whl#sha256=897ad057c3f0d58de6b24871dcc44bd8f2ae07df9462f6af526f137d5947afe0
-ids-peak-ipl @ file:///home/ali/Codes/csr_detector_standalone/.venv/share/python-wheels/ids_peak_ipl-1.5.0.0-cp38-cp38-linux_x86_64.whl#sha256=3e56cfd3e25e2f8bfff2dee96dd340a23460ee1f386192d45d7236c474e1f21a
 numpy==1.24.4
 opencv-contrib-python==4.10.0.84
 opencv-python==4.10.0.84
