@@ -38,10 +38,21 @@ You can also install the cloned submodules and define dependencies and other dis
 
 The first step is to modify the configuration file. For a complete list of configurations you can take a look at [config.py](/config/config.yaml).
 
-### II. Run the Desired Version
+### II. Run the Desired Mode
 
-The current version of the framework you can run offline images (`"offimg"`), offline videos (`"offvid"`), double-vision USB cameras (`"usb"`), double-vision iDS cameras (`"ids"`), or single-vision RealSense camera (`"rs"`).
+The current version of the framework you can run various modes, including offline images (`"offimg"`), offline videos (`"offvid"`), double-vision USB cameras (`"usb"`), double-vision iDS cameras (`"ids"`), or single-vision RealSense camera (`"rs"`). You can set it in the configuration file.
 
 For single vision sensors (`"rs"`, `"offimg"`, or `"offvid"`) the parameter `sequentialSubtraction` can be set to run in **sequential subtraction** or **masking** modes.
 
-Then, the code automatically picks the proper runner for it.
+Then, go to the root of the project and run `[~/.venv/bin/python] main.py`. The code automatically picks the proper runner for it.
+
+💡 **[note]** You can also set the mode value
+
+```python
+# Normal run
+[~/.venv/bin/python] main.py
+
+# Changing the mode using argument and then run
+# [hint] Pick from ["offimg", "offvid", "usb", "ids", "rs"]
+[~/.venv/bin/python] main.py --mode rs
+```
