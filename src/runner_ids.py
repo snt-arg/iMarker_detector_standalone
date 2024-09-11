@@ -94,11 +94,14 @@ def runner_ids(config):
             frame1, frame2, frameMask = processStereoFrames(
                 frame1Raw, frame2Raw, retL, retR, config, False)
 
+            # Prepare a notFound image
+            notFoundImage = cv.imread(
+                f"{os.getcwd()}/src/notFound.png", cv.IMREAD_COLOR)
+
             # Show the frames
-            frame1Raw = frame1Raw if retL else frame1
-            frame2Raw = frame2Raw if retR else frame2
-            frameMask = frameMask if (
-                retR and retL) else frame2 if retL else frame1
+            frame1Raw = frame1Raw if retL else notFoundImage
+            frame2Raw = frame2Raw if retR else notFoundImage
+            frameMask = frameMask if (retR and retL) else notFoundImage
             maskVis = cv.imencode(".png", frameMask)[1].tobytes()
             frame1RawVis = cv.imencode(".png", frame1Raw)[1].tobytes()
             frame2RawVis = cv.imencode(".png", frame2Raw)[1].tobytes()

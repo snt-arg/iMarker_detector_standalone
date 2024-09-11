@@ -1,3 +1,4 @@
+import os
 import cv2 as cv
 from .gui.utils import frameSave
 from .csr_sensors.sensors import sensorUSB as usb
@@ -76,11 +77,14 @@ def runner_usb(config):
             frameL, frameR, frameMask = processStereoFrames(
                 frameLRaw, frameRRaw, retL, retR, config, True)
 
+            # Prepare a notFound image
+            notFoundImage = cv.imread(
+                f"{os.getcwd()}/src/notFound.png", cv.IMREAD_COLOR)
+
             # Show the frames
-            frameLRaw = frameLRaw if retL else frameL
-            frameRRaw = frameRRaw if retR else frameR
-            frameMask = frameMask if (
-                retR and retL) else frameR if retL else frameL
+            frameLRaw = frameLRaw if retL else notFoundImage
+            frameRRaw = frameRRaw if retR else notFoundImage
+            frameMask = frameMask if (retR and retL) else notFoundImage
             maskVis = cv.imencode(".png", frameMask)[1].tobytes()
             frameLRawVis = cv.imencode(".png", frameLRaw)[1].tobytes()
             frameRRawVis = cv.imencode(".png", frameRRaw)[1].tobytes()
