@@ -104,6 +104,9 @@ def runner_rs(config):
                 cFrameVis = cv.imencode(".png", cFrameRGB)[1].tobytes()
                 window['FramesMain'].update(data=cFrameVis)
 
+            # Convert to RGB
+            frameMask = cv.cvtColor(frameMask, cv.COLOR_GRAY2BGR)
+
             # Show the common frames
             maskVis = cv.imencode(".png", frameMask)[1].tobytes()
             maskAppliedVis = cv.imencode(".png", frameMaskApplied)[1].tobytes()

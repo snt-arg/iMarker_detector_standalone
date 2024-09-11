@@ -98,6 +98,9 @@ def runner_ids(config):
             notFoundImage = cv.imread(
                 f"{os.getcwd()}/src/notFound.png", cv.IMREAD_COLOR)
 
+            # Convert to RGB
+            frameMask = cv.cvtColor(frameMask, cv.COLOR_GRAY2BGR)
+
             # Show the frames
             frame1Raw = frame1Raw if retL else notFoundImage
             frame2Raw = frame2Raw if retR else notFoundImage

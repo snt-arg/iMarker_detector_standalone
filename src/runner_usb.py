@@ -81,6 +81,9 @@ def runner_usb(config):
             notFoundImage = cv.imread(
                 f"{os.getcwd()}/src/notFound.png", cv.IMREAD_COLOR)
 
+            # Convert to RGB
+            frameMask = cv.cvtColor(frameMask, cv.COLOR_GRAY2BGR)
+
             # Show the frames
             frameLRaw = frameLRaw if retL else notFoundImage
             frameRRaw = frameRRaw if retR else notFoundImage
