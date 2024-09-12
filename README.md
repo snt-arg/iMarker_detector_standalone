@@ -36,7 +36,7 @@ You can also install the cloned submodules and define dependencies and other dis
 
 ### I. Set Configurations
 
-The first step is to modify the configuration file. For a complete list of configurations you can take a look at [config.py](/config/config.yaml).
+The first step is to modify the configuration file. For a complete list of configurations you can take a look at [config.yaml](/config/config.yaml) or read the detailed descriptions [here](/config/README.md).
 
 ### II. Run the Desired Mode
 
@@ -46,13 +46,16 @@ For single vision sensors (`"rs"`, `"offimg"`, or `"offvid"`) the parameter `seq
 
 Then, go to the root of the project and run `[~/.venv/bin/python] main.py`. The code automatically picks the proper runner for it.
 
-💡 **[note]** You can also set the mode value
+💡 **[note]** You can also set the mode value using the arguments, as shown below:
 
 ```python
-# Normal run
+# Activate the .venv
+source .venv/bin/activate
+
+# Option 1: Normal running
 [~/.venv/bin/python] main.py
 
-# Changing the mode using argument and then run
+# Option 2: Changing the mode using argument and then run
 # [hint] Pick from ["offimg", "offvid", "usb", "ids", "rs"]
 [~/.venv/bin/python] main.py --mode rs
 ```
