@@ -1,4 +1,4 @@
-# CSR Detector Standalone (with GUI)
+# iMarker Detector Standalone (with GUI)
 
 ![Demo](docs/demo.png "Demo")
 
