@@ -121,7 +121,7 @@ def runner_ids(config):
 
             # Record the frame(s)
             if event == 'Record':
-                frameMarkers = cv.cvtColor(frameMarkers, cv.COLOR_GRAY2BGR)
+                # frameMarkers = cv.cvtColor(frameMarkers, cv.COLOR_GRAY2BGR)
                 imageList = [frame1Raw, frame2Raw, frameMarkers]
                 concatedImage = imageConcatHorizontal(imageList, 1800)
                 frameSave(concatedImage, cfgMode['runner'])

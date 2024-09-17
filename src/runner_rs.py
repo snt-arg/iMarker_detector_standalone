@@ -122,7 +122,7 @@ def runner_rs(config):
 
             # Record the frame(s)
             if event == 'Record':
-                frameMarkers = cv.cvtColor(frameMarkers, cv.COLOR_GRAY2BGR)
+                # frameMarkers = cv.cvtColor(frameMarkers, cv.COLOR_GRAY2BGR)
                 imageList = [prevFrame, currFrame, frameMarkers] if (
                     cfgMode['sequentialSubtraction']) else [currFrame, frameMarkers]
                 concatedImage = imageConcatHorizontal(imageList, 1800)
