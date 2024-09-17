@@ -104,7 +104,7 @@ def runner_usb(config):
 
             # Record the frame(s)
             if event == 'Record':
-                frameMarkers = cv.cvtColor(frameMarkers, cv.COLOR_GRAY2BGR)
+                # frameMarkers = cv.cvtColor(frameMarkers, cv.COLOR_GRAY2BGR)
                 imageList = [frameLRaw, frameRRaw, frameMarkers]
                 concatedImage = imageConcatHorizontal(imageList, 1800)
                 frameSave(concatedImage, cfgMode['runner'])
