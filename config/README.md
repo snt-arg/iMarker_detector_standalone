@@ -4,7 +4,7 @@ You can find below various configurations of the framework, which can be modifie
 
 | Main Category | Sub-Category  | Options                 | Description                                                 |
 | ------------- | ------------- | ----------------------- | ----------------------------------------------------------- |
-| `mode`        | -             | `runner`                | ["offimg", "offvid", "usb", "ids", "rs"]                    |
+| `mode`        | -             | `runner`                | ["offimg", "offvid", "offimguv", "usb", "ids", "rs"]        |
 | `mode`        | -             | `sequentialSubtraction` | use sequential frame subtraction ("rs", "offimg", "offvid") |
 | `gui`         | -             | `windowWidth`           | the width of the window in pixels                           |
 | `gui`         | -             | `labelSize`             | the size of the label (e.g., [30, 1])                       |

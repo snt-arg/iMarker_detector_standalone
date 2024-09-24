@@ -25,7 +25,7 @@ def runner_offImg(config):
     image2Path = os.path.join(
         cfgOffline['image']['folder'], cfgOffline['image']['names'][1])
     if not os.path.exists(image1Path) or not os.path.exists(image2Path):
-        print("At leaset one image does not exist!")
+        print("At leaset one image does not exist! Exiting ...")
         return
 
     # Variables

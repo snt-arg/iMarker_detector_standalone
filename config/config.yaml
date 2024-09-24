@@ -1,6 +1,6 @@
 configs:
   mode:
-    runner: "offimg" # ["offimg", "offvid", "usb", "ids", "rs"]
+    runner: "offimg" # ["offimg", "offimguv", "offvid", "usb", "ids", "rs"]
     sequentialSubtraction: false # Only for single vision sensor ("rs", "offimg", "offvid")
   gui:
     windowWidth: 1800
@@ -19,7 +19,9 @@ configs:
     offline:
       image:
         folder: "/home/ali/Pictures/img/"
-        names: ["Halide_RH_5m.jpg", "Halide_LH_5m.jpg"]
+        names: ["Halide_RH_0.5m.jpg", "Halide_LH_0.5m.jpg"]
+      imageUV:
+        path: "/home/ali/Pictures/img/uv.png"
       video:
         rotate: false
         path: "/home/ali/Videos/vid2.MOV"

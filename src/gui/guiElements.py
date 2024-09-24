@@ -50,6 +50,7 @@ def guiElements(cfg: dict, singleCamera: bool = False):
     isRealSense = True if cfgMode['runner'] == 'rs' else False
     isOffImg = True if cfgMode['runner'] == 'offimg' else False
     isOffVid = True if cfgMode['runner'] == 'offvid' else False
+    isOffImgUV = True if cfgMode['runner'] == 'offimguv' else False
     isSequential = True if cfgMode['sequentialSubtraction'] else False
 
     # Preparing the title

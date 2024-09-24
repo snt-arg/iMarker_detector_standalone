@@ -5,6 +5,7 @@ from src.runner_ids import runner_ids
 from src.runner_usb import runner_usb
 from src.runner_offVid import runner_offVid
 from src.runner_offImg import runner_offImg
+from src.runner_offImg_uv import runner_offImgUV
 
 
 def readConfig(config):
@@ -18,7 +19,7 @@ def readConfig(config):
 
 def argParser(mode: str):
     # Variables
-    validModes = ["offimg", "offvid", "usb", "ids", "rs"]
+    validModes = ["offimg", "offvid", "offimguv", "usb", "ids", "rs"]
     # Create an argument parser
     parser = argparse.ArgumentParser()
     # Add arguments to override config values
@@ -58,6 +59,8 @@ def main():
         runner_offVid(config['configs'])
     elif mode == 'offimg':
         runner_offImg(config['configs'])
+    elif mode == 'offimguv':
+        runner_offImgUV(config['configs'])
     else:
         print(f'The selected mode "{mode}" is not valid. Exiting ...')
 
