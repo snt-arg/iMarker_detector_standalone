@@ -1,8 +1,8 @@
 import os
 import cv2 as cv
 import numpy as np
-from .gui.utils import frameSave
 from .csr_sensors.sensors import sensorIDS
+from .gui.utils import frameSave, resizeFrame
 from .csr_detector.process import processStereoFrames
 from .gui.guiElements import checkTerminateGUI, getGUI
 from .csr_sensors.sensors.config.idsPresets import homographyMat
@@ -12,6 +12,7 @@ from .marker_detector.arucoMarkerDetector import arucoMarkerDetector
 
 def runner_ids(config):
     # Get the config values
+    cfgGui = config['gui']
     cfgMode = config['mode']
     cfgMarker = config['marker']
     cfgIDSCam = config['sensor']['ids']
@@ -68,6 +69,10 @@ def runner_ids(config):
                 frame1Raw, alpha=values['camAlpha'], beta=values['camBeta'])
             frame2Raw = cv.convertScaleAbs(
                 frame2Raw, alpha=values['camAlpha'], beta=values['camBeta'])
+
+            # Resize frames if necessary
+            frame1Raw = resizeFrame(frame1Raw, cfgGui['maxImageHolderSize'])
+            frame2Raw = resizeFrame(frame2Raw, cfgGui['maxImageHolderSize'])
 
             # Flip the right frame
             frame2Raw = cv.flip(frame2Raw, 1)

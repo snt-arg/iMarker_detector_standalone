@@ -54,6 +54,9 @@ def runner_offVid(config):
             if not ret:
                 break
 
+            # Resize frames if necessary
+            currFrame = resizeFrame(currFrame, cfgGui['maxImageHolderSize'])
+
             # Change brightness
             currFrame = cv.convertScaleAbs(
                 currFrame, alpha=values['camAlpha'], beta=values['camBeta'])
