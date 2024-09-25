@@ -50,13 +50,14 @@ def guiElements(cfg: dict, singleCamera: bool = False):
     isRealSense = True if cfgMode['runner'] == 'rs' else False
     isOffImg = True if cfgMode['runner'] == 'offimg' else False
     isOffVid = True if cfgMode['runner'] == 'offvid' else False
-    isOffImgUV = True if cfgMode['runner'] == 'offimguv' else False
     isSequential = True if cfgMode['sequentialSubtraction'] else False
+    isUV = True if cfgMode['runner'] == 'offimguv' or cfgMode['runner'] == 'usbuv' else False
 
     # Preparing the title
     setupVariant = "Sequential Subtraction" if isSequential else "Masking"
     windowTitle = f"iMarker Readout - {'Single' if singleCamera else 'Double'} Vision Setup"
     windowTitle += f" [{setupVariant}]" if isOffImg or isOffVid or isRealSense else ""
+    windowTitle += f" [UV Camera Mode]" if isUV else ""
 
     # Preparing sensor-related GUI elements
     enableMask = [sg.Text('Enable circular mask:', size=cfgGui['labelSize']),
@@ -66,23 +67,25 @@ def guiElements(cfg: dict, singleCamera: bool = False):
     boostFrameRate = [sg.Text('Boosting frame-rate?', size=cfgGui['labelSize']),
                       sg.Text(
         f'{"Enabled" if cfgSensor["fpsBoost"] else "Disabled"}')] if isUsbCam else []
+    subtractOrder = [] if isUV else [sg.Text('Subtraction order:', size=cfgGui['labelSize']),
+                                     sg.Checkbox(
+        '(uncheck to reverse)', default=cfgProc['subtractRL'], key="SubtractionOrder")]
+    colorRange = [] if isUV else [sg.Text('Color-range filter:', size=cfgGui['labelSize']),
+                                  sg.Radio("Red", "Channels", key='RChannel',
+                                           default=isRChannel),
+                                  sg.Radio("Green", "Channels",
+                                           key='GChannel', default=isGChannel),
+                                  sg.Radio("Blue", "Channels",
+                                           key='BChannel', default=isBChannel),
+                                  sg.Radio("All", "Channels",
+                                           key='AChannels', default=isAllChannels)]
 
     # Adding GUI elements
     tabGeneral = [boostFrameRate,
-                  [sg.Text('Subtraction order:', size=cfgGui['labelSize']),
-                   sg.Checkbox(
-                       '(uncheck to reverse)', default=cfgProc['subtractRL'], key="SubtractionOrder")],
+                  subtractOrder,
                   [sg.Text('Invert binary image:', size=cfgGui['labelSize']),
                    sg.Checkbox('(check to invert)', default=cfgPostproc['invertBinary'], key="invertBinaryImage")],
-                  [sg.Text('Color-range filter:', size=cfgGui['labelSize']),
-                   sg.Radio("Red", "Channels", key='RChannel',
-                            default=isRChannel),
-                   sg.Radio("Green", "Channels",
-                            key='GChannel', default=isGChannel),
-                   sg.Radio("Blue", "Channels",
-                            key='BChannel', default=isBChannel),
-                   sg.Radio("All", "Channels",
-                            key='AChannels', default=isAllChannels)],
+                  colorRange,
                   [sg.Text("Brightness & contrast:", size=cfgGui['labelSize']),
                    sg.Slider((1.0, 15.0), cfgSensor['brightness']['alpha'], .1, orientation="h", size=(
                        50, 15), key="camAlpha"),

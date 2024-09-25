@@ -1,6 +1,6 @@
 configs:
   mode:
-    runner: "offimg" # ["offimg", "offimguv", "offvid", "usb", "ids", "rs"]
+    runner: "offimg" # ["offimg", "offimguv", "offvid", "usb", "usbuv", "ids", "rs"]
     sequentialSubtraction: false # Only for single vision sensor ("rs", "offimg", "offvid")
   gui:
     windowWidth: 1800
@@ -32,6 +32,8 @@ configs:
       ports:
         lCam: "/dev/video4"
         rCam: "/dev/video6"
+    usbCamUV:
+      port: "/dev/video4"
     ids:
       exposureTime: 20000
       roi:
