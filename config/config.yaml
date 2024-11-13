@@ -32,6 +32,7 @@ configs:
       ports:
         lCam: "/dev/video4"
         rCam: "/dev/video6"
+      calibrationPath: "/home/ali/Codes/csr_detector_standalone/src/csr_sensors/sensors/calibration/output/elpStereoMap.xml"
     usbCamUV:
       port: "/dev/video4"
     ids:

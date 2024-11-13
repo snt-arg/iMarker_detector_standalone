@@ -6,6 +6,7 @@ from .csr_detector.process import processStereoFrames
 from .gui.guiElements import checkTerminateGUI, getGUI
 from .csr_detector.vision.concatImages import imageConcatHorizontal
 from .marker_detector.arucoMarkerDetector import arucoMarkerDetector
+from .csr_sensors.sensors.calibration.utils import getCalibrationParams
 
 
 def runner_usb(config):
@@ -14,6 +15,11 @@ def runner_usb(config):
     cfgMarker = config['marker']
     cfgUsbCam = config['sensor']['usbCam']
     cfgGeneral = config['sensor']['general']
+
+    # Get the calibration parameters
+    calibrationFilePath = cfgUsbCam['calibrationPath']
+    stereoMapL_x, stereoMapL_y, stereoMapR_x, stereoMapR_y = getCalibrationParams(
+        calibrationFilePath)
 
     print(f'Framework started! [Double Vision USB Cameras Setup]')
 
@@ -49,6 +55,12 @@ def runner_usb(config):
             # Flip the right frame
             if (cfgUsbCam['flipImage']):
                 frameRRaw = cv.flip(frameRRaw, 1)
+
+            # Remap the frames
+            # frameLRaw = cv.remap(
+            #     frameLRaw, stereoMapL_x, stereoMapL_y, cv.INTER_LANCZOS4, cv.BORDER_CONSTANT, 0)
+            # frameRRaw = cv.remap(
+            #     frameRRaw, stereoMapR_x, stereoMapR_y, cv.INTER_LANCZOS4, cv.BORDER_CONSTANT, 0)
 
             # Change brightness
             frameLRaw = cv.convertScaleAbs(
