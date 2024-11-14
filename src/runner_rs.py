@@ -56,7 +56,7 @@ def runner_rs(config):
                 break
 
             # Get the color frame
-            currFrame, camParams = rs.getColorFrame(frames)
+            currFrame, cameraMatrix, distCoeffs = rs.getColorFrame(frames)
 
             # Change brightness
             currFrame = cv.convertScaleAbs(
@@ -115,7 +115,8 @@ def runner_rs(config):
 
             # ArUco marker detection
             frameMarkers = arucoMarkerDetector(
-                frameMask, cfgMarker['detection']['dictionary'])
+                frameMask, cameraMatrix, distCoeffs, cfgMarker['detection']['dictionary'],
+                cfgMarker['structure']['size'])
             frameMarkersVis = cv.imencode(
                 ".png", frameMarkers)[1].tobytes()
             window['FramesMarker'].update(data=frameMarkersVis)

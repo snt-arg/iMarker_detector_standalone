@@ -26,15 +26,18 @@ def getArucoDict(dictName: str):
         "DICT_APRILTAG_36h10": cv.aruco.DICT_APRILTAG_36h10,
         "DICT_APRILTAG_36h11": cv.aruco.DICT_APRILTAG_36h11,
     }
+
     # Get the corresponding dictionary constant
     dictConstant = arucoDicts.get(dictName, None)
     if dictConstant is None:
         raise ValueError(f"Aruco dictionary '{dictName}' is not recognized.")
+
     # Return the dictionary object
     return cv.aruco.getPredefinedDictionary(dictConstant)
 
 
-def arucoMarkerDetector(frame, arucoDict: str):
+def arucoMarkerDetector(frame, cameraMatrix, distCoeffs, arucoDict: str,
+                        markerSize: float):
     """
     Detects the markers in the frame and returns the frame with the detected markers.
 
@@ -42,23 +45,41 @@ def arucoMarkerDetector(frame, arucoDict: str):
     ----------
     frame: numpy.ndarray
         Frame to detect the markers in.
+    cameraMatrix: numpy.ndarray
+        Camera matrix of the camera.
+    distCoeffs: numpy.ndarray
+        Distortion coefficients of the camera.
     arucoDict: str
         Aruco dictionary to use for marker detection.
-    arucoParams: cv.aruco_DetectorParameters
-        Aruco parameters to use for marker detection.
+    markerSize: float
+        Size of the markers to detect in meters.        
 
     Returns
     -------
-    numpy.ndarray
+    frame: numpy.ndarray
         Frame with detected markers.
     """
     # Variables
     dictionary = getArucoDict(arucoDict)
     parameters = cv.aruco.DetectorParameters()
+    rotationVecs, translationVecs = None, None
+
     # Detect the markers
     corners, ids, _ = cv.aruco.detectMarkers(
         frame, dictionary, parameters=parameters)
-    # Draw the detected markers
+
+    # If markers are detected
     if ids is not None:
+        # Draw the detected markers
         cv.aruco.drawDetectedMarkers(frame, corners, ids)
+
+        # Estimate the pose of the markers
+        rotationVecs, translationVecs, _ = cv.aruco.estimatePoseSingleMarkers(
+            corners, markerSize, cameraMatrix, distCoeffs)
+
+        # Draw the axes
+        for id in range(len(ids)):
+            cv.drawFrameAxes(frame, cameraMatrix, distCoeffs,
+                             rotationVecs[id], translationVecs[id], length=0.1)
+    # Return
     return frame
