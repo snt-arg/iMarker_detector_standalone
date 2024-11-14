@@ -1,4 +1,5 @@
 import cv2 as cv
+import numpy as np
 
 
 def getArucoDict(dictName: str):
@@ -77,9 +78,20 @@ def arucoMarkerDetector(frame, cameraMatrix, distCoeffs, arucoDict: str,
         rotationVecs, translationVecs, _ = cv.aruco.estimatePoseSingleMarkers(
             corners, markerSize, cameraMatrix, distCoeffs)
 
-        # Draw the axes
+        # Draw the axes and overlay text for each marker
         for id in range(len(ids)):
+            # Draw the axes
             cv.drawFrameAxes(frame, cameraMatrix, distCoeffs,
                              rotationVecs[id], translationVecs[id], length=0.1)
+            # Calculate the distance (magnitude of the translation vector)
+            distance = np.linalg.norm(translationVecs[id])
+            # Prepare the text to display
+            text = f"[Marker-id {ids[id][0]}, size: {markerSize*100}x{markerSize*100}cm, distance: {distance*100:.1f}cm]"
+            # Set text position (near the top-left of the marker)
+            textPosition = (5, frame.shape[0] - 10)
+            # Add the text on the frame
+            cv.putText(frame, text, textPosition, cv.FONT_HERSHEY_SIMPLEX,
+                       0.3, (255, 150, 0), 1, cv.LINE_AA)
+
     # Return
     return frame
