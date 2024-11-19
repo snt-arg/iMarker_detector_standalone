@@ -107,7 +107,8 @@ def runner_offImg(config):
 
             # ArUco marker detection
             frameMarkers = arucoMarkerDetector(
-                frameMask, cfgMarker['detection']['dictionary'])
+                frameMask, None, None, cfgMarker['detection']['dictionary'],
+                cfgMarker['structure']['size'])
             frameMarkersVis = cv.imencode(
                 ".png", frameMarkers)[1].tobytes()
             window['FramesMarker'].update(data=frameMarkersVis)
