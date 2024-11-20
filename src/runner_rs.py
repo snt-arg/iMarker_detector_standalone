@@ -2,9 +2,9 @@ import cv2 as cv
 import numpy as np
 from .gui.utils import frameSave
 from .csr_sensors.sensors import sensorRealSense
-from .gui.guiElements import checkTerminateGUI, getGUI
 from .csr_detector.vision.concatImages import imageConcatHorizontal
 from .marker_detector.arucoMarkerDetector import arucoMarkerDetector
+from .gui.guiElements import checkTerminateGUI, getGUI, updateColorPreview
 from .csr_detector.process import processSequentialFrames, processSingleFrame
 
 
@@ -72,12 +72,24 @@ def runner_rs(config):
             config['algorithm']['postprocess']['gaussianKernelSize'] = values['Gaussian']
             config['algorithm']['postprocess']['threshold']['size'] = values['Threshold']
             config['algorithm']['postprocess']['invertBinary'] = values['invertBinaryImage']
+            config['algorithm']['process']['colorRange']['hsv_green']['lower'][0] = int(
+                values['GreenRangeHueLow'])
+            config['algorithm']['process']['colorRange']['hsv_green']['lower'][1] = int(
+                values['GreenRangeSatLow'])
+            config['algorithm']['process']['colorRange']['hsv_green']['upper'][0] = int(
+                values['GreenRangeHueHigh'])
+            config['algorithm']['process']['colorRange']['hsv_green']['upper'][1] = int(
+                values['GreenRangeSatHigh'])
             # Thresholding value
             thresholdMethod = 'otsu' if values['ThreshOts'] else 'both' if values['ThreshBoth'] else 'binary'
             config['algorithm']['postprocess']['threshold']['method'] = thresholdMethod
             # Channel selection
             channel = 'r' if values['RChannel'] else 'g' if values['GChannel'] else 'b' if values['BChannel'] else 'all'
             config['algorithm']['process']['channel'] = channel
+
+            # Update the color preview
+            updateColorPreview(
+                window, config['algorithm']['process']['colorRange'])
 
             if (cfgMode['sequentialSubtraction']):
                 # Process the frames

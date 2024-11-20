@@ -109,8 +109,6 @@ def guiElements(cfg: dict, singleCamera: bool = False):
          sg.Slider(
             (0, 1), cfgAlignment['matchRate'], .1, orientation="h", size=cfgGui['sliderSize'], key="MatchRate")]]
 
-    imageViewPrevGreenRangeH = [
-        [sg.Image(filename="", key="PreviewGreenRangeH")]]
     tabColorPicker = [
         # Green: Hue <35 - 77>
         [sg.Text('Green Low (Hue/Sat):', size=[20, 1]),
@@ -260,10 +258,10 @@ def updateColorPreview(window: sg.Window, config):
 
     # Update the GUI
     window['PreviewGreenRangeL'].update(
-        background_color=hsvToRgbHex(greenRange['lower'][0],
+        background_color=hsvToRgbHex(greenRange['lower'][0] * 360 / 180,
                                      greenRange['lower'][1],
                                      greenRange['lower'][2]))
     window['PreviewGreenRangeH'].update(
-        background_color=hsvToRgbHex(greenRange['upper'][0],
+        background_color=hsvToRgbHex(greenRange['upper'][0] * 360 / 180,
                                      greenRange['upper'][1],
                                      greenRange['upper'][2]))
