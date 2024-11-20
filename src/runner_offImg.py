@@ -2,9 +2,9 @@ import os
 import cv2 as cv
 import numpy as np
 from .gui.utils import resizeFrame, frameSave
-from .gui.guiElements import checkTerminateGUI, getGUI
 from .csr_detector.vision.concatImages import imageConcatHorizontal
 from .marker_detector.arucoMarkerDetector import arucoMarkerDetector
+from .gui.guiElements import checkTerminateGUI, getGUI, updateColorPreview
 from .csr_detector.process import processSequentialFrames, processSingleFrame
 
 
@@ -62,6 +62,8 @@ def runner_offImg(config):
             frame2Raw = cv.convertScaleAbs(
                 frame2Raw, alpha=values['camAlpha'], beta=values['camBeta'])
 
+            print(config['algorithm']['process']['colorRange'])
+
             # Check variable changes from the GUI
             config['algorithm']['process']['subtractRL'] = values['SubtractionOrder']
             config['algorithm']['postprocess']['erosionKernelSize'] = values['Erosion']
@@ -82,6 +84,10 @@ def runner_offImg(config):
             # Channel selection
             channel = 'r' if values['RChannel'] else 'g' if values['GChannel'] else 'b' if values['BChannel'] else 'all'
             config['algorithm']['process']['channel'] = channel
+
+            # Update the color preview
+            updateColorPreview(
+                window, config['algorithm']['process']['colorRange'])
 
             if (cfgMode['sequentialSubtraction']):
                 # Process the frames

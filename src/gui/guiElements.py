@@ -109,6 +109,8 @@ def guiElements(cfg: dict, singleCamera: bool = False):
          sg.Slider(
             (0, 1), cfgAlignment['matchRate'], .1, orientation="h", size=cfgGui['sliderSize'], key="MatchRate")]]
 
+    imageViewPrevGreenRangeH = [
+        [sg.Image(filename="", key="PreviewGreenRangeH")]]
     tabColorPicker = [
         # Green: Hue <35 - 77>
         [sg.Text('Green Low (Hue/Sat):', size=[20, 1]),
@@ -124,7 +126,8 @@ def guiElements(cfg: dict, singleCamera: bool = False):
          sg.Slider((10, 255), greenUSat, 1, orientation="h",
                    size=(50, 15), key="GreenRangeSatHigh"),
          sg.Text('', size=(2, 1), background_color=hsvToRgbHex(greenUHue, greenUSat, greenRange['upper'][2]),
-                 key='PreviewGreenRangeH')]
+                 key='PreviewGreenRangeH')
+         ]
     ]
 
     tabPosProcessing = [
@@ -225,8 +228,8 @@ def checkTerminateGUI(event):
 
     Parameters
     -------
-    window: Window
-        The window containing all the GUI
+    event: str
+        The event to trigger the termination
 
     Returns
     -------
@@ -239,3 +242,28 @@ def checkTerminateGUI(event):
         stopGUI = True
     # Return to the called
     return stopGUI
+
+
+def updateColorPreview(window: sg.Window, config):
+    """
+    Updates the color preview based on the HSV values
+
+    Parameters
+    -------
+    window: Window
+        The window containing all the GUI
+    config: dict
+        The dictionary containing various parameters
+    """
+    # Variables
+    greenRange = config['hsv_green']
+
+    # Update the GUI
+    window['PreviewGreenRangeL'].update(
+        background_color=hsvToRgbHex(greenRange['lower'][0],
+                                     greenRange['lower'][1],
+                                     greenRange['lower'][2]))
+    window['PreviewGreenRangeH'].update(
+        background_color=hsvToRgbHex(greenRange['upper'][0],
+                                     greenRange['upper'][1],
+                                     greenRange['upper'][2]))
