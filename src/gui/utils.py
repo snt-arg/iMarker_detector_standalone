@@ -8,9 +8,9 @@ def resizeFrame(frame, widthThreshold=1000):
 
     Parameters
     ----------
-    frame : numpy.ndarray
+    frame: numpy.ndarray
         Frame to resize.
-    widthThreshold : int, optional (default=1000)
+    widthThreshold: int, optional (default=1000)
         Width threshold to resize the frame.
 
     Returns
@@ -41,9 +41,9 @@ def fileNameGenerator(prefix: str, extension: str = 'png'):
 
     Parameters
     ----------
-    prefix : str
+    prefix: str
         Prefix for the file name.
-    extension : str
+    extension: str
         Extension for the file name.
 
     Returns
@@ -61,11 +61,11 @@ def frameSave(frame, prefix: str, extension: str = 'png'):
 
     Parameters
     ----------
-    frame : numpy.ndarray
+    frame: numpy.ndarray
         Frame to save.
-    prefix : str
+    prefix: str
         Prefix for the file name.
-    extension : str
+    extension: str
         Extension for the file name.
     """
     # Prepare a unique file name and path
@@ -74,3 +74,26 @@ def frameSave(frame, prefix: str, extension: str = 'png'):
     # Save the frame
     cv.imwrite(filePath, frame)
     print(f"- The current frame saved as {fileName}")
+
+
+def hsvToRgbHex(h, s, v):
+    """
+    Convert HSV color to RGB hex color.
+
+    Parameters
+    ----------
+    h: int
+        Hue value.
+    s: int
+        Saturation value.
+    v: int
+        Value value.
+
+    Returns
+    -------
+    hexColor: str
+        RGB hex color.
+    """
+    import colorsys
+    r, g, b = colorsys.hsv_to_rgb(h / 360, s / 255, v / 255)
+    return f'#{int(r * 255):02x}{int(g * 255):02x}{int(b * 255):02x}'

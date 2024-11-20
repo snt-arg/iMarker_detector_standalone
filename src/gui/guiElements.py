@@ -1,4 +1,5 @@
 import PySimpleGUI as sg
+from src.gui.utils import hsvToRgbHex
 
 
 def guiElements(cfg: dict, singleCamera: bool = False):
@@ -31,9 +32,17 @@ def guiElements(cfg: dict, singleCamera: bool = False):
     # Get further parameters
     cfgProc = cfgAlgortihm['process']
     cfgAlignment = cfgProc['alignment']
+    cfgColorRange = cfgProc['colorRange']
     cfgPostproc = cfgAlgortihm['postprocess']
     thresholdSize = cfgPostproc['threshold']['size']
     thresholdMethod = cfgPostproc['threshold']['method']
+
+    # Separate color range
+    greenRange = cfgColorRange['hsv_green']
+    greenLHue = greenRange['lower'][0]
+    greenUHue = greenRange['upper'][0]
+    greenLSat = greenRange['lower'][1]
+    greenUSat = greenRange['upper'][1]
 
     # Preparation of the GUI elements
     isRChannel = True if (cfgProc['channel'] == 'r') else False
@@ -100,6 +109,24 @@ def guiElements(cfg: dict, singleCamera: bool = False):
          sg.Slider(
             (0, 1), cfgAlignment['matchRate'], .1, orientation="h", size=cfgGui['sliderSize'], key="MatchRate")]]
 
+    tabColorPicker = [
+        # Green: Hue <35 - 77>
+        [sg.Text('Green Low (Hue/Sat):', size=[20, 1]),
+         sg.Slider((35, 60), greenLHue, 1, orientation="h",
+                   size=(50, 15), key="GreenRangeHueLow"),
+         sg.Slider((10, 255), greenLSat, 1, orientation="h",
+                   size=(50, 15), key="GreenRangeSatLow"),
+         sg.Text('', size=(2, 1), background_color=hsvToRgbHex(greenLHue, greenLSat, greenRange['lower'][2]),
+                 key='PreviewGreenRangeL')],
+        [sg.Text('Green Up (Hue/Sat):', size=[20, 1]),
+         sg.Slider((61, 80), greenUHue, 1, orientation="h",
+                   size=(50, 15), key="GreenRangeHueHigh"),
+         sg.Slider((10, 255), greenUSat, 1, orientation="h",
+                   size=(50, 15), key="GreenRangeSatHigh"),
+         sg.Text('', size=(2, 1), background_color=hsvToRgbHex(greenUHue, greenUSat, greenRange['upper'][2]),
+                 key='PreviewGreenRangeH')]
+    ]
+
     tabPosProcessing = [
         [sg.Text('Thresholding method:', size=cfgGui['labelSize']),
          sg.Radio("Binary thresholding", "ThreshMeth",
@@ -115,7 +142,7 @@ def guiElements(cfg: dict, singleCamera: bool = False):
          sg.Slider((1, 49), cfgPostproc['gaussianKernelSize'], 2, orientation="h", size=cfgGui['sliderSize'], key="Gaussian")]]
 
     # Define tab group values based on camera setup
-    groups = [[sg.Tab('General Settings', tabGeneral),
+    groups = [[sg.Tab('General Settings', tabGeneral), sg.Tab('Color Range Picker', tabColorPicker, visible=not isUV),
                sg.Tab('Post-Processing', tabPosProcessing)]] if singleCamera else [[sg.Tab('General Settings', tabGeneral), sg.Tab('Alignment Configurations', tabAlignment),
                                                                                     sg.Tab('Post-Processing', tabPosProcessing)]]
     tabGroup = [[sg.Image(filename="./src/logo.png",  key="LogoHolder"),

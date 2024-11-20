@@ -68,6 +68,14 @@ def runner_offImg(config):
             config['algorithm']['postprocess']['gaussianKernelSize'] = values['Gaussian']
             config['algorithm']['postprocess']['threshold']['size'] = values['Threshold']
             config['algorithm']['postprocess']['invertBinary'] = values['invertBinaryImage']
+            config['algorithm']['process']['colorRange']['hsv_green']['lower'][0] = int(
+                values['GreenRangeHueLow'])
+            config['algorithm']['process']['colorRange']['hsv_green']['lower'][1] = int(
+                values['GreenRangeSatLow'])
+            config['algorithm']['process']['colorRange']['hsv_green']['upper'][0] = int(
+                values['GreenRangeHueHigh'])
+            config['algorithm']['process']['colorRange']['hsv_green']['upper'][1] = int(
+                values['GreenRangeSatHigh'])
             # Thresholding value
             thresholdMethod = 'otsu' if values['ThreshOts'] else 'both' if values['ThreshBoth'] else 'binary'
             config['algorithm']['postprocess']['threshold']['method'] = thresholdMethod

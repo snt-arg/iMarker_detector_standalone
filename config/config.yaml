@@ -59,8 +59,12 @@ configs:
         matchRate: 0.4
         usePreset: true
         maxFeatures: 500
-      channel: "g" # ["b", "g", "r", "all"]
       subtractRL: true
+      channel: "g" # ["b", "g", "r", "all"]
+      colorRange:
+        hsv_green:
+          lower: [35, 50, 50]
+          upper: [90, 255, 255]
     postprocess:
       threshold:
         size: 50
