@@ -62,8 +62,6 @@ def runner_offImg(config):
             frame2Raw = cv.convertScaleAbs(
                 frame2Raw, alpha=values['camAlpha'], beta=values['camBeta'])
 
-            print(config['algorithm']['process']['colorRange'])
-
             # Check variable changes from the GUI
             config['algorithm']['process']['subtractRL'] = values['SubtractionOrder']
             config['algorithm']['postprocess']['erosionKernelSize'] = values['Erosion']

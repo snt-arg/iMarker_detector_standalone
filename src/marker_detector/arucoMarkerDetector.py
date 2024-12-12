@@ -74,6 +74,10 @@ def arucoMarkerDetector(frame, cameraMatrix, distCoeffs, arucoDict: str,
         # Draw the detected markers
         cv.aruco.drawDetectedMarkers(frame, corners, ids)
 
+        # If camera matrix and distortion coefficients are not provided, just draw the markers
+        if cameraMatrix is None or distCoeffs is None:
+            return frame
+
         # Estimate the pose of the markers
         rotationVecs, translationVecs, _ = cv.aruco.estimatePoseSingleMarkers(
             corners, markerSize, cameraMatrix, distCoeffs)

@@ -74,6 +74,6 @@ configs:
       gaussianKernelSize: 1
   marker:
     structure:
-      size: 0.1
+      size: 0.07
     detection:
       dictionary: "DICT_ARUCO_ORIGINAL"
