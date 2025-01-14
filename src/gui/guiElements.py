@@ -50,7 +50,7 @@ def guiElements(cfg: dict, singleCamera: bool = False):
     isBChannel = True if (cfgProc['channel'] == 'b') else False
     isAllChannels = True if (cfgProc['channel'] == 'all') else False
     isThreshOts = True if (thresholdMethod == 'otsu') else False
-    isThreshBoth = True if (thresholdMethod == 'both') else False
+    isThreshAdapt = True if (thresholdMethod == 'adaptive') else False
     isThreshBin = True if (thresholdMethod == 'binary') else False
 
     # Define various modes
@@ -130,13 +130,14 @@ def guiElements(cfg: dict, singleCamera: bool = False):
 
     tabPosProcessing = [
         [sg.Text('Thresholding method:', size=cfgGui['labelSize']),
-         sg.Radio("Binary thresholding", "ThreshMeth",
+         sg.Radio("Adaptive", "ThreshMeth",
+                  key='ThreshAdapt', default=isThreshAdapt),
+         sg.Radio("Binary", "ThreshMeth",
                   key='ThreshBin', default=isThreshBin),
-         sg.Radio("Otsu algorithm", "ThreshMeth",
-                  key='ThreshOts', default=isThreshOts),
-         sg.Radio("Both", "ThreshMeth", key='ThreshBoth', default=isThreshBoth)],
+         sg.Radio("Otsu", "ThreshMeth",
+                  key='ThreshOts', default=isThreshOts)],
         [sg.Text('Thresholding value:', size=cfgGui['labelSize']),
-         sg.Slider((1, 255), thresholdSize, 1, orientation="h", size=cfgGui['sliderSize'], key="Threshold")],
+         sg.Slider((1, 255), thresholdSize, 2, orientation="h", size=cfgGui['sliderSize'], key="Threshold")],
         [sg.Text('Erosion kernel size (noise removal):', size=cfgGui['labelSize']),
          sg.Slider((1, 50), cfgPostproc['erosionKernelSize'], 1, orientation="h", size=cfgGui['sliderSize'], key="Erosion")],
         [sg.Text('Gaussian kernel size (smoothing):', size=cfgGui['labelSize']),

@@ -65,6 +65,10 @@ def arucoMarkerDetector(frame, cameraMatrix, distCoeffs, arucoDict: str,
     parameters = cv.aruco.DetectorParameters()
     rotationVecs, translationVecs = None, None
 
+    # Avoid detecting small noise as markers
+    parameters.minMarkerPerimeterRate = 0.1
+    parameters.minCornerDistanceRate = 0.1
+
     # Detect the markers
     corners, ids, _ = cv.aruco.detectMarkers(
         frame, dictionary, parameters=parameters)

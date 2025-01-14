@@ -53,7 +53,7 @@ def runner_usbUV(config):
             config['algorithm']['postprocess']['threshold']['size'] = values['Threshold']
             config['algorithm']['postprocess']['invertBinary'] = values['invertBinaryImage']
             # Thresholding value
-            thresholdMethod = 'otsu' if values['ThreshOts'] else 'both' if values['ThreshBoth'] else 'binary'
+            thresholdMethod = 'otsu' if values['ThreshOts'] else 'adaptive' if values['ThreshAdapt'] else 'binary'
             config['algorithm']['postprocess']['threshold']['method'] = thresholdMethod
 
             # Prepare a notFound image

@@ -51,8 +51,8 @@ configs:
     realSense:
       fps: 30
       resolution:
-        width: 640
-        height: 480
+        width: 640 # 1280
+        height: 480 # 720
   algorithm:
     process:
       alignment:
@@ -67,8 +67,8 @@ configs:
           upper: [90, 255, 255]
     postprocess:
       threshold:
-        size: 50
-        method: "binary" # ["binary", "otsu", "both"]
+        size: 55
+        method: "binary" # ["binary", "otsu", "adaptive"]
       invertBinary: true
       erosionKernelSize: 1
       gaussianKernelSize: 1

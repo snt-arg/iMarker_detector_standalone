@@ -84,7 +84,7 @@ def runner_offVid(config):
             config['algorithm']['process']['colorRange']['hsv_green']['upper'][1] = int(
                 values['GreenRangeSatHigh'])
             # Thresholding value
-            thresholdMethod = 'otsu' if values['ThreshOts'] else 'both' if values['ThreshBoth'] else 'binary'
+            thresholdMethod = 'otsu' if values['ThreshOts'] else 'adaptive' if values['ThreshAdapt'] else 'binary'
             config['algorithm']['postprocess']['threshold']['method'] = thresholdMethod
             # Channel selection
             channel = 'r' if values['RChannel'] else 'g' if values['GChannel'] else 'b' if values['BChannel'] else 'all'
