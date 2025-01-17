@@ -2,6 +2,7 @@ import os
 import cv2 as cv
 import numpy as np
 from .gui.utils import resizeFrame, frameSave
+from .utils import startProfiler, stopProfiler
 from .csr_detector.vision.concatImages import imageConcatHorizontal
 from .marker_detector.arucoMarkerDetector import arucoMarkerDetector
 from .gui.guiElements import checkTerminateGUI, getGUI, updateColorPreview
@@ -44,6 +45,9 @@ def runner_offImg(config):
         frame1RawFetched, cfgGui['maxImageHolderSize'])
     frame2RawFetched = resizeFrame(
         frame2RawFetched, cfgGui['maxImageHolderSize'])
+
+    # Start the profiler
+    # profiler = startProfiler()
 
     try:
         while True:
@@ -138,3 +142,4 @@ def runner_offImg(config):
         cv.destroyAllWindows()
         print(
             f'Framework stopped! [Offline Images Captured by Single Vision Setup - {setupVariant}]')
+        # stopProfiler(profiler)
