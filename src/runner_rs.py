@@ -1,6 +1,6 @@
 import cv2 as cv
 import numpy as np
-from .gui.utils import frameSave
+from .gui.utils import frameSave, resizeFrame
 from .csr_sensors.sensors import sensorRealSense
 from .csr_detector.vision.concatImages import imageConcatHorizontal
 from .marker_detector.arucoMarkerDetector import arucoMarkerDetector
@@ -57,6 +57,9 @@ def runner_rs(config):
 
             # Get the color frame
             currFrame, cameraMatrix, distCoeffs = rs.getColorFrame(frames)
+
+            # Resize frames if necessary
+            currFrame = resizeFrame(currFrame, 1000)
 
             # Change brightness
             currFrame = cv.convertScaleAbs(

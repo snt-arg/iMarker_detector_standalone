@@ -5,6 +5,7 @@ from .gui.utils import resizeFrame, frameSave
 from .utils import startProfiler, stopProfiler
 from .csr_detector.vision.concatImages import imageConcatHorizontal
 from .marker_detector.arucoMarkerDetector import arucoMarkerDetector
+from .csr_sensors.sensors.config.rsPresets import cameraMatrix, distCoeffs
 from .gui.guiElements import checkTerminateGUI, getGUI, updateColorPreview
 from .csr_detector.process import processSequentialFrames, processSingleFrame
 
@@ -121,9 +122,12 @@ def runner_offImg(config):
             window['FramesMask'].update(data=maskVis)
             window['FramesMaskApplied'].update(data=maskAppliedVis)
 
+            # Convert to RGB
+            frameMask = cv.cvtColor(frameMask, cv.COLOR_GRAY2BGR)
+
             # ArUco marker detection
             frameMarkers = arucoMarkerDetector(
-                frameMask, None, None, cfgMarker['detection']['dictionary'],
+                frameMask, cameraMatrix, distCoeffs, cfgMarker['detection']['dictionary'],
                 cfgMarker['structure']['size'])
             frameMarkersVis = cv.imencode(
                 ".png", frameMarkers)[1].tobytes()
@@ -131,7 +135,7 @@ def runner_offImg(config):
 
             # Record the frame(s)
             if event == 'Record':
-                frameMarkers = cv.cvtColor(frameMarkers, cv.COLOR_GRAY2BGR)
+                # frameMarkers = cv.cvtColor(frameMarkers, cv.COLOR_GRAY2BGR)
                 imageList = [frame1Raw, frame2Raw, frameMarkers] if (
                     cfgMode['sequentialSubtraction']) else [frame2Raw, frameMarkers]
                 concatedImage = imageConcatHorizontal(imageList, 1800)
