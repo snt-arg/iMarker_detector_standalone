@@ -5,9 +5,9 @@ from .gui.utils import resizeFrame, frameSave
 from .utils import startProfiler, stopProfiler
 from .csr_detector.vision.concatImages import imageConcatHorizontal
 from .marker_detector.arucoMarkerDetector import arucoMarkerDetector
-from .csr_sensors.sensors.config.rsPresets import cameraMatrix, distCoeffs
 from .gui.guiElements import checkTerminateGUI, getGUI, updateColorPreview
 from .csr_detector.process import processSequentialFrames, processSingleFrame
+from .csr_sensors.sensors.config.cameraPresets import cameraMatrix_RealSense, distCoeffs_RealSense
 
 
 def runner_offImg(config):
@@ -124,6 +124,10 @@ def runner_offImg(config):
 
             # Convert to RGB
             frameMask = cv.cvtColor(frameMask, cv.COLOR_GRAY2BGR)
+
+            # Camera parameters
+            distCoeffs = distCoeffs_RealSense
+            cameraMatrix = cameraMatrix_RealSense
 
             # ArUco marker detection
             frameMarkers = arucoMarkerDetector(

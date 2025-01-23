@@ -65,9 +65,12 @@ def arucoMarkerDetector(frame, cameraMatrix, distCoeffs, arucoDict: str,
     parameters = cv.aruco.DetectorParameters()
     rotationVecs, translationVecs = None, None
 
-    # Avoid detecting small noise as markers
+    # Minimum size of a marker in relation to image size (default: 0.03)
     parameters.minMarkerPerimeterRate = 0.1
-    parameters.minCornerDistanceRate = 0.1
+    # Minimum distance between corners (default: 0.05)
+    parameters.minCornerDistanceRate = 0.05
+    # Maximum error when detecting marker corners (default: 0.35)
+    parameters.maxErroneousBitsInBorderRate = 0.35
 
     # Detect the markers
     corners, ids, _ = cv.aruco.detectMarkers(
@@ -94,7 +97,7 @@ def arucoMarkerDetector(frame, cameraMatrix, distCoeffs, arucoDict: str,
             # Calculate the distance (magnitude of the translation vector)
             distance = np.linalg.norm(translationVecs[id])
             # Prepare the text to display
-            text = f"[Marker-id {ids[id][0]}, size: {markerSize*100}x{markerSize*100}cm, distance: {distance*100:.1f}cm]"
+            text = f"[Marker-id {ids[id][0]}, size: {int(markerSize)*100}x{int(markerSize)*100}cm, distance: {distance*100:.1f}cm]"
             # Set text position (near the top-left of the marker)
             textPosition = (5, frame.shape[0] - 10)
             # Add the text on the frame
