@@ -304,16 +304,23 @@ def getGUI(config: dict, singleCamera: bool = False, imageSize: tuple = None,
     dpg.destroy_context()
 
 
-def checkTerminateGUI():
+def guiIsRunning():
     """
-    Creates a set of GUI elements and send it back
+    Checks if the GUI is running
 
     Returns
     -------
     guiShouldStop: bool
         The bool to set the command of stop/continue GUI
     """
-    return not dpg.is_viewport_ok()
+    return dpg.is_dearpygui_running()
+
+
+def guiCloseCallback():
+    """
+    Closes the GUI and destroys the context
+    """
+    dpg.destroy_context()
 
 
 def getGUIValue(tag: str):
