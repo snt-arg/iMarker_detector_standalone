@@ -6,7 +6,7 @@ from .utils import startProfiler, stopProfiler
 from .csr_detector.vision.concatImages import imageConcatHorizontal
 from .marker_detector.arucoMarkerDetector import arucoMarkerDetector
 from .csr_detector.process import processSequentialFrames, processSingleFrame
-from .gui.guiContent import checkTerminateGUI, getGUI, updateColorPreview
+from .gui.guiContent import checkTerminateGUI, getGUI, updateColorPreview, renderFrame, getGUIValue
 from .csr_sensors.sensors.config.cameraPresets import cameraMatrix_RealSense, distCoeffs_RealSense
 
 
@@ -51,23 +51,20 @@ def runner_offImg(config):
 
     # Start the profiler
     # profiler = startProfiler()
-
     # try:
-    #     while True:
-    # event, values = window.read(timeout=10)
-
-    #         # End program if user closes window
-    #         if checkTerminateGUI(event):
-    #             break
-
+    #     while not checkTerminateGUI():
+    #         print("Running ...")
     #         frame1Raw = frame1RawFetched.copy()
     #         frame2Raw = frame2RawFetched.copy()
 
     #         # Change brightness
-    #         frame1Raw = cv.convertScaleAbs(
-    #             frame1Raw, alpha=values['camAlpha'], beta=values['camBeta'])
-    #         frame2Raw = cv.convertScaleAbs(
-    #             frame2Raw, alpha=values['camAlpha'], beta=values['camBeta'])
+    #         alpha = getGUIValue('camAlpha')
+    #         beta = getGUIValue('camBeta')
+    #         print("Alpha: ", alpha, beta)
+    #         frame1Raw = cv.convertScaleAbs(frame1Raw, alpha, beta)
+    #         frame2Raw = cv.convertScaleAbs(frame2Raw, alpha, beta)
+
+    # renderFrame()
 
     #         # Check variable changes from the GUI
     #         config['algorithm']['process']['subtractRL'] = values['SubtractionOrder']

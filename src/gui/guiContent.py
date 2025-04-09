@@ -4,7 +4,7 @@ import dearpygui.dearpygui as dpg
 from src.gui.utils import hsvToRgbHex
 
 
-def guiElements(cfg: dict, singleCamera: bool = False):
+def guiElements(cfg: dict, imageSize: tuple, singleCamera: bool = False):
     """
     Defines GUI elements using Dear PyGui
 
@@ -60,9 +60,10 @@ def guiElements(cfg: dict, singleCamera: bool = False):
     loadImageAsTexture("./src/logo.png", "LogoImage")
 
     # Define textures
+    height, width = imageSize[:2]
     with dpg.texture_registry(show=True):
-        dpg.add_dynamic_texture(width=300, height=400, default_value=[
-                                0, 0, 0, 1]*300*400, tag="FramesMain")
+        dpg.add_dynamic_texture(width, height, default_value=[
+                                0.0, 0.0, 0.0, 1.0]*width*height, tag="FramesMain")
 
     # GUI content
     with dpg.window(label=windowTitle, tag="MainWindow",
@@ -234,34 +235,43 @@ def loadImageAsTexture(path: str, tag: str):
 
 def updateImageTexture(frame: np.ndarray, tag: str):
     """
-    Converts an OpenCV BGR image to DearPyGui texture and updates it.
+    Converts an OpenCV BGR/BGRA image to RGBA float32 format and updates the DPG texture.
 
     Parameters
     ----------
     frame : np.ndarray
-        Image frame in BGR or BGRA format
+        The image to display (BGR or BGRA format).
     tag : str
-        The texture tag to update (must be defined in advance in GUI)
+        The texture tag to update (must be registered in dpg.texture_registry).
     """
-    if len(frame.shape) == 2:
-        frame = cv.cvtColor(frame, cv.COLOR_GRAY2BGRA)
-    elif frame.shape[2] == 3:
+    width, height = frame.shape[1], frame.shape[0]
+    # Convert to RGBA
+    if len(frame.shape) == 2:  # Grayscale
+        frame = cv.cvtColor(frame, cv.COLOR_GRAY2RGBA)
+    elif frame.shape[2] == 3:  # BGR
         frame = cv.cvtColor(frame, cv.COLOR_BGR2RGBA)
-    elif frame.shape[2] == 4:
+    elif frame.shape[2] == 4:  # BGRA
         frame = cv.cvtColor(frame, cv.COLOR_BGRA2RGBA)
+    else:
+        raise ValueError("Unsupported image format!")
 
+    # Normalize to [0.0, 1.0]
     frame = frame.astype(np.float32) / 255.0
-    flat_frame = frame.flatten()
-    height, width = frame.shape[:2]
+
+    # Make sure it's (H, W, 4)
+    assert frame.shape[2] == 4, f"Expected 4 channels, got {frame.shape[2]}"
+
+    # Convert to 1D list (flatten row-major)
+    flat_frame = frame.astype(np.float32).reshape(-1).tolist()
 
     try:
         dpg.set_value(tag, flat_frame)
-        dpg.configure_item(tag, width=width, height=height)
     except Exception as e:
         print(f"[ERROR] Failed to update texture: {e}")
 
 
-def getGUI(config: dict, singleCamera: bool = False, imageSize: tuple = None, postInitImages: list = None):
+def getGUI(config: dict, singleCamera: bool = False, imageSize: tuple = None,
+           postInitImages: list = None):
     """
     Creates a set of GUI elements using DearPyGui and returns the window ID
 
@@ -269,18 +279,18 @@ def getGUI(config: dict, singleCamera: bool = False, imageSize: tuple = None, po
     -------
     config: dict
         The dictionary containing various parameters
-
-    Returns
-    -------
-    window_id: str
-        The ID of the created window
+    singleCamera: bool
+        The bool to set the command of single/double camera setup
+    imageSize: tuple
+        The size of the image to be displayed in the GUI
+    postInitImages: list
+        The list of images to be displayed after the GUI is initialized
     """
     dpg.create_context()
     dpg.create_viewport()
     dpg.setup_dearpygui()
     dpg.set_viewport_resize_callback(updateWindowSize)
-    guiElements(config, singleCamera)
-    dpg.show_viewport()
+    guiElements(config, imageSize, singleCamera)
 
     # Register a render callback (executed after GUI is ready)
     if postInitImages:
@@ -289,25 +299,45 @@ def getGUI(config: dict, singleCamera: bool = False, imageSize: tuple = None, po
                 updateImageTexture(img, tag)
         dpg.set_frame_callback(1, updateAfterGui)
 
+    dpg.show_viewport()
     dpg.start_dearpygui()
     dpg.destroy_context()
 
 
-def checkTerminateGUI(event):
+def checkTerminateGUI():
     """
     Creates a set of GUI elements and send it back
 
+    Returns
+    -------
+    guiShouldStop: bool
+        The bool to set the command of stop/continue GUI
+    """
+    return not dpg.is_viewport_ok()
+
+
+def getGUIValue(tag: str):
+    """
+    Returns the value of a GUI element
+
     Parameters
     -------
-    event: str
-        The event to trigger the termination
+    tag: str
+        The tag of the GUI element
 
     Returns
     -------
-    stopGUI: bool
-        The bool to set the command of stop/continue GUI
+    value: any
+        The value of the GUI element
     """
-    stopGUI = False
+    return dpg.get_value(tag)
+
+
+def renderFrame():
+    """
+    Renders the DearPyGui frame
+    """
+    dpg.render_dearpygui_frame()
 
 
 def updateColorPreview(window, config):
