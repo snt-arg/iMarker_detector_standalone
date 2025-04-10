@@ -4,7 +4,7 @@ import dearpygui.dearpygui as dpg
 from src.gui.utils import hsvToRgbHex
 
 
-def guiElements(cfg: dict, imageSize: tuple, singleCamera: bool = False):
+def guiElements(cfg: dict, singleCamera: bool = False):
     """
     Defines GUI elements using Dear PyGui
 
@@ -56,16 +56,6 @@ def guiElements(cfg: dict, imageSize: tuple, singleCamera: bool = False):
     if isUV:
         windowTitle += " [UV Camera Mode]"
 
-    # Load logo image
-    loadImageAsTexture("./src/logo.png", "LogoImage")
-
-    # Define textures
-    height, width = imageSize[:2]
-    with dpg.texture_registry(show=True):
-        dpg.add_dynamic_texture(width, height, default_value=[
-                                0.0, 0.0, 0.0, 1.0]*width*height, tag="FramesMain")
-
-    # GUI content
     with dpg.window(label=windowTitle, tag="MainWindow",
                     width=dpg.get_viewport_client_width(), height=dpg.get_viewport_client_height()):
         # Main Tabs
@@ -85,8 +75,9 @@ def guiElements(cfg: dict, imageSize: tuple, singleCamera: bool = False):
                                                  width=200, min_value=0.0, max_value=1.0, tag="CircMask", format="%.2f")
 
                     if not isUV:
-                        dpg.add_checkbox(label="Reverse subtraction order",
-                                         default_value=cfgProc['subtractRL'], tag="SubtractionOrder")
+                        if (singleCamera and isSequential) or not singleCamera:
+                            dpg.add_checkbox(label="Reverse subtraction order",
+                                             default_value=cfgProc['subtractRL'], tag="SubtractionOrder")
                         with dpg.group(horizontal=True):
                             dpg.add_text("Color-range filter:")
                             dpg.add_radio_button(items=["Red", "Green", "Blue", "All"], tag="ColorChannel", horizontal=True,
@@ -96,7 +87,7 @@ def guiElements(cfg: dict, imageSize: tuple, singleCamera: bool = False):
                                      default_value=cfgPostproc['invertBinary'], tag="invertBinaryImage")
 
                     with dpg.group(horizontal=True):
-                        dpg.add_slider_float(label="Brightness (Alpha)", min_value=1.0, max_value=15.0, width=200,
+                        dpg.add_slider_float(label="Brightness (Alpha)", min_value=0.1, max_value=5.0, width=200,
                                              default_value=cfgSensor['brightness']['alpha'], tag="camAlpha", format="%.1f")
                         dpg.add_spacer(width=50)
                         dpg.add_slider_int(label="Contrast (Beta)", min_value=0, max_value=50, width=200,
@@ -138,7 +129,7 @@ def guiElements(cfg: dict, imageSize: tuple, singleCamera: bool = False):
                                        default_value=thresholdSize, tag="Threshold")
                     dpg.add_slider_int(label="Erosion Kernel Size", min_value=1, max_value=50, width=200,
                                        default_value=cfgPostproc['erosionKernelSize'], tag="Erosion")
-                    dpg.add_slider_int(label="Gaussian Kernel Size", min_value=1, max_value=49, width=200,
+                    dpg.add_slider_int(label="Gaussian Kernel Size", min_value=1, max_value=50, width=200,
                                        default_value=cfgPostproc['gaussianKernelSize'], tag="Gaussian")
 
         with dpg.child_window(tag="Viewers", autosize_x=True, height=-1):
@@ -146,45 +137,33 @@ def guiElements(cfg: dict, imageSize: tuple, singleCamera: bool = False):
                 if singleCamera:
                     if isSequential:
                         with dpg.tab(label="Previous Frame"):
-                            dpg.add_text("PreviousFrame")
-                            # dpg.add_image("FramesLeft")
+                            dpg.add_image("FramesLeft")
                         with dpg.tab(label="Current Frame"):
-                            dpg.add_text("CurrentFrame")
-                            # dpg.add_image("FramesRight")
+                            dpg.add_image("FramesRight")
                         with dpg.tab(label="Mask Frame"):
-                            dpg.add_text("MaskFrame")
-                            # dpg.add_image("FramesMask")
+                            dpg.add_image("FramesMask")
                         with dpg.tab(label="Mask Applied"):
-                            dpg.add_text("MaskApplied")
-                            # dpg.add_image("FramesMaskApplied")
+                            dpg.add_image("FramesMaskApplied")
                         with dpg.tab(label="Detected Markers"):
-                            dpg.add_text("DetectedMarkers")
-                            # dpg.add_image("FramesMarker")
+                            dpg.add_image("FramesMarker")
                     else:
                         with dpg.tab(label="Raw Frame"):
                             dpg.add_image("FramesMain")
                         with dpg.tab(label="Mask Frame"):
-                            dpg.add_text("MaskFrame")
-                            # dpg.add_image("FramesMask")
+                            dpg.add_image("FramesMask")
                         with dpg.tab(label="Mask Applied"):
-                            dpg.add_text("MaskApplied")
-                            # dpg.add_image("FramesMaskApplied")
+                            dpg.add_image("FramesMaskApplied")
                         with dpg.tab(label="Detected Markers"):
-                            dpg.add_text("DetectedMarkers")
-                            # dpg.add_image("FramesMarker")
+                            dpg.add_image("FramesMarker")
                 else:
                     with dpg.tab(label="Raw Frame Left"):
-                        dpg.add_text("RawFrameL")
-                        # dpg.add_image("FramesLeft")
+                        dpg.add_image("FramesLeft")
                     with dpg.tab(label="Raw Frame Right"):
-                        dpg.add_text("RawFrameR")
-                        # dpg.add_image("FramesRight")
+                        dpg.add_image("FramesRight")
                     with dpg.tab(label="Mask Frame"):
-                        dpg.add_text("MaskFrame")
-                        # dpg.add_image("FramesMaskApplied")
+                        dpg.add_image("FramesMaskApplied")
                     with dpg.tab(label="Detected Markers"):
-                        dpg.add_text("DetectedMarkers")
-                        # dpg.add_image("FramesMarker")
+                        dpg.add_image("FramesMarker")
 
         # Footer
         with dpg.group(horizontal=True):
@@ -192,7 +171,8 @@ def guiElements(cfg: dict, imageSize: tuple, singleCamera: bool = False):
             dpg.add_text(
                 "© 2022-2025 - TRANSCEND Project - University of Luxembourg")
             dpg.add_spacer(width=-1)
-            dpg.add_button(label="Save the Current Frame", tag="Record")
+            dpg.add_button(label="Save the Current Frame", tag="Record",
+                           callback=onRecord)
 
 
 def updateWindowSize(sender, app_data):
@@ -270,83 +250,6 @@ def updateImageTexture(frame: np.ndarray, tag: str):
         print(f"[ERROR] Failed to update texture: {e}")
 
 
-def getGUI(config: dict, singleCamera: bool = False, imageSize: tuple = None,
-           postInitImages: list = None):
-    """
-    Creates a set of GUI elements using DearPyGui and returns the window ID
-
-    Parameters
-    -------
-    config: dict
-        The dictionary containing various parameters
-    singleCamera: bool
-        The bool to set the command of single/double camera setup
-    imageSize: tuple
-        The size of the image to be displayed in the GUI
-    postInitImages: list
-        The list of images to be displayed after the GUI is initialized
-    """
-    dpg.create_context()
-    dpg.create_viewport()
-    dpg.setup_dearpygui()
-    dpg.set_viewport_resize_callback(updateWindowSize)
-    guiElements(config, imageSize, singleCamera)
-
-    # Register a render callback (executed after GUI is ready)
-    if postInitImages:
-        def updateAfterGui():
-            for img, tag in postInitImages:
-                updateImageTexture(img, tag)
-        dpg.set_frame_callback(1, updateAfterGui)
-
-    dpg.show_viewport()
-    dpg.start_dearpygui()
-    dpg.destroy_context()
-
-
-def guiIsRunning():
-    """
-    Checks if the GUI is running
-
-    Returns
-    -------
-    guiShouldStop: bool
-        The bool to set the command of stop/continue GUI
-    """
-    return dpg.is_dearpygui_running()
-
-
-def guiCloseCallback():
-    """
-    Closes the GUI and destroys the context
-    """
-    dpg.destroy_context()
-
-
-def getGUIValue(tag: str):
-    """
-    Returns the value of a GUI element
-
-    Parameters
-    -------
-    tag: str
-        The tag of the GUI element
-
-    Returns
-    -------
-    value: any
-        The value of the GUI element
-    """
-    return dpg.get_value(tag)
-
-
-def renderFrame():
-    """
-    Renders the DearPyGui frame
-    """
-    dpg.render_dearpygui_frame()
-
-
 def updateColorPreview(window, config):
     """
     Updates the color preview based on the HSV values
@@ -370,3 +273,10 @@ def updateColorPreview(window, config):
         background_color=hsvToRgbHex(greenRange['upper'][0] * 360 / 180,
                                      greenRange['upper'][1],
                                      greenRange['upper'][2]))
+
+
+def onRecord():
+    """
+    Callback function to handle the record button click event.
+    """
+    dpg.set_value("RecordFlag", True)

@@ -6,15 +6,8 @@ from .gui.utils import frameSave, resizeFrame
 from src.csr_detector.process import processSequentialFrames, processSingleFrame
 from src.csr_detector.vision.concatImages import imageConcatHorizontal
 from .marker_detector.arucoMarkerDetector import arucoMarkerDetector
-from src.gui.guiContent import loadImageAsTexture, updateImageTexture, updateWindowSize
+from src.gui.guiContent import guiElements, loadImageAsTexture, onRecord, updateImageTexture, updateWindowSize
 from .csr_sensors.sensors.config.cameraPresets import cameraMatrix_RealSense, distCoeffs_RealSense
-
-
-def onRecord():
-    """
-    Callback function to handle the record button click event.
-    """
-    dpg.set_value("RecordFlag", True)
 
 
 def runner_offImg(config):
@@ -132,122 +125,7 @@ def runner_offImg(config):
                                 0.0, 0.0, 0.0, 1.0]*width*height, tag="FramesMarker")
 
     # GUI content
-    with dpg.window(label=windowTitle, tag="MainWindow",
-                    width=dpg.get_viewport_client_width(), height=dpg.get_viewport_client_height()):
-        # Main Tabs
-        with dpg.child_window(tag="Configs", autosize_x=True, height=200):
-            with dpg.tab_bar():
-                # General Settings
-                with dpg.tab(label="General Settings"):
-                    # Circular mask for old USB camera setup
-                    if isUsbCam:
-                        dpg.add_text(
-                            f"Boosting frame-rate? {'Enabled' if cfgSensor['fpsBoost'] else 'Disabled'}")
-                        with dpg.group(horizontal=True):
-                            dpg.add_checkbox(
-                                label="Enable circular mask", default_value=cfgUsbCam['enableMask'], tag="CircMaskEnable")
-                            dpg.add_spacer(width=30)
-                            dpg.add_slider_float(label="Circular mask radius size", default_value=cfgUsbCam['maskSize'],
-                                                 width=200, min_value=0.0, max_value=1.0, tag="CircMask", format="%.2f")
-
-                    if not isUV:
-                        dpg.add_checkbox(label="Reverse subtraction order",
-                                         default_value=cfgProc['subtractRL'], tag="SubtractionOrder")
-                        with dpg.group(horizontal=True):
-                            dpg.add_text("Color-range filter:")
-                            dpg.add_radio_button(items=["Red", "Green", "Blue", "All"], tag="ColorChannel", horizontal=True,
-                                                 default_value=("Red" if isRChannel else "Green" if isGChannel else "Blue" if isBChannel else "All"))
-
-                    dpg.add_checkbox(label="Invert binary image",
-                                     default_value=cfgPostproc['invertBinary'], tag="invertBinaryImage")
-
-                    with dpg.group(horizontal=True):
-                        dpg.add_slider_float(label="Brightness (Alpha)", min_value=0.1, max_value=5.0, width=200,
-                                             default_value=cfgSensor['brightness']['alpha'], tag="camAlpha", format="%.1f")
-                        dpg.add_spacer(width=50)
-                        dpg.add_slider_int(label="Contrast (Beta)", min_value=0, max_value=50, width=200,
-                                           default_value=cfgSensor['brightness']['beta'], tag="camBeta")
-
-                if not isUV and singleCamera:
-                    with dpg.tab(label="Color Range Picker"):
-                        with dpg.group(horizontal=True):
-                            dpg.add_text("Green Low (Hue/Sat):")
-                            dpg.add_spacer(width=50)
-                            dpg.add_slider_int(label="Hue Low", min_value=35, max_value=60, width=200,
-                                               default_value=greenLHue, tag="GreenRangeHueLow")
-                            dpg.add_spacer(width=50)
-                            dpg.add_slider_int(label="Sat Low", min_value=10, max_value=255, width=200,
-                                               default_value=greenLSat, tag="GreenRangeSatLow")
-
-                        with dpg.group(horizontal=True):
-                            dpg.add_text("Green High (Hue/Sat):")
-                            dpg.add_spacer(width=50)
-                            dpg.add_slider_int(label="Hue High", min_value=61, max_value=80, width=200,
-                                               default_value=greenUHue, tag="GreenRangeHueHigh")
-                            dpg.add_spacer(width=50)
-                            dpg.add_slider_int(label="Sat High", min_value=10, max_value=255, width=200,
-                                               default_value=greenUSat, tag="GreenRangeSatHigh")
-
-                if not singleCamera:
-                    with dpg.tab(label="Alignment Configurations"):
-                        dpg.add_slider_int(label="Max Features", min_value=10, max_value=1000, width=200,
-                                           default_value=cfgProc['alignment']['maxFeatures'], tag="MaxFeat")
-                        dpg.add_slider_float(label="Match Rate", min_value=0.0, max_value=1.0, width=200,
-                                             default_value=cfgProc['alignment']['matchRate'], tag="MatchRate", format="%.2f")
-
-                with dpg.tab(label="Post-Processing"):
-                    with dpg.group(horizontal=True):
-                        dpg.add_text("Threshold Method:")
-                        dpg.add_radio_button(items=["Adaptive", "Binary", "Otsu"], tag="ThreshMethod", horizontal=True,
-                                             default_value=("Adaptive" if isThreshAdapt else "Binary" if isThreshBin else "Otsu"))
-                    dpg.add_slider_int(label="Threshold Value", min_value=1, max_value=255, width=200,
-                                       default_value=thresholdSize, tag="Threshold")
-                    dpg.add_slider_int(label="Erosion Kernel Size", min_value=1, max_value=50, width=200,
-                                       default_value=cfgPostproc['erosionKernelSize'], tag="Erosion")
-                    dpg.add_slider_int(label="Gaussian Kernel Size", min_value=1, max_value=50, width=200,
-                                       default_value=cfgPostproc['gaussianKernelSize'], tag="Gaussian")
-
-        with dpg.child_window(tag="Viewers", autosize_x=True, height=-1):
-            with dpg.tab_bar():
-                if singleCamera:
-                    if isSequential:
-                        with dpg.tab(label="Previous Frame"):
-                            dpg.add_image("FramesLeft")
-                        with dpg.tab(label="Current Frame"):
-                            dpg.add_image("FramesRight")
-                        with dpg.tab(label="Mask Frame"):
-                            dpg.add_image("FramesMask")
-                        with dpg.tab(label="Mask Applied"):
-                            dpg.add_image("FramesMaskApplied")
-                        with dpg.tab(label="Detected Markers"):
-                            dpg.add_image("FramesMarker")
-                    else:
-                        with dpg.tab(label="Raw Frame"):
-                            dpg.add_image("FramesMain")
-                        with dpg.tab(label="Mask Frame"):
-                            dpg.add_image("FramesMask")
-                        with dpg.tab(label="Mask Applied"):
-                            dpg.add_image("FramesMaskApplied")
-                        with dpg.tab(label="Detected Markers"):
-                            dpg.add_image("FramesMarker")
-                else:
-                    with dpg.tab(label="Raw Frame Left"):
-                        dpg.add_image("FramesLeft")
-                    with dpg.tab(label="Raw Frame Right"):
-                        dpg.add_image("FramesRight")
-                    with dpg.tab(label="Mask Frame"):
-                        dpg.add_image("FramesMaskApplied")
-                    with dpg.tab(label="Detected Markers"):
-                        dpg.add_image("FramesMarker")
-
-        # Footer
-        with dpg.group(horizontal=True):
-            dpg.add_image("LogoImage", width=30, height=28)
-            dpg.add_text(
-                "© 2022-2025 - TRANSCEND Project - University of Luxembourg")
-            dpg.add_spacer(width=-1)
-            dpg.add_button(label="Save the Current Frame", tag="Record",
-                           callback=onRecord)
+    guiElements(config, singleCamera)
 
     dpg.show_viewport()
 
