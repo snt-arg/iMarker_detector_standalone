@@ -133,36 +133,38 @@ def guiElements(cfg: dict, singleCamera: bool = False):
                                        default_value=cfgPostproc['gaussianKernelSize'], tag="Gaussian")
 
         with dpg.child_window(tag="Viewers", autosize_x=True, height=-1):
-            with dpg.tab_bar():
+            with dpg.tab_bar(tag="ImageTabBar"):
                 if singleCamera:
                     if isSequential:
-                        with dpg.tab(label="Previous Frame"):
+                        with dpg.tab(label="Previous Frame", tag="RawFrameLeftTab"):
                             dpg.add_image("FramesLeft")
-                        with dpg.tab(label="Current Frame"):
+                        with dpg.tab(label="Current Frame", tag="RawFrameRightTab"):
                             dpg.add_image("FramesRight")
-                        with dpg.tab(label="Mask Frame"):
+                        with dpg.tab(label="Mask Frame", tag="MaskFrameTab"):
                             dpg.add_image("FramesMask")
-                        with dpg.tab(label="Mask Applied"):
+                        with dpg.tab(label="Mask Applied", tag="MaskAppliedTab"):
                             dpg.add_image("FramesMaskApplied")
-                        with dpg.tab(label="Detected Markers"):
+                        with dpg.tab(label="Detected Markers", tag="MarkersTab"):
                             dpg.add_image("FramesMarker")
                     else:
-                        with dpg.tab(label="Raw Frame"):
+                        with dpg.tab(label="Raw Frame", tag="RawFrameTab"):
                             dpg.add_image("FramesMain")
-                        with dpg.tab(label="Mask Frame"):
+                        with dpg.tab(label="Mask Frame", tag="MaskFrameTab"):
                             dpg.add_image("FramesMask")
-                        with dpg.tab(label="Mask Applied"):
+                        with dpg.tab(label="Mask Applied", tag="MaskAppliedTab"):
                             dpg.add_image("FramesMaskApplied")
-                        with dpg.tab(label="Detected Markers"):
+                        with dpg.tab(label="Detected Markers", tag="MarkersTab"):
                             dpg.add_image("FramesMarker")
                 else:
-                    with dpg.tab(label="Raw Frame Left"):
+                    with dpg.tab(label="Raw Frame Left", tag="RawFrameLeftTab"):
                         dpg.add_image("FramesLeft")
-                    with dpg.tab(label="Raw Frame Right"):
+                    with dpg.tab(label="Raw Frame Right", tag="RawFrameRightTab"):
                         dpg.add_image("FramesRight")
-                    with dpg.tab(label="Mask Frame"):
+                    with dpg.tab(label="Mask Frame", tag="MaskFrameTab"):
+                        dpg.add_image("FramesMask")
+                    with dpg.tab(label="Mask Applied", tag="MaskAppliedTab"):
                         dpg.add_image("FramesMaskApplied")
-                    with dpg.tab(label="Detected Markers"):
+                    with dpg.tab(label="Detected Markers", tag="MarkersTab"):
                         dpg.add_image("FramesMarker")
 
         # Footer
@@ -280,3 +282,22 @@ def onRecord():
     Callback function to handle the record button click event.
     """
     dpg.set_value("RecordFlag", True)
+
+
+def onImageViewTabChange(imageDict):
+    # Update the displayed images
+    activeTabId = dpg.get_value("ImageTabBar")
+    activeTabTag = dpg.get_item_alias(activeTabId)
+    # Only update the image if the tab is changed
+    if activeTabTag == "RawFrameLeftTab":
+        updateImageTexture(imageDict['left'], 'FramesLeft')
+    elif activeTabTag == "RawFrameRightTab":
+        updateImageTexture(imageDict['right'], 'FramesRight')
+    elif activeTabTag == "RawFrameTab":
+        updateImageTexture(imageDict['main'], 'FramesMain')
+    elif activeTabTag == "MaskFrameTab":
+        updateImageTexture(imageDict['mask'], 'FramesMask')
+    elif activeTabTag == "MaskAppliedTab":
+        updateImageTexture(imageDict['maskApplied'], 'FramesMaskApplied')
+    elif activeTabTag == "MarkersTab":
+        updateImageTexture(imageDict['marker'], 'FramesMarker')

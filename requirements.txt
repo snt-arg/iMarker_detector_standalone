@@ -5,8 +5,8 @@ opencv-python==4.10.0.84
 pkg_resources==0.0.0
 pyasn1==0.6.0
 pyrealsense2==2.55.1.6486
-PySimpleGUI==5.0.6
 python-dotenv==1.0.1
 PyYAML==6.0.1
 rsa==4.9
 sv-ttk==2.6.0
+dearpygui==2.0.0

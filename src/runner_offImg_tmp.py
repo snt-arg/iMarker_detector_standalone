@@ -6,7 +6,7 @@ from .gui.utils import frameSave, resizeFrame
 from src.csr_detector.process import processSequentialFrames, processSingleFrame
 from src.csr_detector.vision.concatImages import imageConcatHorizontal
 from .marker_detector.arucoMarkerDetector import arucoMarkerDetector
-from src.gui.guiContent import guiElements, loadImageAsTexture, onRecord, updateImageTexture, updateWindowSize
+from src.gui.guiContent import guiElements, loadImageAsTexture, onImageViewTabChange, onRecord, updateImageTexture, updateWindowSize
 from .csr_sensors.sensors.config.cameraPresets import cameraMatrix_RealSense, distCoeffs_RealSense
 
 
@@ -95,13 +95,15 @@ def runner_offImg(config):
         dpg.add_bool_value(default_value=False, tag="RecordFlag")
 
     # Register a render callback (executed after GUI is ready)
-    postInitImages = [(frame1RawFetched, 'FramesMain'),
-                      (frame1RawFetched, 'FramesLeft'),
-                      (frame1RawFetched, 'FramesRight'),
-                      (frame1RawFetched, 'FramesMask'),
+    postInitImages = [(frame1RawFetched, 'FramesMask'),
                       (frame1RawFetched, 'FramesMaskApplied'),
                       (frame1RawFetched, 'FramesMarker')
                       ]
+    # if (isSequential):
+    postInitImages.append((frame2RawFetched, 'FramesLeft'))
+    postInitImages.append((frame2RawFetched, 'FramesRight'))
+    # else:
+    postInitImages.append((frame2RawFetched, 'FramesMain'))
 
     def updateAfterGui():
         for img, tag in postInitImages:
@@ -111,12 +113,14 @@ def runner_offImg(config):
     # Define textures
     height, width = frame1RawFetched.shape[:2]
     with dpg.texture_registry(show=True):
-        dpg.add_dynamic_texture(width, height, default_value=[
-                                0.0, 0.0, 0.0, 1.0]*width*height, tag="FramesMain")
+        # if (isSequential):
         dpg.add_dynamic_texture(width, height, default_value=[
                                 0.0, 0.0, 0.0, 1.0]*width*height, tag="FramesLeft")
         dpg.add_dynamic_texture(width, height, default_value=[
                                 0.0, 0.0, 0.0, 1.0]*width*height, tag="FramesRight")
+        # else:
+        dpg.add_dynamic_texture(width, height, default_value=[
+            0.0, 0.0, 0.0, 1.0]*width*height, tag="FramesMain")
         dpg.add_dynamic_texture(width, height, default_value=[
                                 0.0, 0.0, 0.0, 1.0]*width*height, tag="FramesMask")
         dpg.add_dynamic_texture(width, height, default_value=[
@@ -177,12 +181,6 @@ def runner_offImg(config):
             # Apply the mask
             frameMaskApplied = cv.bitwise_and(
                 cFrame, cFrame, mask=frameMask)
-            # Show the setup-specific frames
-            # pFrameVis = cv.imencode(".png", frame1Raw)[1].tobytes()
-            # cFrameVis = cv.imencode(".png", frame2Raw)[1].tobytes()
-            # Update the displayed image
-            updateImageTexture(frame1Raw, 'FramesLeft')
-            updateImageTexture(frame2Raw, 'FramesRight')
         else:
             # Keep the original frame
             cFrameRGB = np.copy(frame2Raw)
@@ -191,16 +189,6 @@ def runner_offImg(config):
                 frame2Raw, True, config)
             frameMaskApplied = cv.bitwise_and(
                 cFrame, cFrame, mask=frameMask)
-            # Show the setup-specific frames
-            # cFrameVis = cv.imencode(".png", cFrameRGB)[1].tobytes()
-            # Update the displayed image
-            updateImageTexture(cFrameRGB, 'FramesMain')
-
-        # Show the common frames
-        # maskVis = cv.imencode(".png", frameMask)[1].tobytes()
-        # maskAppliedVis = cv.imencode(".png", frameMaskApplied)[1].tobytes()
-        updateImageTexture(frameMask, 'FramesMask')
-        updateImageTexture(frameMaskApplied, 'FramesMaskApplied')
 
         # Convert to RGB
         frameMask = cv.cvtColor(frameMask, cv.COLOR_GRAY2BGR)
@@ -213,14 +201,19 @@ def runner_offImg(config):
         frameMarkers = arucoMarkerDetector(
             frameMask, cameraMatrix, distCoeffs, cfgMarker['detection']['dictionary'],
             cfgMarker['structure']['size'])
-        # frameMarkersVis = cv.imencode(
-        #     ".png", frameMarkers)[1].tobytes()
-        # window['FramesMarker'].update(data=frameMarkersVis)
-        updateImageTexture(frameMarkers, 'FramesMarker')
+
+        # Update the textures
+        onImageViewTabChange({
+            'left': frame1Raw,
+            'right': frame2Raw,
+            'main': frame2Raw,
+            'mask': frameMask,
+            'maskApplied': frameMaskApplied,
+            'marker': frameMarkers
+        })
 
         # Record the frame(s)
         if dpg.get_value("RecordFlag"):
-            # frameMarkers = cv.cvtColor(frameMarkers, cv.COLOR_GRAY2BGR)
             imageList = [frame1Raw, frame2Raw, frameMarkers] if (
                 cfgMode['sequentialSubtraction']) else [frame2Raw, frameMarkers]
             concatedImage = imageConcatHorizontal(imageList, 1800)
