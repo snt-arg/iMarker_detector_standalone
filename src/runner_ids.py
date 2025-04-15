@@ -5,7 +5,6 @@ import dearpygui.dearpygui as dpg
 from .csr_sensors.sensors import sensorIDS
 from .gui.utils import frameSave, resizeFrame
 from .csr_detector.process import processStereoFrames
-from .gui.guiElements import checkTerminateGUI, getGUI
 from .csr_sensors.sensors.config.idsPresets import homographyMat
 from .csr_detector.vision.concatImages import imageConcatHorizontal
 from .marker_detector.arucoMarkerDetector import arucoMarkerDetector

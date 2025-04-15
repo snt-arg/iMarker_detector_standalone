@@ -4,7 +4,6 @@ import numpy as np
 import dearpygui.dearpygui as dpg
 from .gui.utils import resizeFrame, frameSave
 from .csr_detector.process import processSingleFrame
-from .gui.guiElements import checkTerminateGUI, getGUI
 from .csr_detector.vision.concatImages import imageConcatHorizontal
 from .marker_detector.arucoMarkerDetector import arucoMarkerDetector
 from .csr_sensors.sensors.config.cameraPresets import cameraMatrix_RealSense, distCoeffs_RealSense
