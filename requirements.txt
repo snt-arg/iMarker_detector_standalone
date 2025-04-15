@@ -8,5 +8,4 @@ pyrealsense2==2.55.1.6486
 python-dotenv==1.0.1
 PyYAML==6.0.1
 rsa==4.9
-sv-ttk==2.6.0
 dearpygui==2.0.0
