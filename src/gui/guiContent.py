@@ -59,7 +59,7 @@ def guiElements(cfg: dict, singleCamera: bool = False):
     with dpg.window(label=windowTitle, tag="MainWindow",
                     width=dpg.get_viewport_client_width(), height=dpg.get_viewport_client_height()):
         # Main Tabs
-        with dpg.child_window(tag="Configs", autosize_x=True, height=200):
+        with dpg.child_window(tag="Configs", autosize_x=True, height=150):
             with dpg.tab_bar():
                 # General Settings
                 with dpg.tab(label="General Settings"):
