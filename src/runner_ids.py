@@ -1,6 +1,7 @@
 import os
 import cv2 as cv
 import numpy as np
+import dearpygui.dearpygui as dpg
 from .csr_sensors.sensors import sensorIDS
 from .gui.utils import frameSave, resizeFrame
 from .csr_detector.process import processStereoFrames
@@ -8,6 +9,7 @@ from .gui.guiElements import checkTerminateGUI, getGUI
 from .csr_sensors.sensors.config.idsPresets import homographyMat
 from .csr_detector.vision.concatImages import imageConcatHorizontal
 from .marker_detector.arucoMarkerDetector import arucoMarkerDetector
+from .gui.guiContent import guiElements, loadImageAsTexture, onImageViewTabChange, updateImageTexture, updateWindowSize
 
 
 def runner_ids(config):
@@ -18,9 +20,6 @@ def runner_ids(config):
     cfgIDSCam = config['sensor']['ids']
 
     print(f'Framework started! [Double Vision iDS Cameras Setup]')
-
-    # Create the window
-    window = getGUI(config, False)
 
     # Fetch the cameras
     cap1 = sensorIDS.idsCamera(0)
@@ -49,13 +48,62 @@ def runner_ids(config):
     cap1.setExposureTime(cfgIDSCam['exposureTime'])
     cap2.setExposureTime(cfgIDSCam['exposureTime'])
 
-    try:
-        while True:
-            event, values = window.read(timeout=10)
+    # Read the first frame to get the size
+    initFrame = cap1.getFrame()
+    retL = False if (not np.any(initFrame)) else True
+    if not retL:
+        print("- Error: Could not open camera 1.")
+        exit()
+    height, width = initFrame.shape[:2]
 
-            # End program if user closes window
-            if checkTerminateGUI(event):
-                break
+    # Initialize the GUI
+    dpg.create_context()
+    dpg.create_viewport(title='iMarker Detector Software')
+    dpg.setup_dearpygui()
+    dpg.set_viewport_resize_callback(updateWindowSize)
+
+    # Load logo image
+    loadImageAsTexture("./src/logo.png", "LogoImage")
+
+    # Use an invisible container for internal values
+    with dpg.value_registry():
+        dpg.add_bool_value(default_value=False, tag="RecordFlag")
+
+    # Register a render callback (executed after GUI is ready)
+    postInitImages = [(initFrame, 'FramesLeft'),
+                      (initFrame, 'FramesRight'),
+                      (initFrame, 'FramesMask'),
+                      (initFrame, 'FramesMaskApplied'),
+                      (initFrame, 'FramesMarker')]
+
+    def updateAfterGui():
+        for img, tag in postInitImages:
+            updateImageTexture(img, tag)
+    dpg.set_frame_callback(1, updateAfterGui)
+
+    # Define textures
+    with dpg.texture_registry(show=True):
+        dpg.add_dynamic_texture(width, height, default_value=[
+                                0.0, 0.0, 0.0, 1.0]*width*height, tag="FramesLeft")
+        dpg.add_dynamic_texture(width, height, default_value=[
+                                0.0, 0.0, 0.0, 1.0]*width*height, tag="FramesRight")
+        dpg.add_dynamic_texture(width, height, default_value=[
+                                0.0, 0.0, 0.0, 1.0]*width*height, tag="FramesMask")
+        dpg.add_dynamic_texture(width, height, default_value=[
+                                0.0, 0.0, 0.0, 1.0]*width*height, tag="FramesMaskApplied")
+        dpg.add_dynamic_texture(width, height, default_value=[
+                                0.0, 0.0, 0.0, 1.0]*width*height, tag="FramesMarker")
+
+    # GUI content
+    guiElements(config)
+
+    dpg.show_viewport()
+
+    try:
+        while dpg.is_dearpygui_running():
+            # Get GUI values
+            alpha = dpg.get_value('camAlpha')
+            beta = dpg.get_value('camBeta')
 
             # Fetch the frames
             frame1Raw = cap1.getFrame()
@@ -64,11 +112,42 @@ def runner_ids(config):
             retL = False if (not np.any(frame1Raw)) else True
             retR = False if (not np.any(frame2Raw)) else True
 
+            # Re-write the config values based on the GUI changes
+            config['algorithm']['process']['subtractRL'] = dpg.get_value(
+                'SubtractionOrder')
+            config['algorithm']['postprocess']['erosionKernelSize'] = dpg.get_value(
+                'Erosion')
+            config['algorithm']['postprocess']['gaussianKernelSize'] = dpg.get_value(
+                'Gaussian') if dpg.get_value('Gaussian') % 2 == 1 else dpg.get_value('Gaussian') + 1
+            config['algorithm']['postprocess']['threshold']['size'] = dpg.get_value(
+                'Threshold')
+            config['algorithm']['postprocess']['invertBinary'] = dpg.get_value(
+                'invertBinaryImage')
+            config['algorithm']['process']['colorRange']['hsv_green']['lower'][0] = int(
+                dpg.get_value('GreenRangeHueLow'))
+            config['algorithm']['process']['colorRange']['hsv_green']['lower'][1] = int(
+                dpg.get_value('GreenRangeSatLow'))
+            config['algorithm']['process']['colorRange']['hsv_green']['upper'][0] = int(
+                dpg.get_value('GreenRangeHueHigh'))
+            config['algorithm']['process']['colorRange']['hsv_green']['upper'][1] = int(
+                dpg.get_value('GreenRangeSatHigh'))
+            # Alignment parameters
+            config['algorithm']['process']['alignment']['matchRate'] = dpg.get_value(
+                'MatchRate')
+            config['algorithm']['process']['alignment']['maxFeatures'] = dpg.get_value(
+                'MaxFeat')
+            # Thresholding value
+            config['algorithm']['postprocess']['threshold']['method'] = dpg.get_value(
+                'ThreshMethod').lower()
+            # Channel selection
+            colorChannelValue = dpg.get_value('ColorChannel')
+            channel = 'r' if colorChannelValue == 'Red' else 'g' if dpg.get_value(
+                'ColorChannel') == 'Green' else 'b' if colorChannelValue == 'Blue' else 'All'
+            config['algorithm']['process']['channel'] = channel
+
             # Change brightness
-            frame1Raw = cv.convertScaleAbs(
-                frame1Raw, alpha=values['camAlpha'], beta=values['camBeta'])
-            frame2Raw = cv.convertScaleAbs(
-                frame2Raw, alpha=values['camAlpha'], beta=values['camBeta'])
+            frame1Raw = cv.convertScaleAbs(frame1Raw, alpha=alpha, beta=beta)
+            frame2Raw = cv.convertScaleAbs(frame2Raw, alpha=alpha, beta=beta)
 
             # Resize frames if necessary
             frame1Raw = resizeFrame(frame1Raw, cfgGui['maxImageHolderSize'])
@@ -76,21 +155,6 @@ def runner_ids(config):
 
             # Flip the right frame
             frame2Raw = cv.flip(frame2Raw, 1)
-
-            # Check variable changes from the GUI
-            config['algorithm']['process']['subtractRL'] = values['SubtractionOrder']
-            config['algorithm']['postprocess']['erosionKernelSize'] = values['Erosion']
-            config['algorithm']['postprocess']['gaussianKernelSize'] = values['Gaussian']
-            config['algorithm']['postprocess']['threshold']['size'] = values['Threshold']
-            config['algorithm']['process']['alignment']['matchRate'] = values['MatchRate']
-            config['algorithm']['process']['alignment']['maxFeatures'] = values['MaxFeat']
-            config['algorithm']['postprocess']['invertBinary'] = values['invertBinaryImage']
-            # Thresholding value
-            thresholdMethod = 'otsu' if values['ThreshOts'] else 'adaptive' if values['ThreshAdapt'] else 'binary'
-            config['algorithm']['postprocess']['threshold']['method'] = thresholdMethod
-            # Channel selection
-            channel = 'r' if values['RChannel'] else 'g' if values['GChannel'] else 'b' if values['BChannel'] else 'all'
-            config['algorithm']['process']['channel'] = channel
 
             # Add the homography matrix to the config
             config['presetMat'] = homographyMat
@@ -110,32 +174,34 @@ def runner_ids(config):
             frame1Raw = frame1Raw if retL else notFoundImage
             frame2Raw = frame2Raw if retR else notFoundImage
             frameMask = frameMask if (retR and retL) else notFoundImage
-            maskVis = cv.imencode(".png", frameMask)[1].tobytes()
-            frame1RawVis = cv.imencode(".png", frame1Raw)[1].tobytes()
-            frame2RawVis = cv.imencode(".png", frame2Raw)[1].tobytes()
-            window['FramesMask'].update(data=maskVis)
-            window['FramesLeft'].update(data=frame1RawVis)
-            window['FramesRight'].update(data=frame2RawVis)
 
             # ArUco marker detection
             frameMarkers = arucoMarkerDetector(
                 frameMask, None, None, cfgMarker['detection']['dictionary'],
                 cfgMarker['structure']['size'])
-            frameMarkersVis = cv.imencode(
-                ".png", frameMarkers)[1].tobytes()
-            window['FramesMarker'].update(data=frameMarkersVis)
+
+            # Update the textures
+            onImageViewTabChange({
+                'left': frame1Raw,
+                'right': frame2Raw,
+                'mask': frameMask,
+                'marker': frameMarkers
+            })
 
             # Record the frame(s)
-            if event == 'Record':
-                # frameMarkers = cv.cvtColor(frameMarkers, cv.COLOR_GRAY2BGR)
+            if dpg.get_value("RecordFlag"):
                 imageList = [frame1Raw, frame2Raw, frameMarkers]
                 concatedImage = imageConcatHorizontal(imageList, 1800)
                 frameSave(concatedImage, cfgMode['runner'])
+                dpg.set_value("RecordFlag", False)
+
+            # You can manually stop by using stop_dearpygui()
+            dpg.render_dearpygui_frame()
 
     finally:
         # Stop the pipeline and close the windows
-        window.close()
         cap1.closeLibrary()
         cap2.closeLibrary()
         cv.destroyAllWindows()
+        dpg.destroy_context()
         print(f'Framework finished! [Double Vision iDS Cameras Setup]')
