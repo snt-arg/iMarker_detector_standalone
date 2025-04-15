@@ -28,7 +28,6 @@ def runner_offVid(config):
         return
 
     # Variables
-    cFrameRGB = None
     prevFrame = None
     frameMask = None
     singleCamera = True
