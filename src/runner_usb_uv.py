@@ -1,11 +1,13 @@
 import os
 import cv2 as cv
+import numpy as np
 from .gui.utils import frameSave
+import dearpygui.dearpygui as dpg
 from .csr_sensors.sensors import sensorUSB as usb
 from .csr_detector.process import processSingleFrame
-from .gui.guiElements import checkTerminateGUI, getGUI
 from .csr_detector.vision.concatImages import imageConcatHorizontal
 from .marker_detector.arucoMarkerDetector import arucoMarkerDetector
+from .gui.guiContent import guiElements, loadImageAsTexture, onImageViewTabChange, updateImageTexture, updateWindowSize
 
 
 def runner_usbUV(config):
@@ -17,25 +19,64 @@ def runner_usbUV(config):
 
     print(f'Framework started! [Single-Vision UV Camera Setup]')
 
-    # Create the window
-    window = getGUI(config, True)
-
     # Fetch the cameras
     cap = usb.createCameraObject(cfgUVCam['port'])
 
     if cfgGeneral['fpsBoost']:
         cap.set(cv.CAP_PROP_FPS, 30.0)
 
-    try:
-        while True:
-            event, values = window.read(timeout=10)
+    # Read the first frame to get the size
+    width = int(cap.get(cv.CAP_PROP_FRAME_WIDTH))
+    height = int(cap.get(cv.CAP_PROP_FRAME_HEIGHT))
+    initFrame = np.zeros((height, width, 3), dtype=np.uint8)
 
-            # End program if user closes window
-            if checkTerminateGUI(event):
-                break
+    # Initialize the GUI
+    dpg.create_context()
+    dpg.create_viewport(title='iMarker Detector Software')
+    dpg.setup_dearpygui()
+    dpg.set_viewport_resize_callback(updateWindowSize)
+
+    # Load logo image
+    loadImageAsTexture("./src/logo.png", "LogoImage")
+
+    # Use an invisible container for internal values
+    with dpg.value_registry():
+        dpg.add_bool_value(default_value=False, tag="RecordFlag")
+
+    # Register a render callback (executed after GUI is ready)
+    postInitImages = [(initFrame, 'FramesMask'),
+                      (initFrame, 'FramesMaskApplied'),
+                      (initFrame, 'FramesMarker'),
+                      (initFrame, 'FramesMain')]
+
+    def updateAfterGui():
+        for img, tag in postInitImages:
+            updateImageTexture(img, tag)
+    dpg.set_frame_callback(1, updateAfterGui)
+
+    # Define textures
+    with dpg.texture_registry(show=True):
+        dpg.add_dynamic_texture(width, height, default_value=[
+                                0.0, 0.0, 0.0, 1.0]*width*height, tag="FramesMain")
+        dpg.add_dynamic_texture(width, height, default_value=[
+                                0.0, 0.0, 0.0, 1.0]*width*height, tag="FramesMask")
+        dpg.add_dynamic_texture(width, height, default_value=[
+                                0.0, 0.0, 0.0, 1.0]*width*height, tag="FramesMaskApplied")
+        dpg.add_dynamic_texture(width, height, default_value=[
+                                0.0, 0.0, 0.0, 1.0]*width*height, tag="FramesMarker")
+
+    # GUI content
+    guiElements(config, True)
+
+    dpg.show_viewport()
+
+    try:
+        while dpg.is_dearpygui_running():
+            # Get GUI values
+            alpha = dpg.get_value('camAlpha')
+            beta = dpg.get_value('camBeta')
 
             # Retrieve frames
-            # Note: if each of the cameras not working, retX will be False
             ret, frameRaw = usb.grabImage(cap)
 
             # Check if both cameras are connected
@@ -43,18 +84,21 @@ def runner_usbUV(config):
                 print('- [Error] no UV camera is connected! Exiting...')
                 break
 
-            # Change brightness
-            frameRaw = cv.convertScaleAbs(
-                frameRaw, alpha=values['camAlpha'], beta=values['camBeta'])
-
-            # Check variable changes from the GUI
-            config['algorithm']['postprocess']['erosionKernelSize'] = values['Erosion']
-            config['algorithm']['postprocess']['gaussianKernelSize'] = values['Gaussian']
-            config['algorithm']['postprocess']['threshold']['size'] = values['Threshold']
-            config['algorithm']['postprocess']['invertBinary'] = values['invertBinaryImage']
+            # Re-write the config values based on the GUI changes
+            config['algorithm']['postprocess']['erosionKernelSize'] = dpg.get_value(
+                'Erosion')
+            config['algorithm']['postprocess']['gaussianKernelSize'] = dpg.get_value(
+                'Gaussian') if dpg.get_value('Gaussian') % 2 == 1 else dpg.get_value('Gaussian') + 1
+            config['algorithm']['postprocess']['threshold']['size'] = dpg.get_value(
+                'Threshold')
+            config['algorithm']['postprocess']['invertBinary'] = dpg.get_value(
+                'invertBinaryImage')
             # Thresholding value
-            thresholdMethod = 'otsu' if values['ThreshOts'] else 'adaptive' if values['ThreshAdapt'] else 'binary'
-            config['algorithm']['postprocess']['threshold']['method'] = thresholdMethod
+            config['algorithm']['postprocess']['threshold']['method'] = dpg.get_value(
+                'ThreshMethod').lower()
+
+            # Change brightness
+            frameRaw = cv.convertScaleAbs(frameRaw, alpha=alpha, beta=beta)
 
             # Prepare a notFound image
             notFoundImage = cv.imread(
@@ -71,30 +115,34 @@ def runner_usbUV(config):
             # Show the frames
             frameRaw = frameRaw if ret else notFoundImage
             frameMask = frameMask if ret else notFoundImage
-            maskVis = cv.imencode(".png", frameMask)[1].tobytes()
-            frameRawVis = cv.imencode(".png", frameRaw)[1].tobytes()
-            maskAppliedVis = cv.imencode(".png", frameMaskApplied)[1].tobytes()
-            window['FramesMask'].update(data=maskVis)
-            window['FramesMain'].update(data=frameRawVis)
-            window['FramesMaskApplied'].update(data=maskAppliedVis)
 
             # ArUco marker detection
             frameMarkers = arucoMarkerDetector(
                 frameMask, None, None, cfgMarker['detection']['dictionary'],
                 cfgMarker['structure']['size'])
-            frameMarkersVis = cv.imencode(
-                ".png", frameMarkers)[1].tobytes()
-            window['FramesMarker'].update(data=frameMarkersVis)
+
+            # Update the textures
+            onImageViewTabChange({
+                'main': cFrame,
+                'mask': frameMask,
+                'marker': frameMarkers,
+                'maskApplied': frameMaskApplied,
+            })
 
             # Record the frame(s)
-            if event == 'Record':
+            if dpg.get_value("RecordFlag"):
                 frameMarkers = cv.cvtColor(frameMarkers, cv.COLOR_GRAY2BGR)
                 imageList = [frameRaw, frameMarkers]
                 concatedImage = imageConcatHorizontal(imageList, 1800)
                 frameSave(concatedImage, cfgMode['runner'])
+                dpg.set_value("RecordFlag", False)
+
+            # You can manually stop by using stop_dearpygui()
+            dpg.render_dearpygui_frame()
 
     finally:
         # Stop the pipeline and close the windows
         cap.release()
         cv.destroyAllWindows()
+        dpg.destroy_context()
         print(f'Framework finished! [Single-Vision UV Camera Setup]')
