@@ -1,7 +1,7 @@
 configs:
   mode:
     runner: "offimg" # ["offimg", "offimguv", "offvid", "usb", "usbuv", "ids", "rs"]
-    sequentialSubtraction: True # Only for single vision sensor ("rs", "offimg", "offvid")
+    sequentialSubtraction: False # Only for single vision sensor ("rs", "offimg", "offvid")
   gui:
     windowWidth: 1800
     labelSize: [30, 1]
@@ -15,12 +15,12 @@ configs:
       fpsBoost: true
       brightness:
         alpha: 1.0
-        beta: 0.0
+        beta: 1.0
     offline:
       image:
         folder: "/home/ali/Pictures/img/"
-        names: ["iM7.jpg", "iM8.jpg"]
-        # names: ["Halide_RH_0.5m.jpg", "Halide_LH_0.5m.jpg"]
+        # names: ["M3.jpg", "M3.jpg"]
+        names: ["Halide_RH_0.5m.jpg", "Halide_LH_0.5m.jpg"]
       imageUV:
         path: "/home/ali/Pictures/img/uv.png"
       video:

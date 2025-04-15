@@ -18,7 +18,7 @@ def runner_offVid(config):
     cfgOffline = config['sensor']['offline']
     isSequential = cfgMode['sequentialSubtraction']
 
-    setupVariant = "Sequential Subtraction" if cfgMode['sequentialSubtraction'] else "Masking"
+    setupVariant = "Sequential Subtraction" if isSequential else "Masking"
     print(
         f'Framework started! [Offline Video Captured by Single Vision Setup - {setupVariant}]')
 
