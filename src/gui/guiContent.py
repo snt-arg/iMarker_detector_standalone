@@ -135,18 +135,7 @@ def guiElements(cfg: dict, singleCamera: bool = False):
         with dpg.child_window(tag="Viewers", autosize_x=True, height=-1):
             with dpg.tab_bar(tag="ImageTabBar"):
                 if singleCamera:
-                    if isSequential:
-                        with dpg.tab(label="Previous Frame", tag="RawFrameLeftTab"):
-                            dpg.add_image("FramesLeft")
-                        with dpg.tab(label="Current Frame", tag="RawFrameRightTab"):
-                            dpg.add_image("FramesRight")
-                        with dpg.tab(label="Mask Frame", tag="MaskFrameTab"):
-                            dpg.add_image("FramesMask")
-                        with dpg.tab(label="Mask Applied", tag="MaskAppliedTab"):
-                            dpg.add_image("FramesMaskApplied")
-                        with dpg.tab(label="Detected Markers", tag="MarkersTab"):
-                            dpg.add_image("FramesMarker")
-                    else:
+                    if isUV:
                         with dpg.tab(label="Raw Frame", tag="RawFrameTab"):
                             dpg.add_image("FramesMain")
                         with dpg.tab(label="Mask Frame", tag="MaskFrameTab"):
@@ -155,6 +144,27 @@ def guiElements(cfg: dict, singleCamera: bool = False):
                             dpg.add_image("FramesMaskApplied")
                         with dpg.tab(label="Detected Markers", tag="MarkersTab"):
                             dpg.add_image("FramesMarker")
+                    else:
+                        if isSequential:
+                            with dpg.tab(label="Previous Frame", tag="RawFrameLeftTab"):
+                                dpg.add_image("FramesLeft")
+                            with dpg.tab(label="Current Frame", tag="RawFrameRightTab"):
+                                dpg.add_image("FramesRight")
+                            with dpg.tab(label="Mask Frame", tag="MaskFrameTab"):
+                                dpg.add_image("FramesMask")
+                            with dpg.tab(label="Mask Applied", tag="MaskAppliedTab"):
+                                dpg.add_image("FramesMaskApplied")
+                            with dpg.tab(label="Detected Markers", tag="MarkersTab"):
+                                dpg.add_image("FramesMarker")
+                        else:
+                            with dpg.tab(label="Raw Frame", tag="RawFrameTab"):
+                                dpg.add_image("FramesMain")
+                            with dpg.tab(label="Mask Frame", tag="MaskFrameTab"):
+                                dpg.add_image("FramesMask")
+                            with dpg.tab(label="Mask Applied", tag="MaskAppliedTab"):
+                                dpg.add_image("FramesMaskApplied")
+                            with dpg.tab(label="Detected Markers", tag="MarkersTab"):
+                                dpg.add_image("FramesMarker")
                 else:
                     with dpg.tab(label="Raw Frame Left", tag="RawFrameLeftTab"):
                         dpg.add_image("FramesLeft")

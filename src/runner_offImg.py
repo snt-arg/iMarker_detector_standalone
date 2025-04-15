@@ -92,9 +92,9 @@ def runner_offImg(config):
     postInitImages = [(frame1RawFetched, 'FramesMask'),
                       (frame1RawFetched, 'FramesMaskApplied'),
                       (frame1RawFetched, 'FramesMarker'),
-                      (frame2RawFetched, 'FramesLeft'),
-                      (frame2RawFetched, 'FramesRight'),
-                      (frame2RawFetched, 'FramesMain')]
+                      (frame1RawFetched, 'FramesLeft'),
+                      (frame1RawFetched, 'FramesRight'),
+                      (frame1RawFetched, 'FramesMain')]
 
     def updateAfterGui():
         for img, tag in postInitImages:
