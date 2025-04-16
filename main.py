@@ -53,7 +53,15 @@ def main():
     if mode == 'rs':
         runner_rs(config['configs'])
     elif mode == 'ids':
-        runner_ids(config['configs'])
+        # Check if the user has installed `ids-peak` and `ids-peak-ipl` packages
+        try:
+            import ids_peak
+            import ids_peak_ipl
+            runner_ids(config['configs'])
+        except ImportError:
+            print(
+                '[Error] Please install the `ids-peak` and `ids-peak-ipl` packages to use the iDS camera runner.')
+            return
     elif mode == 'usb':
         runner_usb(config['configs'])
     elif mode == 'offvid':
