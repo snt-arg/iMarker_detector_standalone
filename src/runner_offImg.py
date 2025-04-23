@@ -53,7 +53,7 @@ def runner_offImg(config):
     isRealSense = cfgMode['runner'] == 'rs'
     isOffImg = cfgMode['runner'] == 'offimg'
     isOffVid = cfgMode['runner'] == 'offvid'
-    isSequential = cfgMode['sequentialSubtraction']
+    isSequential = cfgMode['temporalSubtraction']
     isUV = cfgMode['runner'] in ['offimguv', 'usbuv']
 
     # Window title
@@ -81,9 +81,9 @@ def runner_offImg(config):
 
     # Resize frames if necessary
     frame1RawFetched = resizeFrame(
-        frame1RawFetched, cfgGui['maxImageHolderSize'])
+        frame1RawFetched, cfgGui['imageHolderWidth'])
     frame2RawFetched = resizeFrame(
-        frame2RawFetched, cfgGui['maxImageHolderSize'])
+        frame2RawFetched, cfgGui['imageHolderWidth'])
 
     # Initialize the GUI
     dpg.create_context()
@@ -141,9 +141,9 @@ def runner_offImg(config):
         # Re-write the config values based on the GUI changes
         config['algorithm']['process']['subtractRL'] = dpg.get_value(
             'SubtractionOrder')
-        config['algorithm']['postprocess']['erosionKernelSize'] = dpg.get_value(
+        config['algorithm']['postprocess']['erosionKernel'] = dpg.get_value(
             'Erosion')
-        config['algorithm']['postprocess']['gaussianKernelSize'] = dpg.get_value(
+        config['algorithm']['postprocess']['gaussianKernel'] = dpg.get_value(
             'Gaussian') if dpg.get_value('Gaussian') % 2 == 1 else dpg.get_value('Gaussian') + 1
         config['algorithm']['postprocess']['threshold']['size'] = dpg.get_value(
             'Threshold')
@@ -214,7 +214,7 @@ def runner_offImg(config):
         # Record the frame(s)
         if dpg.get_value("RecordFlag"):
             imageList = [frame1Raw, frame2Raw, frameMarkers] if (
-                cfgMode['sequentialSubtraction']) else [frame2Raw, frameMarkers]
+                cfgMode['temporalSubtraction']) else [frame2Raw, frameMarkers]
             concatedImage = imageConcatHorizontal(imageList, 1800)
             frameSave(concatedImage, cfgMode['runner'])
             dpg.set_value("RecordFlag", False)

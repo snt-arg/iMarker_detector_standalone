@@ -124,9 +124,9 @@ def runner_ids(config):
             # Re-write the config values based on the GUI changes
             config['algorithm']['process']['subtractRL'] = dpg.get_value(
                 'SubtractionOrder')
-            config['algorithm']['postprocess']['erosionKernelSize'] = dpg.get_value(
+            config['algorithm']['postprocess']['erosionKernel'] = dpg.get_value(
                 'Erosion')
-            config['algorithm']['postprocess']['gaussianKernelSize'] = dpg.get_value(
+            config['algorithm']['postprocess']['gaussianKernel'] = dpg.get_value(
                 'Gaussian') if dpg.get_value('Gaussian') % 2 == 1 else dpg.get_value('Gaussian') + 1
             config['algorithm']['postprocess']['threshold']['size'] = dpg.get_value(
                 'Threshold')
@@ -159,8 +159,8 @@ def runner_ids(config):
             frame2Raw = cv.convertScaleAbs(frame2Raw, alpha=alpha, beta=beta)
 
             # Resize frames if necessary
-            frame1Raw = resizeFrame(frame1Raw, cfgGui['maxImageHolderSize'])
-            frame2Raw = resizeFrame(frame2Raw, cfgGui['maxImageHolderSize'])
+            frame1Raw = resizeFrame(frame1Raw, cfgGui['imageHolderWidth'])
+            frame2Raw = resizeFrame(frame2Raw, cfgGui['imageHolderWidth'])
 
             # Flip the right frame
             frame2Raw = cv.flip(frame2Raw, 1)

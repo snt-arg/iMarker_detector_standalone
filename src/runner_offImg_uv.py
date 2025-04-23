@@ -52,7 +52,7 @@ def runner_offImgUV(config):
     isRealSense = cfgMode['runner'] == 'rs'
     isOffImg = cfgMode['runner'] == 'offimg'
     isOffVid = cfgMode['runner'] == 'offvid'
-    isSequential = cfgMode['sequentialSubtraction']
+    isSequential = cfgMode['temporalSubtraction']
     isUV = cfgMode['runner'] in ['offimguv', 'usbuv']
 
     print(f'Framework started! [Offline Images Captured by UV Vision Setup]')
@@ -71,7 +71,7 @@ def runner_offImgUV(config):
 
     # Resize frames if necessary
     frameRawFetched = resizeFrame(
-        frameRawFetched, cfgGui['maxImageHolderSize'])
+        frameRawFetched, cfgGui['imageHolderWidth'])
 
     # Initialize the GUI
     dpg.create_context()
@@ -122,9 +122,9 @@ def runner_offImgUV(config):
         beta = dpg.get_value('camBeta')
 
         # Re-write the config values based on the GUI changes
-        config['algorithm']['postprocess']['erosionKernelSize'] = dpg.get_value(
+        config['algorithm']['postprocess']['erosionKernel'] = dpg.get_value(
             'Erosion')
-        config['algorithm']['postprocess']['gaussianKernelSize'] = dpg.get_value(
+        config['algorithm']['postprocess']['gaussianKernel'] = dpg.get_value(
             'Gaussian') if dpg.get_value('Gaussian') % 2 == 1 else dpg.get_value('Gaussian') + 1
         config['algorithm']['postprocess']['threshold']['size'] = dpg.get_value(
             'Threshold')

@@ -24,7 +24,7 @@ def runner_rs(config):
     cfgMode = config['mode']
     cfgMarker = config['marker']
     cfgRS = config['sensor']['realSense']
-    isSequential = cfgMode['sequentialSubtraction']
+    isSequential = cfgMode['temporalSubtraction']
 
     setupVariant = "Sequential Subtraction" if isSequential else "Masking"
     print(
@@ -121,9 +121,9 @@ def runner_rs(config):
             # Re-write the config values based on the GUI changes
             config['algorithm']['process']['subtractRL'] = dpg.get_value(
                 'SubtractionOrder')
-            config['algorithm']['postprocess']['erosionKernelSize'] = dpg.get_value(
+            config['algorithm']['postprocess']['erosionKernel'] = dpg.get_value(
                 'Erosion')
-            config['algorithm']['postprocess']['gaussianKernelSize'] = dpg.get_value(
+            config['algorithm']['postprocess']['gaussianKernel'] = dpg.get_value(
                 'Gaussian') if dpg.get_value('Gaussian') % 2 == 1 else dpg.get_value('Gaussian') + 1
             config['algorithm']['postprocess']['threshold']['size'] = dpg.get_value(
                 'Threshold')

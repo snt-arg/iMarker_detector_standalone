@@ -26,7 +26,7 @@ def runner_offVid(config):
     cfgMode = config['mode']
     cfgMarker = config['marker']
     cfgOffline = config['sensor']['offline']
-    isSequential = cfgMode['sequentialSubtraction']
+    isSequential = cfgMode['temporalSubtraction']
 
     setupVariant = "Sequential Subtraction" if isSequential else "Masking"
     print(
@@ -54,7 +54,7 @@ def runner_offVid(config):
     width = int(cap.get(cv.CAP_PROP_FRAME_WIDTH))
     height = int(cap.get(cv.CAP_PROP_FRAME_HEIGHT))
     initFrame = np.zeros((height, width, 3), dtype=np.uint8)
-    initFrame = resizeFrame(initFrame, cfgGui['maxImageHolderSize'])
+    initFrame = resizeFrame(initFrame, cfgGui['imageHolderWidth'])
     height, width = initFrame.shape[:2]
 
     # Initialize the GUI
@@ -113,9 +113,9 @@ def runner_offVid(config):
         # Re-write the config values based on the GUI changes
         config['algorithm']['process']['subtractRL'] = dpg.get_value(
             'SubtractionOrder')
-        config['algorithm']['postprocess']['erosionKernelSize'] = dpg.get_value(
+        config['algorithm']['postprocess']['erosionKernel'] = dpg.get_value(
             'Erosion')
-        config['algorithm']['postprocess']['gaussianKernelSize'] = dpg.get_value(
+        config['algorithm']['postprocess']['gaussianKernel'] = dpg.get_value(
             'Gaussian') if dpg.get_value('Gaussian') % 2 == 1 else dpg.get_value('Gaussian') + 1
         config['algorithm']['postprocess']['threshold']['size'] = dpg.get_value(
             'Threshold')
@@ -146,7 +146,7 @@ def runner_offVid(config):
             break
 
         # Resize frames if necessary
-        currFrame = resizeFrame(currFrame, cfgGui['maxImageHolderSize'])
+        currFrame = resizeFrame(currFrame, cfgGui['imageHolderWidth'])
 
         # Rotate the frame 180 degrees (if necessary)
         if cfgOffline['video']['rotate']:

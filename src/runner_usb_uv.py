@@ -95,9 +95,9 @@ def runner_usbUV(config):
                 break
 
             # Re-write the config values based on the GUI changes
-            config['algorithm']['postprocess']['erosionKernelSize'] = dpg.get_value(
+            config['algorithm']['postprocess']['erosionKernel'] = dpg.get_value(
                 'Erosion')
-            config['algorithm']['postprocess']['gaussianKernelSize'] = dpg.get_value(
+            config['algorithm']['postprocess']['gaussianKernel'] = dpg.get_value(
                 'Gaussian') if dpg.get_value('Gaussian') % 2 == 1 else dpg.get_value('Gaussian') + 1
             config['algorithm']['postprocess']['threshold']['size'] = dpg.get_value(
                 'Threshold')

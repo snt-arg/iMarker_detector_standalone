@@ -1,15 +1,9 @@
 configs:
   mode:
     runner: "offimg" # ["offimg", "offimguv", "offvid", "usb", "usbuv", "ids", "rs"]
-    sequentialSubtraction: False # Only for single vision sensor ("rs", "offimg", "offvid")
+    temporalSubtraction: False # Only for single vision sensor ("rs", "offimg", "offvid")
   gui:
-    windowWidth: 1800
-    labelSize: [30, 1]
-    inputSize: [30, 1]
-    buttonSize: [30, 1]
-    sliderSize: [100, 15]
-    windowLocation: [0, 0]
-    maxImageHolderSize: 400
+    imageHolderWidth: 400
   sensor:
     general:
       fpsBoost: true
@@ -71,8 +65,8 @@ configs:
         size: 55
         method: "binary" # ["binary", "otsu", "adaptive"]
       invertBinary: true
-      erosionKernelSize: 1
-      gaussianKernelSize: 1
+      erosionKernel: 1
+      gaussianKernel: 1
   marker:
     structure:
       size: 0.07

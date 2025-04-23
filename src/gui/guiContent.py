@@ -45,7 +45,7 @@ def guiElements(cfg: dict, singleCamera: bool = False):
     isRealSense = cfgMode['runner'] == 'rs'
     isOffImg = cfgMode['runner'] == 'offimg'
     isOffVid = cfgMode['runner'] == 'offvid'
-    isSequential = cfgMode['sequentialSubtraction']
+    isSequential = cfgMode['temporalSubtraction']
     isUV = cfgMode['runner'] in ['offimguv', 'usbuv']
 
     # Window title
@@ -128,9 +128,9 @@ def guiElements(cfg: dict, singleCamera: bool = False):
                     dpg.add_slider_int(label="Threshold Value", min_value=1, max_value=255, width=200,
                                        default_value=thresholdSize, tag="Threshold")
                     dpg.add_slider_int(label="Erosion Kernel Size", min_value=1, max_value=50, width=200,
-                                       default_value=cfgPostproc['erosionKernelSize'], tag="Erosion")
+                                       default_value=cfgPostproc['erosionKernel'], tag="Erosion")
                     dpg.add_slider_int(label="Gaussian Kernel Size", min_value=1, max_value=50, width=200,
-                                       default_value=cfgPostproc['gaussianKernelSize'], tag="Gaussian")
+                                       default_value=cfgPostproc['gaussianKernel'], tag="Gaussian")
 
         with dpg.child_window(tag="Viewers", autosize_x=True, height=-1):
             with dpg.tab_bar(tag="ImageTabBar"):
