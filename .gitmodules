@@ -1,6 +1,6 @@
-[submodule "src/csr_sensors"]
-	path = src/csr_sensors
-	url = git@github.com:snt-arg/csr_sensors.git
-[submodule "src/csr_detector"]
-	path = src/csr_detector
-	url = git@github.com:snt-arg/csr_detector.git
+[submodule "src/iMarker_algorithms"]
+	path = src/iMarker_algorithms
+	url = git@github.com:snt-arg/iMarker_algorithms.git
+[submodule "src/iMarker_sensors"]
+	path = src/iMarker_sensors
+	url = git@github.com:snt-arg/iMarker_sensors.git
