@@ -2,7 +2,7 @@
 
 ![Demo](docs/demo.png "Demo")
 
-This repository contains the GUI-enabled standalone version of **iMarker detector**. It functions as a wrapper for iMarker [detector sensors](https://github.com/snt-arg/csr_sensors) and [algorithms](https://github.com/snt-arg/csr_detector).
+This repository contains the GUI-enabled standalone version of **iMarker detector**. It functions as a wrapper for iMarker [detector sensors](https://github.com/snt-arg/iMarker_sensors) and [algorithms](https://github.com/snt-arg/csr_detector).
 
 ## 🛠️ Getting Started
 
@@ -16,7 +16,7 @@ git clone --recurse-submodules git@github.com:snt-arg/csr_detector_standalone.gi
 
 You can also get the latest changes of each submodule individually using the command `git pull --recurse-submodules`.
 
-💡 **[note]** In case you do not have SSH access, you can just download the code of [this library](https://github.com/snt-arg/csr_detector_standalone), and clone the [detector sensors](https://github.com/snt-arg/csr_sensors) inside `src/csr_sensors`, and [detector algorithms repo](https://github.com/snt-arg/csr_detector) inside `src/csr_detector` paths.
+💡 **[note]** In case you do not have SSH access, you can just download the code of [this library](https://github.com/snt-arg/csr_detector_standalone), and clone the [detector sensors](https://github.com/snt-arg/iMarker_sensors) inside `src/iMarker_sensors`, and [detector algorithms repo](https://github.com/snt-arg/csr_detector) inside `src/csr_detector` paths.
 
 ### II. Installation
 
@@ -28,7 +28,7 @@ pip install -r requirements.txt
 
 You can also install the cloned submodules and define dependencies and other distribution-related configurations using the provided `setup.py` file in the root directory of each file. Hence, follow the below steps:
 
-- Go to `src/csr_sensors` and run `pip install -e .`,
+- Go to `src/iMarker_sensors` and run `pip install -e .`,
 - Go to `src/csr_detector` and run `pip install -e .`,
 - Go to the **root directory** and run `pip install -e .` to install the package and its dependencies.
 

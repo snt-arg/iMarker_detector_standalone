@@ -6,7 +6,7 @@ if __name__ == '__main__':
           author='Ali Tourani',
           description='CSR detector with GUI',
           url='https://github.com/snt-arg/csr_detector_standalone',
-          packages=['csr_sensors', 'csr_detector'],
+          packages=['iMarker_sensors', 'csr_detector'],
           package_dir={'csr_detector': 'src/csr_detector',
-                       'csr_sensors': 'src/csr_sensors'}
+                       'iMarker_sensors': 'src/iMarker_sensors'}
           )

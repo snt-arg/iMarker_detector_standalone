@@ -13,11 +13,11 @@ import cv2 as cv
 import numpy as np
 from .gui.utils import frameSave
 import dearpygui.dearpygui as dpg
-from .csr_sensors.sensors import sensorUSB as usb
-from .csr_detector.process import processStereoFrames
-from .csr_detector.vision.concatImages import imageConcatHorizontal
+from .iMarker_sensors.sensors import usb_interface as usb
+from .iMarker_algorithms.process import singleFrameProcessing
 from .marker_detector.arucoMarkerDetector import arucoMarkerDetector
-from .csr_sensors.sensors.calibration.utils import getCalibrationParams
+from .iMarker_algorithms.vision.concatImages import concatFramesHorizontal
+from .iMarker_sensors.sensors.calibration.utils import getCalibrationParams
 from .gui.guiContent import guiElements, loadImageAsTexture, onImageViewTabChange, updateImageTexture, updateWindowSize
 
 
@@ -153,7 +153,7 @@ def runner_usb(config):
             frameRRaw = cv.convertScaleAbs(frameRRaw, alpha=alpha, beta=beta)
 
             # Process frames
-            frameL, frameR, frameMask = processStereoFrames(
+            frameL, frameR, frameMask = singleFrameProcessing(
                 frameLRaw, frameRRaw, retL, retR, config, True)
 
             # Prepare a notFound image
@@ -184,7 +184,7 @@ def runner_usb(config):
             # Record the frame(s)
             if dpg.get_value("RecordFlag"):
                 imageList = [frameLRaw, frameRRaw, frameMarkers]
-                concatedImage = imageConcatHorizontal(imageList, 1800)
+                concatedImage = concatFramesHorizontal(imageList, 1800)
                 frameSave(concatedImage, cfgMode['runner'])
                 dpg.set_value("RecordFlag", False)
 

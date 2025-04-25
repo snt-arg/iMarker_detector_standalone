@@ -13,10 +13,10 @@ import cv2 as cv
 import numpy as np
 from .gui.utils import frameSave
 import dearpygui.dearpygui as dpg
-from .csr_sensors.sensors import sensorUSB as usb
-from .csr_detector.process import processSingleFrame
-from .csr_detector.vision.concatImages import imageConcatHorizontal
+from .iMarker_sensors.sensors import usb_interface as usb
+from .iMarker_algorithms.process import singleFrameProcessing
 from .marker_detector.arucoMarkerDetector import arucoMarkerDetector
+from .iMarker_algorithms.vision.concatImages import concatFramesHorizontal
 from .gui.guiContent import guiElements, loadImageAsTexture, onImageViewTabChange, updateImageTexture, updateWindowSize
 
 
@@ -115,7 +115,7 @@ def runner_usbUV(config):
                 f"{os.getcwd()}/src/notFound.png", cv.IMREAD_COLOR)
 
             # Process frames
-            cFrame, frameMask = processSingleFrame(
+            cFrame, frameMask = singleFrameProcessing(
                 frameRaw, ret, config)
 
             # Apply the mask
@@ -143,7 +143,7 @@ def runner_usbUV(config):
             if dpg.get_value("RecordFlag"):
                 frameMarkers = cv.cvtColor(frameMarkers, cv.COLOR_GRAY2BGR)
                 imageList = [frameRaw, frameMarkers]
-                concatedImage = imageConcatHorizontal(imageList, 1800)
+                concatedImage = concatFramesHorizontal(imageList, 1800)
                 frameSave(concatedImage, cfgMode['runner'])
                 dpg.set_value("RecordFlag", False)
 

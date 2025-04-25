@@ -12,10 +12,10 @@ import cv2 as cv
 import numpy as np
 import dearpygui.dearpygui as dpg
 from .gui.utils import frameSave, resizeFrame
-from .csr_sensors.sensors import sensorRealSense
-from .csr_detector.vision.concatImages import imageConcatHorizontal
+from .iMarker_sensors.sensors import rs_interface
 from .marker_detector.arucoMarkerDetector import arucoMarkerDetector
-from .csr_detector.process import processSequentialFrames, processSingleFrame
+from .iMarker_algorithms.vision.concatImages import concatFramesHorizontal
+from .iMarker_algorithms.process import sequentialFrameProcessing, singleFrameProcessing
 from .gui.guiContent import guiElements, loadImageAsTexture, onImageViewTabChange, updateImageTexture, updateWindowSize
 
 
@@ -38,7 +38,7 @@ def runner_rs(config):
     # Create an object
     width = cfgRS['resolution']['width']
     height = cfgRS['resolution']['height']
-    rs = sensorRealSense.rsCamera((width, height), cfgRS['fps'])
+    rs = rs_interface.rsCamera((width, height), cfgRS['fps'])
 
     # Create a pipeline
     rs.createPipeline()
@@ -164,7 +164,7 @@ def runner_rs(config):
 
             if (isSequential):
                 # Process the frames
-                pFrame, cFrame, frameMask = processSequentialFrames(
+                pFrame, cFrame, frameMask = sequentialFrameProcessing(
                     prevFrame, currFrame, True, config)
                 # Apply the mask
                 frameMaskApplied = cv.bitwise_and(
@@ -173,7 +173,7 @@ def runner_rs(config):
                 # Keep the original frame
                 # cFrameRGB = np.copy(currFrame)
                 # Process the frames
-                cFrame, frameMask = processSingleFrame(
+                cFrame, frameMask = singleFrameProcessing(
                     currFrame, True, config)
                 # Apply the mask
                 frameMaskApplied = cv.bitwise_and(
@@ -201,7 +201,7 @@ def runner_rs(config):
             if dpg.get_value("RecordFlag"):
                 imageList = [prevFrame, currFrame, frameMarkers] if (
                     isSequential) else [currFrame, frameMarkers]
-                concatedImage = imageConcatHorizontal(imageList, 1800)
+                concatedImage = concatFramesHorizontal(imageList, 1800)
                 frameSave(concatedImage, cfgMode['runner'])
                 dpg.set_value("RecordFlag", False)
 

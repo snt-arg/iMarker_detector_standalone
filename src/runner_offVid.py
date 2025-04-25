@@ -13,10 +13,10 @@ import cv2 as cv
 import numpy as np
 import dearpygui.dearpygui as dpg
 from .gui.utils import resizeFrame, frameSave
-from .csr_detector.vision.concatImages import imageConcatHorizontal
 from .marker_detector.arucoMarkerDetector import arucoMarkerDetector
-from .csr_detector.process import processSequentialFrames, processSingleFrame
-from .csr_sensors.sensors.config.cameraPresets import cameraMatrix_RealSense, distCoeffs_RealSense
+from .iMarker_algorithms.vision.concatImages import concatFramesHorizontal
+from .iMarker_algorithms.process import sequentialFrameProcessing, singleFrameProcessing
+from .iMarker_sensors.sensors.config.presets import cameraMatrix_RealSense, distCoeffs_RealSense
 from .gui.guiContent import guiElements, loadImageAsTexture, onImageViewTabChange, updateImageTexture, updateWindowSize
 
 
@@ -166,14 +166,14 @@ def runner_offVid(config):
 
         if (isSequential):
             # Process the frames
-            prevFrame, currFrame, frameMask = processSequentialFrames(
+            prevFrame, currFrame, frameMask = sequentialFrameProcessing(
                 prevFrame, currFrame, True, config)
             # Apply the mask
             frameMaskApplied = cv.bitwise_and(
                 currFrame, currFrame, mask=frameMask)
         else:
             # Process the frames
-            currFrame, frameMask = processSingleFrame(
+            currFrame, frameMask = singleFrameProcessing(
                 currFrame, True, config)
             frameMaskApplied = cv.bitwise_and(
                 currFrame, currFrame, mask=frameMask)
@@ -204,8 +204,8 @@ def runner_offVid(config):
         if dpg.get_value("RecordFlag"):
             imageList = [prevFrame, currFrame, frameMarkers] if (
                 isSequential) else [currFrame, frameMarkers]
-            concatedImage = imageConcatHorizontal(imageList, 1800)
             frameSave(concatedImage, cfgMode['runner'])
+            concatedImage = concatFramesHorizontal(imageList, 1800)
             dpg.set_value("RecordFlag", False)
 
         # You can manually stop by using stop_dearpygui()

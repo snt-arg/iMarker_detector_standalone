@@ -12,12 +12,12 @@ import os
 import cv2 as cv
 import numpy as np
 import dearpygui.dearpygui as dpg
-from .csr_sensors.sensors import sensorIDS
 from .gui.utils import frameSave, resizeFrame
-from .csr_detector.process import processStereoFrames
-from .csr_sensors.sensors.config.idsPresets import homographyMat
-from .csr_detector.vision.concatImages import imageConcatHorizontal
+from .iMarker_sensors.sensors import ids_interface
+from .iMarker_algorithms.process import stereoFrameProcessing
 from .marker_detector.arucoMarkerDetector import arucoMarkerDetector
+from .iMarker_algorithms.vision.concatImages import concatFramesHorizontal
+from .iMarker_sensors.sensors.config.presets import homographyMatrixPreset_iDS
 from .gui.guiContent import guiElements, loadImageAsTexture, onImageViewTabChange, updateImageTexture, updateWindowSize
 
 
@@ -31,11 +31,11 @@ def runner_ids(config):
     print(f'Framework started! [Double Vision iDS Cameras Setup]')
 
     # Fetch the cameras
-    cap1 = sensorIDS.idsCamera(0)
-    cap2 = sensorIDS.idsCamera(1)
+    cap1 = ids_interface.idsCamera(0)
+    cap2 = ids_interface.idsCamera(1)
 
     # Get the calibration configuration
-    root = f"{os.getcwd()}/src/csr_sensors/sensors/config"
+    root = f"{os.getcwd()}/src/iMarker_sensors/sensors/config"
     cap1.getCalibrationConfig(root, 'cam1')
     cap2.getCalibrationConfig(root, 'cam2')
 
@@ -166,10 +166,10 @@ def runner_ids(config):
             frame2Raw = cv.flip(frame2Raw, 1)
 
             # Add the homography matrix to the config
-            config['presetMat'] = homographyMat
+            config['presetMat'] = homographyMatrixPreset_iDS
 
             # Process frames
-            frame1, frame2, frameMask = processStereoFrames(
+            frame1, frame2, frameMask = stereoFrameProcessing(
                 frame1Raw, frame2Raw, retL, retR, config, False)
 
             # Prepare a notFound image
@@ -200,7 +200,7 @@ def runner_ids(config):
             # Record the frame(s)
             if dpg.get_value("RecordFlag"):
                 imageList = [frame1Raw, frame2Raw, frameMarkers]
-                concatedImage = imageConcatHorizontal(imageList, 1800)
+                concatedImage = concatFramesHorizontal(imageList, 1800)
                 frameSave(concatedImage, cfgMode['runner'])
                 dpg.set_value("RecordFlag", False)
 

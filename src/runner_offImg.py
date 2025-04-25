@@ -14,10 +14,10 @@ import numpy as np
 import dearpygui.dearpygui as dpg
 from .gui.utils import frameSave, resizeFrame
 from .utils import startProfiler, stopProfiler
-from .csr_detector.vision.concatImages import imageConcatHorizontal
 from .marker_detector.arucoMarkerDetector import arucoMarkerDetector
-from .csr_detector.process import processSequentialFrames, processSingleFrame
-from .csr_sensors.sensors.config.cameraPresets import cameraMatrix_RealSense, distCoeffs_RealSense
+from .iMarker_algorithms.vision.concatImages import concatFramesHorizontal
+from .iMarker_algorithms.process import sequentialFrameProcessing, singleFrameProcessing
+from .iMarker_sensors.sensors.config.presets import cameraMatrix_RealSense, distCoeffs_RealSense
 from .gui.guiContent import guiElements, loadImageAsTexture, onImageViewTabChange, updateImageTexture, updateWindowSize
 
 
@@ -175,7 +175,7 @@ def runner_offImg(config):
 
         if (isSequential):
             # Process the frames
-            pFrame, cFrame, frameMask = processSequentialFrames(
+            pFrame, cFrame, frameMask = sequentialFrameProcessing(
                 frame1Raw, frame2Raw, True, config)
             # Apply the mask
             frameMaskApplied = cv.bitwise_and(
@@ -184,7 +184,7 @@ def runner_offImg(config):
             # Keep the original frame
             cFrameRGB = np.copy(frame2Raw)
             # Process the frames
-            cFrame, frameMask = processSingleFrame(
+            cFrame, frameMask = singleFrameProcessing(
                 frame2Raw, True, config)
             frameMaskApplied = cv.bitwise_and(
                 cFrame, cFrame, mask=frameMask)
@@ -215,7 +215,7 @@ def runner_offImg(config):
         if dpg.get_value("RecordFlag"):
             imageList = [frame1Raw, frame2Raw, frameMarkers] if (
                 cfgMode['temporalSubtraction']) else [frame2Raw, frameMarkers]
-            concatedImage = imageConcatHorizontal(imageList, 1800)
+            concatedImage = concatFramesHorizontal(imageList, 1800)
             frameSave(concatedImage, cfgMode['runner'])
             dpg.set_value("RecordFlag", False)
 

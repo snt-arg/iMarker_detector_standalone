@@ -13,10 +13,10 @@ import cv2 as cv
 import numpy as np
 import dearpygui.dearpygui as dpg
 from .gui.utils import resizeFrame, frameSave
-from .csr_detector.process import processSingleFrame
-from .csr_detector.vision.concatImages import imageConcatHorizontal
+from .iMarker_algorithms.process import singleFrameProcessing
 from .marker_detector.arucoMarkerDetector import arucoMarkerDetector
-from .csr_sensors.sensors.config.cameraPresets import cameraMatrix_RealSense, distCoeffs_RealSense
+from .iMarker_algorithms.vision.concatImages import concatFramesHorizontal
+from .iMarker_sensors.sensors.config.presets import cameraMatrix_RealSense, distCoeffs_RealSense
 from .gui.guiContent import guiElements, loadImageAsTexture, onImageViewTabChange, updateImageTexture, updateWindowSize
 
 
@@ -142,7 +142,7 @@ def runner_offImgUV(config):
         # Keep the original frame
         cFrameGrayscale = np.copy(frameRaw)
         # Process the frames
-        cFrame, frameMask = processSingleFrame(
+        cFrame, frameMask = singleFrameProcessing(
             frameRaw, True, config)
         frameMaskApplied = cv.bitwise_and(
             cFrame, cFrame, mask=frameMask)
@@ -168,7 +168,7 @@ def runner_offImgUV(config):
         if dpg.get_value("RecordFlag"):
             frameMarkers = cv.cvtColor(frameMarkers, cv.COLOR_GRAY2BGR)
             imageList = [frameRaw, frameMarkers]
-            concatedImage = imageConcatHorizontal(imageList, 1800)
+            concatedImage = concatFramesHorizontal(imageList, 1800)
             frameSave(concatedImage, cfgMode['runner'])
             dpg.set_value("RecordFlag", False)
 
