@@ -14,8 +14,8 @@ import numpy as np
 import dearpygui.dearpygui as dpg
 from .gui.utils import frameSave, resizeFrame
 from .iMarker_sensors.sensors import ids_interface
+from .marker_detector.arucoDetector import arucoDetector
 from .iMarker_algorithms.process import stereoFrameProcessing
-from .marker_detector.arucoMarkerDetector import arucoMarkerDetector
 from .iMarker_algorithms.vision.concatImages import concatFramesHorizontal
 from .iMarker_sensors.sensors.config.presets import homographyMatrixPreset_iDS
 from .gui.guiContent import guiElements, loadImageAsTexture, onImageViewTabChange, updateImageTexture, updateWindowSize
@@ -185,7 +185,7 @@ def runner_ids(config):
             frameMask = frameMask if (retR and retL) else notFoundImage
 
             # ArUco marker detection
-            frameMarkers = arucoMarkerDetector(
+            frameMarkers = arucoDetector(
                 frameMask, None, None, cfgMarker['detection']['dictionary'],
                 cfgMarker['structure']['size'])
 

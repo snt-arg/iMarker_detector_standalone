@@ -12,7 +12,20 @@ import cv2 as cv
 import numpy as np
 
 
-def getArucoDict(dictName: str):
+def getArucoDict(dictName: str) -> cv.aruco.Dictionary:
+    """
+    Returns the Aruco dictionary object corresponding to the given name.
+
+    Parameters
+    ----------
+    dictName: str
+        Name of the Aruco dictionary to use.
+
+    Returns
+    -------
+    dictionary: cv.aruco.Dictionary
+        Aruco dictionary object.
+    """
     # Variables
     arucoDicts = {
         "DICT_4X4_50": cv.aruco.DICT_4X4_50,
@@ -47,8 +60,8 @@ def getArucoDict(dictName: str):
     return cv.aruco.getPredefinedDictionary(dictConstant)
 
 
-def arucoMarkerDetector(frame, cameraMatrix, distCoeffs, arucoDict: str,
-                        markerSize: float):
+def arucoDetector(frame, cameraMatrix, distCoeffs, arucoDict: str,
+                  markerSize: float):
     """
     Detects the markers in the frame and returns the frame with the detected markers.
 

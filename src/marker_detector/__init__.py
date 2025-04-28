@@ -1,1 +1,1 @@
-from . import arucoMarkerDetector
+from . import arucoDetector

@@ -13,9 +13,9 @@ import cv2 as cv
 import numpy as np
 from .gui.utils import frameSave
 import dearpygui.dearpygui as dpg
+from .marker_detector.arucoDetector import arucoDetector
 from .iMarker_sensors.sensors import usb_interface as usb
 from .iMarker_algorithms.process import singleFrameProcessing
-from .marker_detector.arucoMarkerDetector import arucoMarkerDetector
 from .iMarker_algorithms.vision.concatImages import concatFramesHorizontal
 from .iMarker_sensors.sensors.calibration.utils import getCalibrationParams
 from .gui.guiContent import guiElements, loadImageAsTexture, onImageViewTabChange, updateImageTexture, updateWindowSize
@@ -169,7 +169,7 @@ def runner_usb(config):
             frameMask = frameMask if (retR and retL) else notFoundImage
 
             # ArUco marker detection
-            frameMarkers = arucoMarkerDetector(
+            frameMarkers = arucoDetector(
                 frameMask, None, None, cfgMarker['detection']['dictionary'],
                 cfgMarker['structure']['size'])
 

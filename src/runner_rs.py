@@ -13,7 +13,7 @@ import numpy as np
 import dearpygui.dearpygui as dpg
 from .gui.utils import frameSave, resizeFrame
 from .iMarker_sensors.sensors import rs_interface
-from .marker_detector.arucoMarkerDetector import arucoMarkerDetector
+from .marker_detector.arucoDetector import arucoDetector
 from .iMarker_algorithms.vision.concatImages import concatFramesHorizontal
 from .iMarker_algorithms.process import sequentialFrameProcessing, singleFrameProcessing
 from .gui.guiContent import guiElements, loadImageAsTexture, onImageViewTabChange, updateImageTexture, updateWindowSize
@@ -183,7 +183,7 @@ def runner_rs(config):
             frameMask = cv.cvtColor(frameMask, cv.COLOR_GRAY2BGR)
 
             # ArUco marker detection
-            frameMarkers = arucoMarkerDetector(
+            frameMarkers = arucoDetector(
                 frameMask, cameraMatrix, distCoeffs, cfgMarker['detection']['dictionary'],
                 cfgMarker['structure']['size'])
 

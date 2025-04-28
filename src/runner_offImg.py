@@ -14,7 +14,7 @@ import numpy as np
 import dearpygui.dearpygui as dpg
 from .gui.utils import frameSave, resizeFrame
 from .utils import startProfiler, stopProfiler
-from .marker_detector.arucoMarkerDetector import arucoMarkerDetector
+from .marker_detector.arucoDetector import arucoDetector
 from .iMarker_algorithms.vision.concatImages import concatFramesHorizontal
 from .iMarker_algorithms.process import sequentialFrameProcessing, singleFrameProcessing
 from .iMarker_sensors.sensors.config.presets import cameraMatrix_RealSense, distCoeffs_RealSense
@@ -197,7 +197,7 @@ def runner_offImg(config):
         cameraMatrix = cameraMatrix_RealSense
 
         # ArUco marker detection
-        frameMarkers = arucoMarkerDetector(
+        frameMarkers = arucoDetector(
             frameMask, cameraMatrix, distCoeffs, cfgMarker['detection']['dictionary'],
             cfgMarker['structure']['size'])
 
