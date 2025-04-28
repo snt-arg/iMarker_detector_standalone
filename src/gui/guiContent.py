@@ -1,7 +1,7 @@
 import cv2 as cv
 import numpy as np
 import dearpygui.dearpygui as dpg
-from src.gui.utils import hsvToRgbHex
+from src.gui.utils import hsvToRgbHex, hsvToRgbTuple
 
 
 def guiElements(cfg: dict, singleCamera: bool = False):
@@ -17,27 +17,20 @@ def guiElements(cfg: dict, singleCamera: bool = False):
     """
 
     # Extract parameters
-    cfgGui = cfg['gui']
     cfgMode = cfg['mode']
     cfgAlgortihm = cfg['algorithm']
     cfgUsbCam = cfg['sensor']['usbCam']
     cfgSensor = cfg['sensor']['general']
     cfgProc = cfgAlgortihm['process']
     cfgColorRange = cfgProc['colorRange']
+    greenRange = cfgColorRange['hsv_green']
     cfgPostproc = cfgAlgortihm['postprocess']
     thresholdSize = cfgPostproc['threshold']['size']
     thresholdMethod = cfgPostproc['threshold']['method']
-    greenRange = cfgColorRange['hsv_green']
-    greenLHue = greenRange['lower'][0]
-    greenUHue = greenRange['upper'][0]
-    greenLSat = greenRange['lower'][1]
-    greenUSat = greenRange['upper'][1]
 
     isRChannel = cfgProc['channel'] == 'r'
     isGChannel = cfgProc['channel'] == 'g'
     isBChannel = cfgProc['channel'] == 'b'
-    isAllChannels = cfgProc['channel'] == 'all'
-    isThreshOts = thresholdMethod == 'otsu'
     isThreshAdapt = thresholdMethod == 'adaptive'
     isThreshBin = thresholdMethod == 'binary'
 
@@ -47,6 +40,10 @@ def guiElements(cfg: dict, singleCamera: bool = False):
     isOffVid = cfgMode['runner'] == 'offvid'
     isSequential = cfgMode['temporalSubtraction']
     isUV = cfgMode['runner'] in ['offimguv', 'usbuv']
+
+    # Color variables
+    greenRangeLow = hsvToRgbTuple(greenRange['lower'])
+    greenRangeHigh = hsvToRgbTuple(greenRange['upper'])
 
     # Window title
     setupVariant = "Sequential Subtraction" if isSequential else "Masking"
@@ -96,22 +93,14 @@ def guiElements(cfg: dict, singleCamera: bool = False):
                 if not isUV and singleCamera:
                     with dpg.tab(label="Color Range Picker"):
                         with dpg.group(horizontal=True):
-                            dpg.add_text("Green Low (Hue/Sat):")
+                            # Low range Green
+                            dpg.add_color_picker(
+                                label="Green Low", tag="GreenRangeLow", width=100,
+                                display_hsv=True, no_inputs=False, default_value=greenRangeLow)
                             dpg.add_spacer(width=50)
-                            dpg.add_slider_int(label="Hue Low", min_value=35, max_value=60, width=200,
-                                               default_value=greenLHue, tag="GreenRangeHueLow")
-                            dpg.add_spacer(width=50)
-                            dpg.add_slider_int(label="Sat Low", min_value=10, max_value=255, width=200,
-                                               default_value=greenLSat, tag="GreenRangeSatLow")
-
-                        with dpg.group(horizontal=True):
-                            dpg.add_text("Green High (Hue/Sat):")
-                            dpg.add_spacer(width=50)
-                            dpg.add_slider_int(label="Hue High", min_value=61, max_value=80, width=200,
-                                               default_value=greenUHue, tag="GreenRangeHueHigh")
-                            dpg.add_spacer(width=50)
-                            dpg.add_slider_int(label="Sat High", min_value=10, max_value=255, width=200,
-                                               default_value=greenUSat, tag="GreenRangeSatHigh")
+                            dpg.add_color_picker(
+                                label="Green High", tag="GreenRangeHigh", width=100,
+                                display_hsv=True, default_value=greenRangeHigh)
 
                 if not singleCamera:
                     with dpg.tab(label="Alignment Configurations"):

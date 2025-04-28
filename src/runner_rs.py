@@ -11,9 +11,9 @@ You may not use this file except in compliance with the License.
 import cv2 as cv
 import numpy as np
 import dearpygui.dearpygui as dpg
-from .gui.utils import frameSave, resizeFrame
 from .iMarker_sensors.sensors import rs_interface
 from .marker_detector.arucoDetector import arucoDetector
+from .gui.utils import frameSave, resizeFrame, rgbToHsvTuple
 from .iMarker_algorithms.vision.concatImages import concatFramesHorizontal
 from .iMarker_algorithms.process import sequentialFrameProcessing, singleFrameProcessing
 from .gui.guiContent import guiElements, loadImageAsTexture, onImageViewTabChange, updateImageTexture, updateWindowSize
@@ -101,6 +101,10 @@ def runner_rs(config):
             alpha = dpg.get_value('camAlpha')
             beta = dpg.get_value('camBeta')
 
+            # Get color range values
+            greenRangeLow = rgbToHsvTuple(dpg.get_value('GreenRangeLow'))
+            greenRangeHigh = rgbToHsvTuple(dpg.get_value('GreenRangeHigh'))
+
             # Check if the frames are valid
             if not isPipelineStarted:
                 break
@@ -129,14 +133,8 @@ def runner_rs(config):
                 'Threshold')
             config['algorithm']['postprocess']['invertBinary'] = dpg.get_value(
                 'invertBinaryImage')
-            config['algorithm']['process']['colorRange']['hsv_green']['lower'][0] = int(
-                dpg.get_value('GreenRangeHueLow'))
-            config['algorithm']['process']['colorRange']['hsv_green']['lower'][1] = int(
-                dpg.get_value('GreenRangeSatLow'))
-            config['algorithm']['process']['colorRange']['hsv_green']['upper'][0] = int(
-                dpg.get_value('GreenRangeHueHigh'))
-            config['algorithm']['process']['colorRange']['hsv_green']['upper'][1] = int(
-                dpg.get_value('GreenRangeSatHigh'))
+            config['algorithm']['process']['colorRange']['hsv_green']['lower'] = greenRangeLow
+            config['algorithm']['process']['colorRange']['hsv_green']['upper'] = greenRangeHigh
             # Alignment parameters
             config['algorithm']['process']['alignment']['matchRate'] = dpg.get_value(
                 'MatchRate')

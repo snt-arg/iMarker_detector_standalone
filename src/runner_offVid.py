@@ -12,8 +12,8 @@ import os
 import cv2 as cv
 import numpy as np
 import dearpygui.dearpygui as dpg
-from .gui.utils import resizeFrame, frameSave
 from .marker_detector.arucoDetector import arucoDetector
+from .gui.utils import frameSave, resizeFrame, rgbToHsvTuple
 from .iMarker_algorithms.vision.concatImages import concatFramesHorizontal
 from .iMarker_algorithms.process import sequentialFrameProcessing, singleFrameProcessing
 from .iMarker_sensors.sensors.config.presets import cameraMatrix_RealSense, distCoeffs_RealSense
@@ -110,6 +110,10 @@ def runner_offVid(config):
         alpha = dpg.get_value('camAlpha')
         beta = dpg.get_value('camBeta')
 
+        # Get color range values
+        greenRangeLow = rgbToHsvTuple(dpg.get_value('GreenRangeLow'))
+        greenRangeHigh = rgbToHsvTuple(dpg.get_value('GreenRangeHigh'))
+
         # Re-write the config values based on the GUI changes
         config['algorithm']['process']['subtractRL'] = dpg.get_value(
             'SubtractionOrder')
@@ -121,14 +125,8 @@ def runner_offVid(config):
             'Threshold')
         config['algorithm']['postprocess']['invertBinary'] = dpg.get_value(
             'invertBinaryImage')
-        config['algorithm']['process']['colorRange']['hsv_green']['lower'][0] = int(
-            dpg.get_value('GreenRangeHueLow'))
-        config['algorithm']['process']['colorRange']['hsv_green']['lower'][1] = int(
-            dpg.get_value('GreenRangeSatLow'))
-        config['algorithm']['process']['colorRange']['hsv_green']['upper'][0] = int(
-            dpg.get_value('GreenRangeHueHigh'))
-        config['algorithm']['process']['colorRange']['hsv_green']['upper'][1] = int(
-            dpg.get_value('GreenRangeSatHigh'))
+        config['algorithm']['process']['colorRange']['hsv_green']['lower'] = greenRangeLow
+        config['algorithm']['process']['colorRange']['hsv_green']['upper'] = greenRangeHigh
         # Thresholding value
         config['algorithm']['postprocess']['threshold']['method'] = dpg.get_value(
             'ThreshMethod').lower()

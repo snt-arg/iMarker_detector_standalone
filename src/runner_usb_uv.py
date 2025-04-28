@@ -30,7 +30,11 @@ def runner_usbUV(config):
     print(f'Framework started! [Single-Vision UV Camera Setup]')
 
     # Fetch the cameras
-    cap = usb.createCameraObject(cfgUVCam['port'])
+    try:
+        cap = usb.createCameraObject(cfgUVCam['port'])
+    except Exception as e:
+        print(f'- [Error] Error while fetching camera output: {e}')
+        return
 
     if cfgGeneral['fpsBoost']:
         cap.set(cv.CAP_PROP_FPS, 30.0)
