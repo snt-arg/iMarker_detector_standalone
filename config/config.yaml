@@ -1,6 +1,6 @@
 configs:
   mode:
-    runner: "offimg" # ["offimg", "offimguv", "offvid", "usb", "usbuv", "ids", "rs"]
+    runner: "ids" # ["offimg", "offimguv", "offvid", "usb", "usbuv", "sv_ir", "ids", "rs"]
     temporalSubtraction: False # Only for single vision sensor ("rs", "offimg", "offvid")
   gui:
     imageHolderWidth: 400
@@ -30,6 +30,8 @@ configs:
       calibrationPath: "/home/ali/Codes/csr_detector_standalone/src/iMarker_sensors/sensors/calibration/output/elpStereoMap.xml"
     usbCamUV:
       port: "/dev/video4"
+    usbCamIR_SV:
+      port: "/dev/video6" # "/dev/video4"
     ids:
       exposureTime: 20000
       roi:

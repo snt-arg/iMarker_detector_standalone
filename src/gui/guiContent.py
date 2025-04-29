@@ -36,6 +36,7 @@ def guiElements(cfg: dict, singleCamera: bool = False):
 
     isUsbCam = cfgMode['runner'] == 'usb'
     isRealSense = cfgMode['runner'] == 'rs'
+    isSiViIR = cfgMode['runner'] == 'sv_ir'
     isOffImg = cfgMode['runner'] == 'offimg'
     isOffVid = cfgMode['runner'] == 'offvid'
     isSequential = cfgMode['temporalSubtraction']

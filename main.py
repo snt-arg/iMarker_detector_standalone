@@ -16,6 +16,7 @@ from src.utils import argParser, readConfig
 from src.runner_offVid import runner_offVid
 from src.runner_offImg import runner_offImg
 from src.runner_offImg_uv import runner_offImgUV
+from src.runner_sv_usb_ir import runner_singleVision_usbIR
 
 
 def main():
@@ -52,6 +53,8 @@ def main():
         runner_offImgUV(config['configs'])
     elif mode == 'usbuv':
         runner_usbUV(config['configs'])
+    elif mode == 'sv_ir':
+        runner_singleVision_usbIR(config['configs'])
     else:
         print(f'The selected mode "{mode}" is not valid. Exiting ...')
 
