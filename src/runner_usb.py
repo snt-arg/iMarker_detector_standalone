@@ -11,11 +11,11 @@ You may not use this file except in compliance with the License.
 import os
 import cv2 as cv
 import numpy as np
+from .gui.utils import frameSave
 import dearpygui.dearpygui as dpg
-from .gui.utils import frameSave, rgbToHsvTuple
 from .marker_detector.arucoDetector import arucoDetector
 from .iMarker_sensors.sensors import usb_interface as usb
-from .iMarker_algorithms.process import singleFrameProcessing
+from .iMarker_algorithms.process import stereoFrameProcessing
 from .iMarker_algorithms.vision.concatImages import concatFramesHorizontal
 from .iMarker_sensors.sensors.calibration.utils import getCalibrationParams
 from .gui.guiContent import guiElements, loadImageAsTexture, onImageViewTabChange, updateImageTexture, updateWindowSize
@@ -33,7 +33,7 @@ def runner_usb(config):
     stereoMapL_x, stereoMapL_y, stereoMapR_x, stereoMapR_y = getCalibrationParams(
         calibrationFilePath)
 
-    print(f'Framework started! [Double Vision USB Cameras Setup]')
+    print(f'Framework started! [Dual-Vision USB Cameras Setup]')
 
     # Fetch the cameras
     try:
@@ -69,7 +69,6 @@ def runner_usb(config):
     postInitImages = [(initFrame, 'FramesLeft'),
                       (initFrame, 'FramesRight'),
                       (initFrame, 'FramesMask'),
-                      (initFrame, 'FramesMaskApplied'),
                       (initFrame, 'FramesMarker')]
 
     def updateAfterGui():
@@ -101,10 +100,6 @@ def runner_usb(config):
             alpha = dpg.get_value('camAlpha')
             beta = dpg.get_value('camBeta')
 
-            # Get color range values
-            greenRangeLow = rgbToHsvTuple(dpg.get_value('GreenRangeLow'))
-            greenRangeHigh = rgbToHsvTuple(dpg.get_value('GreenRangeHigh'))
-
             # Retrieve frames
             # Note: if each of the cameras not working, retX will be False
             retL, frameLRaw = usb.grabImage(capL)
@@ -130,8 +125,6 @@ def runner_usb(config):
                 'Threshold')
             config['algorithm']['postprocess']['invertBinary'] = dpg.get_value(
                 'invertBinaryImage')
-            config['algorithm']['process']['colorRange']['hsv_green']['lower'] = greenRangeLow
-            config['algorithm']['process']['colorRange']['hsv_green']['upper'] = greenRangeHigh
             # Alignment parameters
             config['algorithm']['process']['alignment']['matchRate'] = dpg.get_value(
                 'MatchRate')
@@ -155,7 +148,7 @@ def runner_usb(config):
             frameRRaw = cv.convertScaleAbs(frameRRaw, alpha=alpha, beta=beta)
 
             # Process frames
-            frameL, frameR, frameMask = singleFrameProcessing(
+            frameL, frameR, frameMask = stereoFrameProcessing(
                 frameLRaw, frameRRaw, retL, retR, config, True)
 
             # Prepare a notFound image
@@ -199,4 +192,4 @@ def runner_usb(config):
         capR.release()
         cv.destroyAllWindows()
         dpg.destroy_context()
-        print(f'Framework finished! [Double Vision USB Cameras Setup]')
+        print(f'Framework finished! [Dual-Vision USB Cameras Setup]')

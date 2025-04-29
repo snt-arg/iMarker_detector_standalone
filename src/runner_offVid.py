@@ -30,7 +30,7 @@ def runner_offVid(config):
 
     setupVariant = "Sequential Subtraction" if isSequential else "Masking"
     print(
-        f'Framework started! [Offline Video Captured by Single Vision Setup - {setupVariant}]')
+        f'Framework started! [Offline Video Captured by Single-Vision Setup - {setupVariant}]')
 
     # Check if the video file exists
     if not os.path.exists(cfgOffline['video']['path']):
@@ -213,6 +213,6 @@ def runner_offVid(config):
         prevFrame = np.copy(currFrame)
 
     print(
-        f'Framework stopped! [Offline Video Captured by Single Vision Setup - {setupVariant}]')
+        f'Framework stopped! [Offline Video Captured by Single-Vision Setup - {setupVariant}]')
     cv.destroyAllWindows()
     dpg.destroy_context()

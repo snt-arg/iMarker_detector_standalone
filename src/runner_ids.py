@@ -28,7 +28,7 @@ def runner_ids(config):
     cfgMarker = config['marker']
     cfgIDSCam = config['sensor']['ids']
 
-    print(f'Framework started! [Double Vision iDS Cameras Setup]')
+    print(f'Framework started! [Dual-Vision iDS Cameras Setup]')
 
     # Fetch the cameras
     cap1 = ids_interface.idsCamera(0)
@@ -114,10 +114,6 @@ def runner_ids(config):
             alpha = dpg.get_value('camAlpha')
             beta = dpg.get_value('camBeta')
 
-            # Get color range values
-            greenRangeLow = rgbToHsvTuple(dpg.get_value('GreenRangeLow'))
-            greenRangeHigh = rgbToHsvTuple(dpg.get_value('GreenRangeHigh'))
-
             # Fetch the frames
             frame1Raw = cap1.getFrame()
             frame2Raw = cap2.getFrame()
@@ -136,8 +132,6 @@ def runner_ids(config):
                 'Threshold')
             config['algorithm']['postprocess']['invertBinary'] = dpg.get_value(
                 'invertBinaryImage')
-            config['algorithm']['process']['colorRange']['hsv_green']['lower'] = greenRangeLow
-            config['algorithm']['process']['colorRange']['hsv_green']['upper'] = greenRangeHigh
             # Alignment parameters
             config['algorithm']['process']['alignment']['matchRate'] = dpg.get_value(
                 'MatchRate')
@@ -211,4 +205,4 @@ def runner_ids(config):
         cap2.closeLibrary()
         cv.destroyAllWindows()
         dpg.destroy_context()
-        print(f'Framework finished! [Double Vision iDS Cameras Setup]')
+        print(f'Framework finished! [Dual-Vision iDS Cameras Setup]')
