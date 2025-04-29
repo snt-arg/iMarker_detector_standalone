@@ -85,8 +85,6 @@ def runner_usb(config):
         dpg.add_dynamic_texture(width, height, default_value=[
                                 0.0, 0.0, 0.0, 1.0]*width*height, tag="FramesMask")
         dpg.add_dynamic_texture(width, height, default_value=[
-                                0.0, 0.0, 0.0, 1.0]*width*height, tag="FramesMaskApplied")
-        dpg.add_dynamic_texture(width, height, default_value=[
                                 0.0, 0.0, 0.0, 1.0]*width*height, tag="FramesMarker")
 
     # GUI content

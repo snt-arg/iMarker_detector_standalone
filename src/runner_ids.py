@@ -12,9 +12,9 @@ import os
 import cv2 as cv
 import numpy as np
 import dearpygui.dearpygui as dpg
+from .gui.utils import frameSave, resizeFrame
 from .iMarker_sensors.sensors import ids_interface
 from .marker_detector.arucoDetector import arucoDetector
-from .gui.utils import frameSave, resizeFrame, rgbToHsvTuple
 from .iMarker_algorithms.process import stereoFrameProcessing
 from .iMarker_algorithms.vision.concatImages import concatFramesHorizontal
 from .iMarker_sensors.sensors.config.presets import homographyMatrixPreset_iDS
@@ -40,8 +40,10 @@ def runner_ids(config):
     cap2.getCalibrationConfig(root, 'cam2')
 
     # Set the ROI
+    width = cfgIDSCam['roi']['cap1']['width']
+    height = cfgIDSCam['roi']['cap1']['height']
     cap1.setROI(cfgIDSCam['roi']['cap1']['x'], cfgIDSCam['roi']['cap1']
-                ['y'], cfgIDSCam['roi']['cap1']['width'], cfgIDSCam['roi']['cap1']['height'])
+                ['y'], width, height)
     cap2.setROI(cfgIDSCam['roi']['cap2']['x'], cfgIDSCam['roi']['cap2']
                 ['y'], cfgIDSCam['roi']['cap2']['width'], cfgIDSCam['roi']['cap2']['height'])
 
@@ -58,12 +60,7 @@ def runner_ids(config):
     cap2.setExposureTime(cfgIDSCam['exposureTime'])
 
     # Read the first frame to get the size
-    initFrame = cap1.getFrame()
-    retL = False if (not np.any(initFrame)) else True
-    if not retL:
-        print("- Error: Could not open camera 1.")
-        exit()
-    height, width = initFrame.shape[:2]
+    initFrame = np.zeros((height, width, 3), dtype=np.uint8)
 
     # Initialize the GUI
     dpg.create_context()
@@ -82,7 +79,6 @@ def runner_ids(config):
     postInitImages = [(initFrame, 'FramesLeft'),
                       (initFrame, 'FramesRight'),
                       (initFrame, 'FramesMask'),
-                      (initFrame, 'FramesMaskApplied'),
                       (initFrame, 'FramesMarker')]
 
     def updateAfterGui():
@@ -98,8 +94,6 @@ def runner_ids(config):
                                 0.0, 0.0, 0.0, 1.0]*width*height, tag="FramesRight")
         dpg.add_dynamic_texture(width, height, default_value=[
                                 0.0, 0.0, 0.0, 1.0]*width*height, tag="FramesMask")
-        dpg.add_dynamic_texture(width, height, default_value=[
-                                0.0, 0.0, 0.0, 1.0]*width*height, tag="FramesMaskApplied")
         dpg.add_dynamic_texture(width, height, default_value=[
                                 0.0, 0.0, 0.0, 1.0]*width*height, tag="FramesMarker")
 
@@ -151,8 +145,8 @@ def runner_ids(config):
             frame2Raw = cv.convertScaleAbs(frame2Raw, alpha=alpha, beta=beta)
 
             # Resize frames if necessary
-            frame1Raw = resizeFrame(frame1Raw, cfgGui['imageHolderWidth'])
-            frame2Raw = resizeFrame(frame2Raw, cfgGui['imageHolderWidth'])
+            # frame1Raw = resizeFrame(frame1Raw, cfgGui['imageHolderWidth'])
+            # frame2Raw = resizeFrame(frame2Raw, cfgGui['imageHolderWidth'])
 
             # Flip the right frame
             frame2Raw = cv.flip(frame2Raw, 1)
