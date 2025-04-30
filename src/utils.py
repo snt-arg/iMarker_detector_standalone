@@ -111,14 +111,15 @@ def argParser(mode: str) -> str:
         The mode to be used for the runner.
     """
     # Variables
-    validModes = ["offimg", "offvid", "offimguv", "usb", "usbuv", "sv_ir", "ids", "rs"]
+    validModes = ["sv_offImg", "sv_offVid", "sv_offImgUV",
+                  "dv_usb", "sv_usbUv", "sv_usbIr", "dv_ids", "sv_rs"]
 
     # Create an argument parser
     parser = argparse.ArgumentParser()
 
     # Add arguments to override config values
     parser.add_argument(
-        '--mode', type=str, help="Override runner mode (rs, ids, usb, offvid, offimg)")
+        '--mode', type=str, help="Override runner mode (sv_rs, dv_ids, dv_usb, sv_offVid, sv_offImg)")
 
     # New mode
     newMode = parser.parse_args().mode

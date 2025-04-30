@@ -12,12 +12,13 @@ YYYYMMDD_HHMMSS_<variant>.<ext>
 
 `<ext>` refers to the file extension, including `png` and `jpg`. Also, `<variant>` shows the sensor-algorithm pair variant used during execution, including:
 
-| Variant    | Description                          |
-| ---------- | ------------------------------------ |
-| `offimg`   | Offline static frame (RGB camera)    |
-| `offimguv` | Offline static frame (UV camera)     |
-| `offvid`   | Offline video-based processing       |
-| `usb`      | USB dual-vision RGB camera setup     |
-| `usbuv`    | USB dual-vision UV camera setup      |
-| `ids`      | IDS dual-vision camera setup         |
-| `rs`       | RealSense single-vision camera setup |
+| Variant       | Description                                |
+| ------------- | ------------------------------------------ |
+| `sv_offImg`   | Single-vision offline static frame (RGB)   |
+| `sv_offImgUV` | Single-vision offline static frame (UV/IR) |
+| `sv_offVid`   | Single-vision offline video (RGB)          |
+| `sv_usbUv`    | Single-vision USB UV camera setup          |
+| `sv_usbIr`    | Single-vision USB IR camera setup          |
+| `sv_rs`       | Single-vision RealSense camera setup       |
+| `dv_usb`      | Dual-vision USB camera setup               |
+| `dv_ids`      | Dual-vision iDS camera setup               |

@@ -34,25 +34,27 @@ def guiElements(cfg: dict, singleCamera: bool = False):
     isThreshAdapt = thresholdMethod == 'adaptive'
     isThreshBin = thresholdMethod == 'binary'
 
-    isUsbCam = cfgMode['runner'] == 'usb'
-    isRealSense = cfgMode['runner'] == 'rs'
-    isSiViIR = cfgMode['runner'] == 'sv_ir'
-    isOffImg = cfgMode['runner'] == 'offimg'
-    isOffVid = cfgMode['runner'] == 'offvid'
+    isIR = cfgMode['runner'] == 'sv_usbIr'
+    isUsbCam = cfgMode['runner'] == 'dv_usb'
+    isRealSense = cfgMode['runner'] == 'sv_rs'
+    isOffImg = cfgMode['runner'] == 'sv_offImg'
+    isOffVid = cfgMode['runner'] == 'sv_offVid'
     isSequential = cfgMode['temporalSubtraction']
-    isUV = cfgMode['runner'] in ['offimguv', 'usbuv']
+    isUV = cfgMode['runner'] in ['sv_offImgUV', 'sv_usbUv']
 
     # Color variables
     greenRangeLow = hsvToRgbTuple(greenRange['lower'])
     greenRangeHigh = hsvToRgbTuple(greenRange['upper'])
 
     # Window title
-    setupVariant = "Sequential Subtraction" if isSequential else "Masking"
+    setupVariant = "Temporal Subtraction" if isSequential else "Masking"
     windowTitle = f"iMarker Readout - {'Single' if singleCamera else 'Double'} Vision Setup"
     if isOffImg or isOffVid or isRealSense:
         windowTitle += f" [{setupVariant}]"
     if isUV:
         windowTitle += " [UV Camera Mode]"
+    if isIR:
+        windowTitle += " [IR Camera Mode]"
 
     with dpg.window(label=windowTitle, tag="MainWindow",
                     width=dpg.get_viewport_client_width(), height=dpg.get_viewport_client_height()):

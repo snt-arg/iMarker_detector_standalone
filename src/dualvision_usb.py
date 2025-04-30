@@ -21,7 +21,7 @@ from .iMarker_sensors.sensors.calibration.utils import getCalibrationParams
 from .gui.guiContent import guiElements, loadImageAsTexture, onImageViewTabChange, updateImageTexture, updateWindowSize
 
 
-def runner_usb(config):
+def runner_dv_usb(config):
     # Get the config values
     cfgMode = config['mode']
     cfgMarker = config['marker']

@@ -1,7 +1,10 @@
 configs:
   mode:
-    runner: "ids" # ["offimg", "offimguv", "offvid", "usb", "usbuv", "sv_ir", "ids", "rs"]
-    temporalSubtraction: False # Only for single vision sensor ("rs", "offimg", "offvid")
+    # Dual-Vision Modes ("dv_usb", "dv_ids")
+    # Single-Vision Modes ("sv_offImg", "sv_offImgUV", "sv_offVid", "sv_usbUv", "sv_usbIr", "sv_rs")
+    runner: "sv_offImg"
+    # Only for single vision setups ("sv_*")
+    temporalSubtraction: False
   gui:
     imageHolderWidth: 400
   sensor:

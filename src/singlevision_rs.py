@@ -19,16 +19,16 @@ from .iMarker_algorithms.process import sequentialFrameProcessing, singleFramePr
 from .gui.guiContent import guiElements, loadImageAsTexture, onImageViewTabChange, updateImageTexture, updateWindowSize
 
 
-def runner_rs(config):
+def runner_sv_rs(config):
     # Get the config values
     cfgMode = config['mode']
     cfgMarker = config['marker']
     cfgRS = config['sensor']['realSense']
     isSequential = cfgMode['temporalSubtraction']
 
-    setupVariant = "Sequential Subtraction" if isSequential else "Masking"
+    setupVariant = "Temporal Subtraction" if isSequential else "Masking"
     print(
-        f'Framework started! [RealSense Single-Vision Setup - {setupVariant}]')
+        f'Framework started! [Single-Vision RealSense Setup - {setupVariant}]')
 
     # Variables
     prevFrame = None
@@ -216,4 +216,4 @@ def runner_rs(config):
         cv.destroyAllWindows()
         dpg.destroy_context()
         print(
-            f'Framework stopped! [RealSense Single-Vision Setup - {setupVariant}]')
+            f'Framework stopped! [Single-Vision RealSense Setup - {setupVariant}]')

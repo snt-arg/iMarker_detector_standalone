@@ -20,7 +20,7 @@ from .iMarker_algorithms.vision.concatImages import concatFramesHorizontal
 from .gui.guiContent import guiElements, loadImageAsTexture, onImageViewTabChange, updateImageTexture, updateWindowSize
 
 
-def runner_usbUV(config):
+def runner_sv_usb_uv(config):
     # Get the config values
     cfgMode = config['mode']
     cfgMarker = config['marker']

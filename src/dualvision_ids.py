@@ -21,7 +21,7 @@ from .iMarker_sensors.sensors.config.presets import homographyMatrixPreset_iDS
 from .gui.guiContent import guiElements, loadImageAsTexture, onImageViewTabChange, updateImageTexture, updateWindowSize
 
 
-def runner_ids(config):
+def runner_dv_ids(config):
     # Get the config values
     cfgGui = config['gui']
     cfgMode = config['mode']
@@ -114,6 +114,11 @@ def runner_ids(config):
 
             retL = False if (not np.any(frame1Raw)) else True
             retR = False if (not np.any(frame2Raw)) else True
+
+            if not (retL and retR):
+                print(
+                    "\n[Error] Seems like cameras are not connected or not working properly. Exiting ...")
+                break
 
             # Re-write the config values based on the GUI changes
             config['algorithm']['process']['subtractRL'] = dpg.get_value(

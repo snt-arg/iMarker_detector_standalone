@@ -8,15 +8,15 @@
 You may not use this file except in compliance with the License.
 """
 
-from src.runner_rs import runner_rs
-from src.runner_ids import runner_ids
-from src.runner_usb import runner_usb
-from src.runner_usb_uv import runner_usbUV
 from src.utils import argParser, readConfig
-from src.runner_offVid import runner_offVid
-from src.runner_offImg import runner_offImg
-from src.runner_offImg_uv import runner_offImgUV
-from src.runner_sv_usb_ir import runner_singleVision_usbIR
+from src.singlevision_rs import runner_sv_rs
+from src.dualvision_ids import runner_dv_ids
+from src.dualvision_usb import runner_dv_usb
+from src.singlevision_usb_ir import runner_sv_usb_ir
+from src.singlevision_usb_uv import runner_sv_usb_uv
+from src.singlevision_off_vid import runner_sv_off_vid
+from src.singlevision_off_img import runner_sv_off_img
+from src.singlevision_off_img_uv import runner_sv_off_img_uv
 
 
 def main():
@@ -31,30 +31,30 @@ def main():
     config['configs']['mode']['runner'] = mode
 
     # Run the selected mode
-    if mode == 'rs':
-        runner_rs(config['configs'])
-    elif mode == 'ids':
+    if mode == 'sv_rs':
+        runner_sv_rs(config['configs'])
+    elif mode == 'dv_ids':
         # Check if the user has installed `ids-peak` and `ids-peak-ipl` packages
         try:
             import ids_peak
             import ids_peak_ipl
-            runner_ids(config['configs'])
+            runner_dv_ids(config['configs'])
         except ImportError:
             print(
                 '[Error] Please install the `ids-peak` and `ids-peak-ipl` packages to use the iDS camera runner.')
             return
-    elif mode == 'usb':
-        runner_usb(config['configs'])
-    elif mode == 'offvid':
-        runner_offVid(config['configs'])
-    elif mode == 'offimg':
-        runner_offImg(config['configs'])
-    elif mode == 'offimguv':
-        runner_offImgUV(config['configs'])
-    elif mode == 'usbuv':
-        runner_usbUV(config['configs'])
-    elif mode == 'sv_ir':
-        runner_singleVision_usbIR(config['configs'])
+    elif mode == 'dv_usb':
+        runner_dv_usb(config['configs'])
+    elif mode == 'sv_offVid':
+        runner_sv_off_vid(config['configs'])
+    elif mode == 'sv_offImg':
+        runner_sv_off_img(config['configs'])
+    elif mode == 'sv_offImgUV':
+        runner_sv_off_img_uv(config['configs'])
+    elif mode == 'sv_usbUv':
+        runner_sv_usb_uv(config['configs'])
+    elif mode == 'sv_usbIr':
+        runner_sv_usb_ir(config['configs'])
     else:
         print(f'The selected mode "{mode}" is not valid. Exiting ...')
 

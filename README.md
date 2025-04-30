@@ -40,9 +40,9 @@ The first step is to modify the configuration file. For a complete list of confi
 
 ### II. Run the Desired Mode
 
-The current version of the framework you can run various modes, including offline images (`"offimg"`), offline videos (`"offvid"`), double-vision USB cameras (`"usb"`), double-vision iDS cameras (`"ids"`), or single-vision RealSense camera (`"rs"`). You can set it in the configuration file.
+The current version of the framework you can run various modes, including offline images (`"sv_offImg"`), offline videos (`"sv_offVid"`), double-vision USB cameras (`"dv_usb"`), double-vision iDS cameras (`"dv_ids"`), or single-vision RealSense camera (`"sv_rs"`). You can set it in the configuration file.
 
-For single vision sensors (`"rs"`, `"offimg"`, or `"offvid"`) the parameter `temporalSubtraction` can be set to run in **sequential subtraction** or **masking** modes.
+For single vision sensors (`"sv_rs"`, `"sv_offImg"`, or `"sv_offVid"`) the parameter `temporalSubtraction` can be set to run in **sequential subtraction** or **masking** modes.
 
 Then, go to the root of the project and run `[~/.venv/bin/python] main.py`. The code automatically picks the proper runner for it.
 
@@ -56,6 +56,6 @@ source .venv/bin/activate
 [~/.venv/bin/python] main.py
 
 # Option 2: Changing the mode using argument and then run
-# [hint] Pick from ["offimg", "offvid", "usb", "ids", "rs"]
-[~/.venv/bin/python] main.py --mode rs
+# [hint] Pick from ["sv_offImg", "sv_offVid", "dv_usb", "dv_ids", "sv_rs"]
+[~/.venv/bin/python] main.py --mode sv_rs
 ```
