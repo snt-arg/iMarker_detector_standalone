@@ -15,41 +15,33 @@ from .gui.utils import frameSave
 import dearpygui.dearpygui as dpg
 from .marker_detector.arucoDetector import arucoDetector
 from .iMarker_sensors.sensors import usb_interface as usb
-from .iMarker_algorithms.process import stereoFrameProcessing
+from .iMarker_algorithms.process import singleFrameProcessing
 from .iMarker_algorithms.vision.concatImages import concatFramesHorizontal
-from .iMarker_sensors.sensors.calibration.utils import getCalibrationParams
 from .gui.guiContent import guiElements, loadImageAsTexture, onImageViewTabChange, updateImageTexture, updateWindowSize
 
 
-def runner_usb(config):
+def runner_singleVision_usbIR(config):
     # Get the config values
     cfgMode = config['mode']
     cfgMarker = config['marker']
-    cfgUsbCam = config['sensor']['usbCam']
     cfgGeneral = config['sensor']['general']
+    cfgIRCam = config['sensor']['usbCamIR_SV']
 
-    # Get the calibration parameters
-    calibrationFilePath = cfgUsbCam['calibrationPath']
-    stereoMapL_x, stereoMapL_y, stereoMapR_x, stereoMapR_y = getCalibrationParams(
-        calibrationFilePath)
-
-    print(f'Framework started! [Dual-Vision USB Cameras Setup]')
+    print(f'Framework started! [Single-Vision IR Camera Setup]')
 
     # Fetch the cameras
     try:
-        capL = usb.createCameraObject(cfgUsbCam['ports']['lCam'])
-        capR = usb.createCameraObject(cfgUsbCam['ports']['rCam'])
+        cap = usb.createCameraObject(cfgIRCam['port'])
     except Exception as e:
         print(f'- [Error] Error while fetching camera output: {e}')
         return
 
     if cfgGeneral['fpsBoost']:
-        capL.set(cv.CAP_PROP_FPS, 30.0)
-        capR.set(cv.CAP_PROP_FPS, 30.0)
+        cap.set(cv.CAP_PROP_FPS, 30.0)
 
     # Read the first frame to get the size
-    width = int(capL.get(cv.CAP_PROP_FRAME_WIDTH))
-    height = int(capL.get(cv.CAP_PROP_FRAME_HEIGHT))
+    width = int(cap.get(cv.CAP_PROP_FRAME_WIDTH))
+    height = int(cap.get(cv.CAP_PROP_FRAME_HEIGHT))
     initFrame = np.zeros((height, width, 3), dtype=np.uint8)
 
     # Initialize the GUI
@@ -66,10 +58,10 @@ def runner_usb(config):
         dpg.add_bool_value(default_value=False, tag="RecordFlag")
 
     # Register a render callback (executed after GUI is ready)
-    postInitImages = [(initFrame, 'FramesLeft'),
-                      (initFrame, 'FramesRight'),
-                      (initFrame, 'FramesMask'),
-                      (initFrame, 'FramesMarker')]
+    postInitImages = [(initFrame, 'FramesMask'),
+                      (initFrame, 'FramesMaskApplied'),
+                      (initFrame, 'FramesMarker'),
+                      (initFrame, 'FramesMain')]
 
     def updateAfterGui():
         for img, tag in postInitImages:
@@ -79,16 +71,16 @@ def runner_usb(config):
     # Define textures
     with dpg.texture_registry(show=True):
         dpg.add_dynamic_texture(width, height, default_value=[
-                                0.0, 0.0, 0.0, 1.0]*width*height, tag="FramesLeft")
-        dpg.add_dynamic_texture(width, height, default_value=[
-                                0.0, 0.0, 0.0, 1.0]*width*height, tag="FramesRight")
+                                0.0, 0.0, 0.0, 1.0]*width*height, tag="FramesMain")
         dpg.add_dynamic_texture(width, height, default_value=[
                                 0.0, 0.0, 0.0, 1.0]*width*height, tag="FramesMask")
+        dpg.add_dynamic_texture(width, height, default_value=[
+                                0.0, 0.0, 0.0, 1.0]*width*height, tag="FramesMaskApplied")
         dpg.add_dynamic_texture(width, height, default_value=[
                                 0.0, 0.0, 0.0, 1.0]*width*height, tag="FramesMarker")
 
     # GUI content
-    guiElements(config)
+    guiElements(config, True)
 
     dpg.show_viewport()
 
@@ -99,22 +91,14 @@ def runner_usb(config):
             beta = dpg.get_value('camBeta')
 
             # Retrieve frames
-            # Note: if each of the cameras not working, retX will be False
-            retL, frameLRaw = usb.grabImage(capL)
-            retR, frameRRaw = usb.grabImage(capR)
+            ret, frameRaw = usb.grabImage(cap)
 
             # Check if both cameras are connected
-            if not retL and not retR:
-                print('- [Error] no camera is connected! Exiting...')
+            if not ret:
+                print('- [Error] no IR camera is connected! Exiting...')
                 break
 
             # Re-write the config values based on the GUI changes
-            config['sensor']['usbCam']['maskSize'] = dpg.get_value(
-                'CircMask')
-            config['sensor']['usbCam']['enableMask'] = dpg.get_value(
-                'CircMaskEnable')
-            config['algorithm']['process']['subtractRL'] = dpg.get_value(
-                'SubtractionOrder')
             config['algorithm']['postprocess']['erosionKernel'] = dpg.get_value(
                 'Erosion')
             config['algorithm']['postprocess']['gaussianKernel'] = dpg.get_value(
@@ -123,43 +107,28 @@ def runner_usb(config):
                 'Threshold')
             config['algorithm']['postprocess']['invertBinary'] = dpg.get_value(
                 'invertBinaryImage')
-            # Alignment parameters
-            config['algorithm']['process']['alignment']['matchRate'] = dpg.get_value(
-                'MatchRate')
-            config['algorithm']['process']['alignment']['maxFeatures'] = dpg.get_value(
-                'MaxFeat')
             # Thresholding value
             config['algorithm']['postprocess']['threshold']['method'] = dpg.get_value(
                 'ThreshMethod').lower()
-            # Channel selection
-            colorChannelValue = dpg.get_value('ColorChannel')
-            channel = 'r' if colorChannelValue == 'Red' else 'g' if dpg.get_value(
-                'ColorChannel') == 'Green' else 'b' if colorChannelValue == 'Blue' else 'All'
-            config['algorithm']['process']['channel'] = channel
-
-            # Flip the right frame
-            if (cfgUsbCam['flipImage']):
-                frameRRaw = cv.flip(frameRRaw, 1)
 
             # Change brightness
-            frameLRaw = cv.convertScaleAbs(frameLRaw, alpha=alpha, beta=beta)
-            frameRRaw = cv.convertScaleAbs(frameRRaw, alpha=alpha, beta=beta)
-
-            # Process frames
-            frameL, frameR, frameMask = stereoFrameProcessing(
-                frameLRaw, frameRRaw, retL, retR, config, True)
+            frameRaw = cv.convertScaleAbs(frameRaw, alpha=alpha, beta=beta)
 
             # Prepare a notFound image
             notFoundImage = cv.imread(
                 f"{os.getcwd()}/src/notFound.png", cv.IMREAD_COLOR)
 
-            # Convert to RGB
-            frameMask = cv.cvtColor(frameMask, cv.COLOR_GRAY2BGR)
+            # Process frames
+            cFrame, frameMask = singleFrameProcessing(
+                frameRaw, ret, config)
+
+            # Apply the mask
+            frameMaskApplied = cv.bitwise_and(
+                cFrame, cFrame, mask=frameMask)
 
             # Show the frames
-            frameLRaw = frameLRaw if retL else notFoundImage
-            frameRRaw = frameRRaw if retR else notFoundImage
-            frameMask = frameMask if (retR and retL) else notFoundImage
+            frameRaw = frameRaw if ret else notFoundImage
+            frameMask = frameMask if ret else notFoundImage
 
             # ArUco marker detection
             frameMarkers = arucoDetector(
@@ -168,15 +137,16 @@ def runner_usb(config):
 
             # Update the textures
             onImageViewTabChange({
-                'left': frameLRaw,
-                'right': frameRRaw,
+                'main': cFrame,
                 'mask': frameMask,
-                'marker': frameMarkers
+                'marker': frameMarkers,
+                'maskApplied': frameMaskApplied,
             })
 
             # Record the frame(s)
             if dpg.get_value("RecordFlag"):
-                imageList = [frameLRaw, frameRRaw, frameMarkers]
+                frameMarkers = cv.cvtColor(frameMarkers, cv.COLOR_GRAY2BGR)
+                imageList = [frameRaw, frameMarkers]
                 concatedImage = concatFramesHorizontal(imageList, 1800)
                 frameSave(concatedImage, cfgMode['runner'])
                 dpg.set_value("RecordFlag", False)
@@ -186,8 +156,7 @@ def runner_usb(config):
 
     finally:
         # Stop the pipeline and close the windows
-        capL.release()
-        capR.release()
+        cap.release()
         cv.destroyAllWindows()
         dpg.destroy_context()
-        print(f'Framework finished! [Dual-Vision USB Cameras Setup]')
+        print(f'Framework finished! [Single-Vision IR Camera Setup]')

@@ -111,7 +111,7 @@ def argParser(mode: str) -> str:
         The mode to be used for the runner.
     """
     # Variables
-    validModes = ["offimg", "offvid", "offimguv", "usb", "usbuv", "ids", "rs"]
+    validModes = ["offimg", "offvid", "offimguv", "usb", "usbuv", "sv_ir", "ids", "rs"]
 
     # Create an argument parser
     parser = argparse.ArgumentParser()

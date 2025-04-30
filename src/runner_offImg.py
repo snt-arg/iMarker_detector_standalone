@@ -60,7 +60,7 @@ def runner_offImg(config):
     singleCamera = True
     setupVariant = "Sequential Subtraction" if isSequential else "Masking"
     print(
-        f'Framework started! [Offline Images Captured by Single Vision Setup - {setupVariant}]')
+        f'Framework started! [Offline Images Captured by Single-Vision Setup - {setupVariant}]')
 
     # Check if the images files exist
     image1Path = os.path.join(
@@ -221,6 +221,6 @@ def runner_offImg(config):
         dpg.render_dearpygui_frame()
 
     print(
-        f'Framework stopped! [Offline Images Captured by Single Vision Setup - {setupVariant}]')
+        f'Framework stopped! [Offline Images Captured by Single-Vision Setup - {setupVariant}]')
     cv.destroyAllWindows()
     dpg.destroy_context()

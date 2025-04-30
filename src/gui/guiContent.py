@@ -36,6 +36,7 @@ def guiElements(cfg: dict, singleCamera: bool = False):
 
     isUsbCam = cfgMode['runner'] == 'usb'
     isRealSense = cfgMode['runner'] == 'rs'
+    isSiViIR = cfgMode['runner'] == 'sv_ir'
     isOffImg = cfgMode['runner'] == 'offimg'
     isOffVid = cfgMode['runner'] == 'offvid'
     isSequential = cfgMode['temporalSubtraction']
@@ -161,8 +162,6 @@ def guiElements(cfg: dict, singleCamera: bool = False):
                         dpg.add_image("FramesRight")
                     with dpg.tab(label="Mask Frame", tag="MaskFrameTab"):
                         dpg.add_image("FramesMask")
-                    with dpg.tab(label="Mask Applied", tag="MaskAppliedTab"):
-                        dpg.add_image("FramesMaskApplied")
                     with dpg.tab(label="Detected Markers", tag="MarkersTab"):
                         dpg.add_image("FramesMarker")
 

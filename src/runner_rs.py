@@ -28,7 +28,7 @@ def runner_rs(config):
 
     setupVariant = "Sequential Subtraction" if isSequential else "Masking"
     print(
-        f'Framework started! [RealSense Single Vision Setup - {setupVariant}]')
+        f'Framework started! [RealSense Single-Vision Setup - {setupVariant}]')
 
     # Variables
     prevFrame = None
@@ -216,4 +216,4 @@ def runner_rs(config):
         cv.destroyAllWindows()
         dpg.destroy_context()
         print(
-            f'Framework stopped! [RealSense Single Vision Setup - {setupVariant}]')
+            f'Framework stopped! [RealSense Single-Vision Setup - {setupVariant}]')
