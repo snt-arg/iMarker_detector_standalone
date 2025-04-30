@@ -1,61 +1,97 @@
 # iMarker Detector Standalone (with GUI)
 
-![Demo](docs/demo.png "Demo")
+![iMarker Detector Standalone](docs/demo.gif "iMarker Detector Standalone")
 
-This repository contains the GUI-enabled standalone version of **iMarker detector**. It functions as a wrapper for iMarker [detector sensors](https://github.com/snt-arg/iMarker_sensors) and [algorithms](https://github.com/snt-arg/csr_detector).
+Welcome to the **iMarker Detector Standalone** repository 💡!
+This project provides a **Python-based GUI application** for revealing and detecting **iMarkers** placed in the environment.
+To achieve its functionality, this standalone tool integrates the following submodules:
+
+- 🔌 [iMarker Sensor Interfaces](https://github.com/snt-arg/iMarker_sensors) — capture and stream data from various camera setups
+- 👁️ [iMarker Detection Algorithms](https://github.com/snt-arg/iMarker_algorithms) — core image processing and marker extraction logic
+
+## 🧠 About iMarkers
+
+**iMarkers** are invisible fiducial markers detectable only by certain sensors and algorithms. They enable robust detection for human-robot interaction, AR applications, and indoor localization.
+Read more about iMarkers (developed for the TRANSCEND project at the [University of Luxembourg](https://www.uni.lu/en/)) in [this link](https://snt-arg.github.io/iMarkers/).
 
 ## 🛠️ Getting Started
 
-### I. Cloning the Repository
+This section will guide you through setting up the **iMarker Detector Standalone** with all necessary submodules and dependencies.
 
-When cloning the repository include `--recurse-submodules` after `git clone` to also include the submodules. You can use the command below:
+### I. Clone the Repository with Submodules
 
+Clone the repository along with its submodules ([sensor interfaces](https://github.com/snt-arg/iMarker_sensors) and [detector algorithms](https://github.com/snt-arg/iMarker_algorithms)) using:
+
+```bash
+git clone --recurse-submodules git@github.com:snt-arg/iMarker_detector_standalone.git
 ```
-git clone --recurse-submodules git@github.com:snt-arg/csr_detector_standalone.git
+
+> 🛎️ Tip: If you have already cloned it without `--recurse-submodules`, you can initialize and update the submodules afterward:
+
+```bash
+git submodule update --init --recursive
 ```
 
-You can also get the latest changes of each submodule individually using the command `git pull --recurse-submodules`.
+### II. Environment Setup & Installation
 
-💡 **[note]** In case you do not have SSH access, you can just download the code of [this library](https://github.com/snt-arg/csr_detector_standalone), and clone the [detector sensors](https://github.com/snt-arg/iMarker_sensors) inside `src/iMarker_sensors`, and [detector algorithms repo](https://github.com/snt-arg/csr_detector) inside `src/csr_detector` paths.
+We recommend using `Python>=3.10.4` and a virtual environment to avoid package conflicts.
 
-### II. Installation
+#### 1. Create and activate a virtual environment:
 
-After cloning the repository, you need to install the required dependencies. The Python version used while developing the framework is `3.10.4`. It is highly recommended to create a Python virtual environment using `python -m venv .venv`, activate it using `source .venv/bin/activate`, and then install the required dependencies in the `requirements.txt` using the below command:
-
+```bash
+python -m venv .venv
+source .venv/bin/activate  # On Windows use `.venv\Scripts\activate`
 ```
+
+#### 2. Install dependencies:
+
+```bash
 pip install -r requirements.txt
 ```
 
-You can also install the cloned submodules and define dependencies and other distribution-related configurations using the provided `setup.py` file in the root directory of each file. Hence, follow the below steps:
-
-- Go to `src/iMarker_sensors` and run `pip install -e .`,
-- Go to `src/csr_detector` and run `pip install -e .`,
-- Go to the **root directory** and run `pip install -e .` to install the package and its dependencies.
-
 ## 🚀 Running the Code
 
-### I. Set Configurations
+### I. Configure the Application
 
-The first step is to modify the configuration file. For a complete list of configurations you can take a look at [config.yaml](/config/config.yaml) or read the detailed descriptions [here](/config/README.md).
+Before launching the GUI, you need to adjust the configuration settings to match your sensor setup and detection preferences.
+
+- The main configuration file is located at [`config/config.yaml`](./config/config.yaml).
+- For detailed explanations of each parameter, refer to the [configuration guide](./config/README.md).
+
+> 🛎️ Tip: The configuration is automatically parsed and applied when launching the application.
 
 ### II. Run the Desired Mode
 
-The current version of the framework you can run various modes, including offline images (`"sv_offImg"`), offline videos (`"sv_offVid"`), double-vision USB cameras (`"dv_usb"`), double-vision iDS cameras (`"dv_ids"`), or single-vision RealSense camera (`"sv_rs"`). You can set it in the configuration file.
+The framework supports various operating modes, configurable via the `mode`/`runner` field in the configuration file:
 
-For single vision sensors (`"sv_rs"`, `"sv_offImg"`, or `"sv_offVid"`) the parameter `temporalSubtraction` can be set to run in **sequential subtraction** or **masking** modes.
+| Mode          | Description                                |
+| ------------- | ------------------------------------------ |
+| `sv_offImg`   | Single-vision offline static frame (RGB)   |
+| `sv_offImgUV` | Single-vision offline static frame (UV/IR) |
+| `sv_offVid`   | Single-vision offline video (RGB)          |
+| `sv_usbUv`    | Single-vision USB UV camera setup          |
+| `sv_usbIr`    | Single-vision USB IR camera setup          |
+| `sv_rs`       | Single-vision RealSense camera setup       |
+| `dv_usb`      | Dual-vision USB camera setup               |
+| `dv_ids`      | Dual-vision iDS camera setup               |
 
-Then, go to the root of the project and run `[~/.venv/bin/python] main.py`. The code automatically picks the proper runner for it.
+📌 For **single-vision modes** (`sv_*`), you can choose between:
 
-💡 **[note]** You can also set the mode value using the arguments, as shown below:
+- `temporalSubtraction = True` → **Sequential frame subtraction**
+- `temporalSubtraction = False` → **Color masking (no impact for UV/IR cameras)**
 
-```python
-# Activate the .venv
+Once the configuration is set, navigate to the project root and run:
+
+```bash
+# Activate the virtual environment
 source .venv/bin/activate
 
-# Option 1: Normal running
-[~/.venv/bin/python] main.py
+# Option 1: Run with the mode specified in the config
+python main.py
 
-# Option 2: Changing the mode using argument and then run
-# [hint] Pick from ["sv_offImg", "sv_offVid", "dv_usb", "dv_ids", "sv_rs"]
-[~/.venv/bin/python] main.py --mode sv_rs
+# Option 2: Override the mode via command-line argument
+# (Pick one: sv_offImg, sv_offVid, dv_usb, dv_ids, sv_rs)
+python main.py --mode sv_rs
 ```
+
+The script will automatically launch the appropriate runner based on your selected mode.
