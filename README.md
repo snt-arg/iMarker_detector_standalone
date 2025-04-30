@@ -86,12 +86,31 @@ Once the configuration is set, navigate to the project root and run:
 # Activate the virtual environment
 source .venv/bin/activate
 
-# Option 1: Run with the mode specified in the config
+# [Option 1]: Run with the mode specified in the config
 python main.py
 
-# Option 2: Override the mode via command-line argument
-# (Pick one: sv_offImg, sv_offVid, dv_usb, dv_ids, sv_rs)
+# [Option 2]: Override the mode via command-line argument
+# (pick from "dv_usb", "dv_ids", "sv_offImg", "sv_offImgUV", "sv_offVid", "sv_usbUv", "sv_usbIr", "sv_rs")
 python main.py --mode sv_rs
 ```
 
 The script will automatically launch the appropriate runner based on your selected mode.
+
+## 📎 Related Repositories
+
+It is intended to work in conjunction with the core detection and visualization pipelines:
+
+- 🔌 [iMarker Sensor Interfaces](https://github.com/snt-arg/iMarker_sensors)
+- 👁️ [iMarker Detector Algorithms](https://github.com/snt-arg/iMarker_algorithms)
+- 🤖 [ROS-enabled Version of iMarker Detection for Advanced Robotics](https://github.com/snt-arg/iMarker_detector_ros)
+
+## 📚 Citation
+
+```bibtex
+@article{tourani2025unveiling,
+  title={Unveiling the Potential of iMarkers: Invisible Fiducial Markers for Advanced Robotics},
+  author={Tourani, Ali and Avsar, Deniz Isinsu and Bavle, Hriday and Sanchez-Lopez, Jose Luis and Lagerwall, Jan and Voos, Holger},
+  journal={arXiv preprint arXiv:2501.15505},
+  year={2025}
+}
+```
