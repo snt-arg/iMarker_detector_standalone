@@ -23,7 +23,6 @@ from .gui.guiContent import guiElements, loadImageAsTexture, onImageViewTabChang
 
 def runner_dv_ids(config):
     # Get the config values
-    cfgGui = config['gui']
     cfgMode = config['mode']
     cfgMarker = config['marker']
     cfgIDSCam = config['sensor']['ids']
@@ -45,7 +44,7 @@ def runner_dv_ids(config):
     cap1.setROI(cfgIDSCam['roi']['cap1']['x'], cfgIDSCam['roi']['cap1']
                 ['y'], width, height)
     cap2.setROI(cfgIDSCam['roi']['cap2']['x'], cfgIDSCam['roi']['cap2']
-                ['y'], cfgIDSCam['roi']['cap2']['width'], cfgIDSCam['roi']['cap2']['height'])
+                ['y'], width, height)
 
     # Synchronize the cameras
     cap1.syncAsMaster()
