@@ -49,6 +49,7 @@ def getArucoDict(dictName: str) -> cv.aruco.Dictionary:
         "DICT_APRILTAG_25h9": cv.aruco.DICT_APRILTAG_25h9,
         "DICT_APRILTAG_36h10": cv.aruco.DICT_APRILTAG_36h10,
         "DICT_APRILTAG_36h11": cv.aruco.DICT_APRILTAG_36h11,
+        "DICT_ARUCO_MIP_36H12": cv.aruco.DICT_ARUCO_MIP_36H12
     }
 
     # Get the corresponding dictionary constant

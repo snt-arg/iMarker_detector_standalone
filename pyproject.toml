@@ -1,0 +1,14 @@
+[project]
+name = "imarker-detector-standalone"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = [
+    "dearpygui>=2.0.0",
+    "numpy>=1.24.4",
+    "opencv-contrib-python>=4.10.0.84",
+    "opencv-python>=4.10.0.84",
+    "pyrealsense2>=2.55.1.6486",
+    "pyyaml>=6.0.2",
+]
