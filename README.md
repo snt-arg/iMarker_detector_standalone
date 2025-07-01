@@ -94,11 +94,3 @@ python main.py --mode sv_rs
 ```
 
 The script will automatically launch the appropriate runner based on your selected mode.
-
-## 📎 Related Repositories
-
-It is intended to work in conjunction with the core detection and visualization pipelines:
-
-- 🔌 [iMarker Sensor Interfaces](https://github.com/snt-arg/iMarker_sensors)
-- 👁️ [iMarker Detector Algorithms](https://github.com/snt-arg/iMarker_algorithms)
-- 🤖 [ROS-enabled Version of iMarker Detection for Advanced Robotics](https://github.com/snt-arg/iMarker_detector_ros)
