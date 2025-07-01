@@ -12,7 +12,6 @@ To achieve its functionality, this standalone tool integrates the following subm
 ## 🧠 About iMarkers
 
 **iMarkers** are invisible fiducial markers detectable only by certain sensors and algorithms. They enable robust detection for human-robot interaction, AR applications, and indoor localization.
-Read more about iMarkers (developed for the TRANSCEND project at the [University of Luxembourg](https://www.uni.lu/en/)) in [this link](https://snt-arg.github.io/iMarkers/).
 
 ## 🛠️ Getting Started
 
@@ -103,14 +102,3 @@ It is intended to work in conjunction with the core detection and visualization 
 - 🔌 [iMarker Sensor Interfaces](https://github.com/snt-arg/iMarker_sensors)
 - 👁️ [iMarker Detector Algorithms](https://github.com/snt-arg/iMarker_algorithms)
 - 🤖 [ROS-enabled Version of iMarker Detection for Advanced Robotics](https://github.com/snt-arg/iMarker_detector_ros)
-
-## 📚 Citation
-
-```bibtex
-@article{tourani2025unveiling,
-  title={Unveiling the Potential of iMarkers: Invisible Fiducial Markers for Advanced Robotics},
-  author={Tourani, Ali and Avsar, Deniz Isinsu and Bavle, Hriday and Sanchez-Lopez, Jose Luis and Lagerwall, Jan and Voos, Holger},
-  journal={arXiv preprint arXiv:2501.15505},
-  year={2025}
-}
-```
