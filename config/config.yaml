@@ -15,14 +15,13 @@ configs:
         beta: 1.0
     offline:
       image:
-        folder: "/home/ali/Pictures/img/"
-        # names: ["M3.jpg", "M3.jpg"]
-        names: ["Halide_RH_0.5m.jpg", "Halide_LH_0.5m.jpg"]
+        folder: "[YOUR_PATH]"
+        names: ["Img-L.jpg", "Img-R.jpg"]
       imageUV:
-        path: "/home/ali/Pictures/img/uv.png"
+        path: "[YOUR_PATH]"
       video:
         rotate: false
-        path: "/home/ali/Videos/vid2.MOV"
+        path: "[YOUR_PATH]"
     usbCam:
       maskSize: 0.8
       flipImage: true
@@ -30,11 +29,11 @@ configs:
       ports:
         lCam: "/dev/video4"
         rCam: "/dev/video6"
-      calibrationPath: "/home/ali/Codes/csr_detector_standalone/src/iMarker_sensors/sensors/calibration/output/elpStereoMap.xml"
+      calibrationPath: "[YOUR_PATH]"
     usbCamUV:
       port: "/dev/video4"
     usbCamIR_SV:
-      port: "/dev/video6" # "/dev/video4"
+      port: "/dev/video6"
     ids:
       exposureTime: 20000
       roi:
@@ -74,6 +73,6 @@ configs:
       gaussianKernel: 1
   marker:
     structure:
-      size: 0.07
+      size: 0.163
     detection:
-      dictionary: "DICT_ARUCO_ORIGINAL"
+      dictionary: "DICT_ARUCO_MIP_36H12" # [default: DICT_ARUCO_ORIGINAL]
