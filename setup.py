@@ -3,8 +3,8 @@ from setuptools import setup, find_packages
 if __name__ == '__main__':
     setup(name='imarker_detector_standalone',
           version='1.0.0',
-          author='Ali Tourani',
-          author_email='ali.tourani@uni.lu',
+          author='XXX',
+          author_email='XXX',
           description='A GUI-enabled standalone software to detect iMarkers',
           long_description='A Python package providing a GUI-enabled standalone software to detect iMarkers.',
           long_description_content_type='text/plain',

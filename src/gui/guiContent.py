@@ -171,7 +171,7 @@ def guiElements(cfg: dict, singleCamera: bool = False):
         with dpg.group(horizontal=True):
             dpg.add_image("LogoImage", width=30, height=28)
             dpg.add_text(
-                "© 2022-2025 - TRANSCEND Project - University of Luxembourg")
+                "© 2022-2025 - TRANSCEND Project - University of XXX")
             dpg.add_spacer(width=-1)
             dpg.add_button(label="Save the Current Frame", tag="Record",
                            callback=onRecord)
