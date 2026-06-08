@@ -107,10 +107,11 @@ It is intended to work in conjunction with the core detection and visualization 
 ## 📚 Citation
 
 ```bibtex
-@article{tourani2025unveiling,
+@article{imarkers,
   title={Unveiling the Potential of iMarkers: Invisible Fiducial Markers for Advanced Robotics},
-  author={Tourani, Ali and Avsar, Deniz Isinsu and Bavle, Hriday and Sanchez-Lopez, Jose Luis and Lagerwall, Jan and Voos, Holger},
-  journal={arXiv preprint arXiv:2501.15505},
-  year={2025}
+  author={Tourani, Ali and Avşar, Deniz Isinsu and Bavle, Hriday and Sanchez-Lopez, Jose Luis and Lagerwall, Jan and Voos, Holger},
+  journal={IEEE Robotics & Automation Magazine},
+  doi={10.1109/MRA.2026.3693135},
+  year={2026}
 }
 ```
